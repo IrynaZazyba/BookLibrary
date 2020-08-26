@@ -11,17 +11,23 @@ import java.util.Objects;
 
 public class CommandProvider {
 
-    private static CommandProvider instance = new CommandProvider();
+    private static volatile CommandProvider instance;
     private Map<CommandKey, Command> commandRepository = new HashMap<>();
 
     private CommandProvider() {
         commandRepository.put(new CommandKey("GET", "/books"), new GetBooksCommand());
         commandRepository.put(new CommandKey("PUT", "/books"), new AddBookCommand());
         commandRepository.put(new CommandKey("POST", "/books"), new EditBookCommand());
-
     }
 
     public static CommandProvider getInstance() {
+        if (instance == null) {
+            synchronized (CommandProvider.class) {
+                if (instance == null) {
+                    instance = new CommandProvider();
+                }
+            }
+        }
         return instance;
     }
 
@@ -33,7 +39,7 @@ public class CommandProvider {
             command = new UnknownCommand();
         }
 
-        if(command==null){
+        if (command == null) {
             command = new UnknownCommand();
         }
 
