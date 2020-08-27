@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 public class EditBookCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) {
-        //get params from request
-        //validate params
+        //get parameter from request
+        //validate parameter
         //go to service
         //forward or redirect to jsp
     }

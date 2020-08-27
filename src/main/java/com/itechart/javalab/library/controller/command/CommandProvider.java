@@ -15,6 +15,7 @@ public class CommandProvider {
     private Map<CommandKey, Command> commandRepository = new HashMap<>();
 
     private CommandProvider() {
+        commandRepository.put(new CommandKey("GET", "/"), new GetBooksCommand());
         commandRepository.put(new CommandKey("GET", "/books"), new GetBooksCommand());
         commandRepository.put(new CommandKey("PUT", "/books"), new AddBookCommand());
         commandRepository.put(new CommandKey("POST", "/books"), new EditBookCommand());
@@ -42,7 +43,6 @@ public class CommandProvider {
         if (command == null) {
             command = new UnknownCommand();
         }
-
         return command;
     }
 
