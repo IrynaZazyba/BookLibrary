@@ -27,7 +27,7 @@ public class ConnectionPoolListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
 
-        Properties dbProperties = getDBProperties(sce);
+        Properties dbProperties = getDbProperties(sce);
         String dbDriver = dbProperties.getProperty(DB_DRIVER);
         String dbUrl = dbProperties.getProperty(DB_URL);
         String dbUser = dbProperties.getProperty(DB_USER);
@@ -52,19 +52,18 @@ public class ConnectionPoolListener implements ServletContextListener {
     }
 
 
-    private Properties getDBProperties(ServletContextEvent sce) {
+    private Properties getDbProperties(ServletContextEvent sce) {
         Properties dbProperties = new Properties();
 
         String db = sce.getServletContext().getInitParameter(DB_PROPERTIES_FILE_NAME);
-        try {
-            InputStream dbResourceAsStream = getClass().getClassLoader().getResourceAsStream(db);
+        try (InputStream dbResourceAsStream = getClass().getClassLoader().getResourceAsStream(db)) {
             if (dbResourceAsStream != null) {
                 dbProperties.load(dbResourceAsStream);
             } else {
                 //todo logger
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            //todo logger
         }
         return dbProperties;
     }
