@@ -5,7 +5,7 @@ import com.itechart.javalab.library.dao.conn.ConnectionPool;
 
 public class SqlBookDao implements BookDao {
 
-    private ConnectionPool connectionPool;
+    private final ConnectionPool connectionPool;
     public static volatile BookDao instance;
 
     private SqlBookDao(ConnectionPool connectionPool) {

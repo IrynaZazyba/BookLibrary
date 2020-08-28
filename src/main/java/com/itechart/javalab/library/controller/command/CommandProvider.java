@@ -12,7 +12,7 @@ import java.util.Objects;
 public class CommandProvider {
 
     private static volatile CommandProvider instance;
-    private Map<CommandKey, Command> commandRepository = new HashMap<>();
+    private final Map<CommandKey, Command> commandRepository = new HashMap<>();
 
     private CommandProvider() {
         commandRepository.put(new CommandKey("GET", "/"), new GetBooksCommand());
@@ -47,7 +47,7 @@ public class CommandProvider {
     }
 
 
-    class CommandKey {
+    static class CommandKey {
 
         private String method;
         private String url;
