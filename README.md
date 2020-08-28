@@ -12,3 +12,10 @@ Branch - db-initialization
 - create ConnectionPoolListener to initialize connection pool
 - create SqlBookDaoImpl
 - create a factory for DAO implementation
+
+##### Task#3 - Add logger
+Branch - add-logger
+- add config files
+- add filter to log user activity
+- logging existing exceptions
+

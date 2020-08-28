@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+
+    <Properties>
+        <Property name="pattern">[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <RollingFile name="fileLogger" fileName="logs/book-library/book-library.log" append="true"
+                     filePattern="./logs/book-library/%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy  size="250 MB"/>
+            </Policies>
+        </RollingFile>
+
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${pattern}"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="debug" additivity="false">
+            <appender-ref ref="console" level="error"/>
+            <appender-ref ref="fileLogger" level="info"/>
+        </Root>
+    </Loggers>
+</Configuration>
