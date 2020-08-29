@@ -1,9 +1,7 @@
 package com.itechart.javalab.library.controller.listener;
 
 import com.itechart.javalab.library.dao.conn.ConnectionPool;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -13,10 +11,9 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Properties;
 
+@Log4j2
 @WebListener
 public class ConnectionPoolListener implements ServletContextListener {
-
-    private final static Logger logger = LogManager.getLogger(ConnectionPoolListener.class);
 
     private final static String DB_PROPERTIES_FILE_NAME = "db";
     private final static String DB_URL = "db.url";
@@ -43,10 +40,11 @@ public class ConnectionPoolListener implements ServletContextListener {
         connectionPool = ConnectionPool.getInstance();
         try {
             connectionPool.initPoolData(dbUrl, dbUser, dbPassword, dbPoolSize);
+            throw  new SQLException("");
         } catch (SQLException e) {
-            logger.log(Level.ERROR,"Exception in attempt to initialize connection pool",e);
+            log.error("Exception in attempt to initialize connection pool", e);
+            throw new RuntimeException("Exception in attempt to initialize connection pool", e);
         }
-
     }
 
     @Override
@@ -63,10 +61,12 @@ public class ConnectionPoolListener implements ServletContextListener {
             if (dbResourceAsStream != null) {
                 dbProperties.load(dbResourceAsStream);
             } else {
-                logger.log(Level.ERROR,DB_PROPERTIES_FILE_NAME+".properties resource file not found");
+                log.error(DB_PROPERTIES_FILE_NAME + ".properties resource file not found");
+                throw new RuntimeException(DB_PROPERTIES_FILE_NAME + ".properties resource file not found");
             }
         } catch (IOException e) {
-            logger.log(Level.ERROR,"Exception in attempt to read "+DB_PROPERTIES_FILE_NAME+".properties file",e);
+            log.error("Exception in attempt to read " + DB_PROPERTIES_FILE_NAME + ".properties file", e);
+            throw new RuntimeException("Exception in attempt to read " + DB_PROPERTIES_FILE_NAME + ".properties file", e);
         }
         return dbProperties;
     }
