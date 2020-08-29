@@ -40,7 +40,6 @@ public class ConnectionPoolListener implements ServletContextListener {
         connectionPool = ConnectionPool.getInstance();
         try {
             connectionPool.initPoolData(dbUrl, dbUser, dbPassword, dbPoolSize);
-            throw  new SQLException("");
         } catch (SQLException e) {
             log.error("Exception in attempt to initialize connection pool", e);
             throw new RuntimeException("Exception in attempt to initialize connection pool", e);
