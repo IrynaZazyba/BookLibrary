@@ -1,7 +1,13 @@
 package com.itechart.javalab.library.model;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Book {
 
     private int id;
@@ -14,8 +20,5 @@ public class Book {
     private String coverPath;
     private int totalAmount;
     private int inStock;
-
-    //todo  equals, hashcode, builder
-
 
 }
