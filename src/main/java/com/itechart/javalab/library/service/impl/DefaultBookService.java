@@ -2,7 +2,11 @@ package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.dao.BookDao;
 import com.itechart.javalab.library.dao.impl.SqlBookDao;
+import com.itechart.javalab.library.model.Book;
 import com.itechart.javalab.library.service.BookService;
+
+import java.util.List;
+import java.util.Optional;
 
 public class DefaultBookService implements BookService {
 
@@ -26,5 +30,8 @@ public class DefaultBookService implements BookService {
     }
 
 
-
+    @Override
+    public Optional<List<Book>> getAllBooks() {
+        return bookDao.getBooks();
+    }
 }
