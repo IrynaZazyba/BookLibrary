@@ -1,6 +1,7 @@
 package com.itechart.javalab.library.controller.listener;
 
 import com.itechart.javalab.library.dao.conn.ConnectionPool;
+import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -10,11 +11,11 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Properties;
 
+@Log4j2
 @WebListener
 public class ConnectionPoolListener implements ServletContextListener {
 
     private final static String DB_PROPERTIES_FILE_NAME = "db";
-
     private final static String DB_URL = "db.url";
     private final static String DB_USER = "db.user";
     private final static String DB_PASSWORD = "db.password";
@@ -40,9 +41,9 @@ public class ConnectionPoolListener implements ServletContextListener {
         try {
             connectionPool.initPoolData(dbUrl, dbUser, dbPassword, dbPoolSize);
         } catch (SQLException e) {
-            //todo logger
+            log.error("Exception in attempt to initialize connection pool", e);
+            throw new RuntimeException("Exception in attempt to initialize connection pool", e);
         }
-
     }
 
     @Override
@@ -59,10 +60,12 @@ public class ConnectionPoolListener implements ServletContextListener {
             if (dbResourceAsStream != null) {
                 dbProperties.load(dbResourceAsStream);
             } else {
-                //todo logger
+                log.error(DB_PROPERTIES_FILE_NAME + ".properties resource file not found");
+                throw new RuntimeException(DB_PROPERTIES_FILE_NAME + ".properties resource file not found");
             }
         } catch (IOException e) {
-            //todo logger
+            log.error("Exception in attempt to read " + DB_PROPERTIES_FILE_NAME + ".properties file", e);
+            throw new RuntimeException("Exception in attempt to read " + DB_PROPERTIES_FILE_NAME + ".properties file", e);
         }
         return dbProperties;
     }
