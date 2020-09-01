@@ -26,10 +26,9 @@ public class GetBooksCommand implements Command {
         if (allBooks.isPresent()) {
             request.setAttribute(REQUEST_ATTRIBUTE_LIST_BOOKS, allBooks.get());
             forwardToPage(request, response, JspPageName.MAIN_PAGE);
-        }
-
-        if (allBooks.isEmpty()) {
+        } else {
             response.setStatus(500);
         }
+
     }
 }
