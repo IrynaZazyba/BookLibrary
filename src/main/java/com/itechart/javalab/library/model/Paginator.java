@@ -50,7 +50,7 @@ public class Paginator {
             int parsedValue = Integer.parseInt(recordsPerPage);
             this.recordsPerPage = parsedValue > 0 ? parsedValue : DEFAULT_RECORDS_PER_PAGE;
         } else {
-            this.currentPage = DEFAULT_RECORDS_PER_PAGE;
+            this.recordsPerPage = DEFAULT_RECORDS_PER_PAGE;
         }
     }
 

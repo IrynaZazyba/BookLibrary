@@ -19,9 +19,6 @@ public class SqlBookDao implements BookDao {
     private final ConnectionPool connectionPool;
     private static volatile BookDao instance;
 
-    private final static String GET_ALL_BOOKS = "SELECT book.id, title, publish_date, in_stock,author.id,author.name " +
-            "FROM book INNER JOIN author ON book.id=author.book_id";
-
     private final static String GET_COUNT_BOOKS_RECORDS = "SELECT count(id) FROM book";
 
     private SqlBookDao(ConnectionPool connectionPool) {
@@ -44,9 +41,7 @@ public class SqlBookDao implements BookDao {
     public Optional<List<Book>> getBooks(Paginator paginator, boolean isFiltered) {
 
         List<Book> books;
-
-        String query = addAvailableConditions(GET_ALL_BOOKS, isFiltered);
-        query = addConditionLimit(query);
+        String query = buildQueryForMainPage(isFiltered);
 
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -101,8 +96,13 @@ public class SqlBookDao implements BookDao {
         return isFiltered ? query + " WHERE in_stock > 0" : query;
     }
 
-    private String addConditionLimit(String query) {
-        return query + " LIMIT ?,?";
+
+    private String buildQueryForMainPage(boolean isFiltered){
+        String query="SELECT book.id, title, publish_date, in_stock, author.id, author.name from (SELECT * FROM book ";
+        query=isFiltered?query+" WHERE in_stock>0":query;
+        query=query+" LIMIT ?,?";
+        query=query+") as book INNER JOIN author ON book.id=author.book_id;";
+        return query;
     }
 
 }

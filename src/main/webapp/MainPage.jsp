@@ -17,7 +17,7 @@
     <jsp:include page="WEB-INF/jsp/parts/NavigationBar.jsp"/>
 
     <div class="row">
-        <div class="col-9">
+        <div class="col-8">
             <button type="button" class="btn  btn-info add-button">Add</button>
             <button type="button" class="btn  btn-outline-danger">Remove</button>
         </div>
@@ -32,12 +32,38 @@
                 <label class="form-check-label" for="filterBook">Filter out unavailable books</label>
             </div>
         </div>
+        <div class="col-1">
+            <div class="form_toggle">
+                <c:if test="${requestScope.recordsPerPage==10}">
+                    <div class="form_toggle-item item-1">
+                        <input onclick="getCountRecords(this)" id="count-10" type="radio" name="radio" value="10"
+                               checked>
+                        <label for="count-10">10</label>
+                    </div>
+                    <div class="form_toggle-item item-2">
+                        <input onclick="getCountRecords(this)" id="count-20" type="radio" name="radio" value="20">
+                        <label for="count-20">20</label>
+                    </div>
+                </c:if>
+                <c:if test="${requestScope.recordsPerPage==20}">
+                    <div class="form_toggle-item item-1">
+                        <input onclick="getCountRecords(this)" id="count-10" type="radio" name="radio" value="10">
+                        <label for="count-10">10</label>
+                    </div>
+                    <div class="form_toggle-item item-2">
+                        <input onclick="getCountRecords(this)" id="count-20" type="radio" name="radio" value="20"
+                               checked>
+                        <label for="count-20">20</label>
+                    </div>
+                </c:if>
+
+            </div>
+        </div>
     </div>
     <table class="table table-bordered mainPageTable">
         <thead>
         <tr>
             <th></th>
-            <th scope="col">#</th>
             <th scope="col">title</th>
             <th scope="col">author(-s)</th>
             <th scope="col">publish date</th>
@@ -54,7 +80,6 @@
                         <label class="form-check-label" for="delete-${book.id}"></label>
                     </div>
                 </th>
-                <th scope="row">${num=num+1}</th>
                 <td><a href="#">${book.title}</a></td>
                 <td>
                     <c:forEach var="author" items="${book.author}" varStatus="loop">
@@ -68,7 +93,32 @@
         </c:forEach>
         </tbody>
     </table>
+    <div>
+        <nav aria-label="..." class="m-t-27">
+            <ul class="pagination pagination-sm pagination_center">
+                <c:forEach var="i" begin="1" end="${requestScope.countPages}">
+                    <c:if test="${i==requestScope.currentPage}">
 
+                        <li class="page-item page-item-change active" aria-current="page">
+                                                <span class="page-link">${i}
+                                                            <span class="sr-only">(current)</span>
+                                                            </span>
+                        </li>
+                    </c:if>
+
+
+                    <c:if test="${i!=requestScope.currentPage}">
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="${pageContext.request.contextPath}/books?currentPage=${i}&isFiltered=${requestScope.isFiltered}&recordsPerPage=${requestScope.recordsPerPage}">
+                                    ${i}
+                            </a>
+                        </li>
+                    </c:if>
+                </c:forEach>
+            </ul>
+        </nav>
+    </div>
 
 </div>
 

@@ -13,3 +13,42 @@
 .page-nav {
     margin-left: 15px;
 }
+
+
+/* Toggle button */
+.form_toggle {
+    display: inline-block;
+    overflow: hidden;
+}
+.form_toggle-item {
+    float: left;
+    display: inline-block;
+}
+.form_toggle-item input[type=radio] {
+    display: none;
+}
+.form_toggle-item label {
+    display: inline-block;
+    padding: 0px 5px;
+    line-height: 25px;
+    border: 1px solid #999;
+    border-right: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+.form_toggle .item-1 label {
+    border-radius: 6px 0 0 6px;
+}
+.form_toggle .item-2 label {
+    border-radius: 0 6px 6px 0;
+    border-right: 1px solid #999;
+}
+
+/* Checked toggle button */
+.form_toggle .item-1 input[type=radio]:checked + label {
+    background: lightgrey;
+}
+.form_toggle .item-2 input[type=radio]:checked + label {
+    background: lightgrey;
+}
