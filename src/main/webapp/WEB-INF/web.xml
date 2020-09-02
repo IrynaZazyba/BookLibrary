@@ -12,4 +12,8 @@
         <param-name>log4j2</param-name>
         <param-value>log4j2.properties</param-value>
     </context-param>
+    <welcome-file-list>
+        <welcome-file>MainPage.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>
+

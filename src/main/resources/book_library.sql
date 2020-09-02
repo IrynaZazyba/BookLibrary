@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Авг 27 2020 г., 14:59
+-- Время создания: Сен 01 2020 г., 12:42
 -- Версия сервера: 10.2.7-MariaDB
 -- Версия PHP: 7.1.7
 
@@ -56,11 +56,11 @@ INSERT INTO `author` (`id`, `name`, `book_id`) VALUES
 CREATE TABLE `book` (
   `id` int(11) NOT NULL,
   `title` varchar(65) NOT NULL,
-  `publish date` date NOT NULL,
-  `page count` varchar(45) NOT NULL,
-  `ISBN` varchar(45) NOT NULL,
+  `publish_date` date NOT NULL,
+  `page_count` varchar(45) NOT NULL,
+  `isbn` varchar(45) NOT NULL,
   `description` varchar(350) DEFAULT NULL,
-  `total amount` int(11) NOT NULL,
+  `total_amount` int(11) NOT NULL,
   `cover` varchar(45) DEFAULT NULL,
   `in_stock` int(11) NOT NULL,
   `publisher_id` int(11) NOT NULL
@@ -70,7 +70,7 @@ CREATE TABLE `book` (
 -- Дамп данных таблицы `book`
 --
 
-INSERT INTO `book` (`id`, `title`, `publish date`, `page count`, `ISBN`, `description`, `total amount`, `cover`, `in_stock`, `publisher_id`) VALUES
+INSERT INTO `book` (`id`, `title`, `publish_date`, `page_count`, `isbn`, `description`, `total_amount`, `cover`, `in_stock`, `publisher_id`) VALUES
 (1, 'From Third World to First: The Singapore Story - 1965-2000', '2000-10-03', '752 ', '978-0060197766', 'Few gave tiny Singapore much chance of survival when it was granted independence in 1965. How is it, then, that today the former British colonial trading post is a thriving Asian metropolis with not only the world\'s number one airline, best airport, and busiest port of trade, but also the world\'s fourth–highest per capita real income?', 11, NULL, 7, 1),
 (2, 'Sapiens. Краткая история человечества', '2016-12-01', '520', '978-5-905891-64-9', 'Юваль Харари показывает, как ход истории формировал человеческое общество и действительность вокруг него. Его книга прослеживает связь между событиями прошлого и проблемами современности и заставляет читателя пересмотреть все устоявшиеся представления об окружающем мире.', 15, NULL, 5, 2),
 (3, 'Краткие ответы на большие вопросы\r\n', '2019-01-31', '256', '978-5-04-099443-4', 'Перед вами книга-сенсация, книга-завещание, последний труд всемирно известного физика Стивена Хокинга, в которой он подводит некий итог и высказывается по самым главным вопросам, волнующим всех.', 15, NULL, 7, 3),

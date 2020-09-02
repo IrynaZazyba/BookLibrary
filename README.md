@@ -19,3 +19,13 @@ Branch - add-logger
 - add filter to log user activity
 - logging existing exceptions
 
+##### Task#4 - Add main page
+Branch - add-main-page
+- add welcome page to web.xml
+- add lombok to Book 
+- add BookService implementation 
+- add getting list of books
+- add MainPage.jsp 
+- add navigation bar as import
+
+
