@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface BookService {
 
-    Optional<List<Book>> getAllBooks();
+    Optional<List<Book>> getAllBooks(boolean isFiltered);
 
 
 }

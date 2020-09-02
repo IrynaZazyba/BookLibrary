@@ -38,12 +38,12 @@ public class SqlBookDao implements BookDao {
 
 
     @Override
-    public Optional<List<Book>> getBooks() {
+    public Optional<List<Book>> getBooks(boolean isFiltered) {
 
         List<Book> books;
 
         try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_BOOKS)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(buildQueryForMainPage(isFiltered))) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
             Map<Integer, Book> tempBooks = new HashMap<>();
@@ -67,6 +67,11 @@ public class SqlBookDao implements BookDao {
     }
 
 
+    private String buildQueryForMainPage(boolean isFiltered){
+        String query=GET_ALL_BOOKS;
+        query=isFiltered?query+" WHERE in_stock>0":query;
+        return query;
+    }
 
 
 }

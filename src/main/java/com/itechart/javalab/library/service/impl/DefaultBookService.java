@@ -12,7 +12,7 @@ public class DefaultBookService implements BookService {
 
 
     private final BookDao bookDao;
-    public static volatile BookService instance;
+    private static volatile BookService instance;
 
     private DefaultBookService(BookDao bookDao) {
         this.bookDao = bookDao;
@@ -31,7 +31,7 @@ public class DefaultBookService implements BookService {
 
 
     @Override
-    public Optional<List<Book>> getAllBooks() {
-        return bookDao.getBooks();
+    public Optional<List<Book>> getAllBooks(boolean isFiltered) {
+        return bookDao.getBooks(isFiltered);
     }
 }

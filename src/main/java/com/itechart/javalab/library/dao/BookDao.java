@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface BookDao {
 
-    Optional<List<Book>> getBooks();
+    Optional<List<Book>> getBooks(boolean isFiltered);
 
 }

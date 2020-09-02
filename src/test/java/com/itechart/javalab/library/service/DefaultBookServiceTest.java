@@ -27,12 +27,14 @@ public class DefaultBookServiceTest {
     @Test
     public void testGetAllBooksNegative() {
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(bookService.getAllBooks()).thenReturn(Optional.empty());
-        Assert.assertEquals(bookService.getAllBooks(), Optional.empty());
+        boolean isFiltered=true;
+        Mockito.when(bookService.getAllBooks(isFiltered)).thenReturn(Optional.empty());
+        Assert.assertEquals(bookService.getAllBooks(isFiltered), Optional.empty());
     }
 
     @Test
     public void testGetAllBooksPositive() {
+        boolean isFiltered=true;
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -74,8 +76,8 @@ public class DefaultBookServiceTest {
         books.add(javaBook);
         books.add(christmasBook);
 
-        Mockito.when(bookService.getAllBooks()).thenReturn(Optional.of(books));
-        Assert.assertEquals(bookService.getAllBooks(), Optional.of(books));
+        Mockito.when(bookService.getAllBooks(isFiltered)).thenReturn(Optional.of(books));
+        Assert.assertEquals(bookService.getAllBooks(isFiltered), Optional.of(books));
     }
 
 }

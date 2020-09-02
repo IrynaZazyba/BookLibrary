@@ -23,48 +23,51 @@
         </div>
         <div class="col-auto">
             <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="filterBook">
+                <c:if test="${requestScope.isFiltered}">
+                    <input type="checkbox" class="form-check-input" onclick="doFilter(this)" checked id="filterBook">
+                </c:if>
+                <c:if test="${not requestScope.isFiltered}">
+                    <input type="checkbox" class="form-check-input" onclick="doFilter(this)" id="filterBook">
+                </c:if>
                 <label class="form-check-label" for="filterBook">Filter out unavailable books</label>
             </div>
         </div>
     </div>
-    <div class="row">
-        <table class="table table-bordered mainPageTable">
-            <thead>
+    <table class="table table-bordered mainPageTable">
+        <thead>
+        <tr>
+            <th></th>
+            <th scope="col">#</th>
+            <th scope="col">title</th>
+            <th scope="col">author(-s)</th>
+            <th scope="col">publish date</th>
+            <th scope="col">amount of book</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:set var="num" value="0" scope="page"/>
+        <c:forEach var="book" items="${requestScope.books}">
             <tr>
-                <th></th>
-                <th scope="col">#</th>
-                <th scope="col">title</th>
-                <th scope="col">author(-s)</th>
-                <th scope="col">publish date</th>
-                <th scope="col">amount of book</th>
+                <th>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="delete-${book.id}">
+                        <label class="form-check-label" for="delete-${book.id}"></label>
+                    </div>
+                </th>
+                <th scope="row">${num=num+1}</th>
+                <td><a href="#">${book.title}</a></td>
+                <td>
+                    <c:forEach var="author" items="${book.author}" varStatus="loop">
+                        <c:out value="${author.name}"/>
+                        <c:if test="${not loop.last}">,</c:if>
+                    </c:forEach>
+                </td>
+                <td> ${book.publishDate} </td>
+                <td>${book.inStock}</td>
             </tr>
-            </thead>
-            <tbody>
-            <c:set var="num" value="0" scope="page"/>
-            <c:forEach var="book" items="${requestScope.books}">
-                <tr>
-                    <th>
-                        <div class="form-group form-check">
-                            <input type="checkbox" class="form-check-input" id="delete-${book.id}">
-                            <label class="form-check-label" for="delete-${book.id}"></label>
-                        </div>
-                    </th>
-                    <th scope="row">${num=num+1}</th>
-                    <td><a href="#">${book.title}</a></td>
-                    <td>
-                        <c:forEach var="author" items="${book.author}" varStatus="loop">
-                            <c:out value="${author.name}"/>
-                            <c:if test="${not loop.last}">,</c:if>
-                        </c:forEach>
-                    </td>
-                    <td> ${book.publishDate} </td>
-                    <td>${book.inStock}</td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </div>
+        </c:forEach>
+        </tbody>
+    </table>
 
 
 </div>
@@ -78,5 +81,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+<script src="resources/js/script.js"></script>
+
 </body>
 </html>
