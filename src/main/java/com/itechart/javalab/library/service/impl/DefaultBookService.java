@@ -33,7 +33,7 @@ public class DefaultBookService implements BookService {
 
 
     @Override
-    public Optional<List<Book>> getAllBooks(Paginator paginator, boolean isAvailableOnly) {
+    public Optional<List<Book>> getBooks(Paginator paginator, boolean isAvailableOnly) {
         BookFilter bookFilter = BookFilter
                 .builder()
                 .isAvailableOnly(isAvailableOnly)
@@ -47,6 +47,6 @@ public class DefaultBookService implements BookService {
                 .builder()
                 .isAvailableOnly(isAvailableOnly)
                 .build();
-        return bookDao.getCountOfBooksId(bookFilter);
+        return bookDao.getNumberOfBooksRecords(bookFilter);
     }
 }

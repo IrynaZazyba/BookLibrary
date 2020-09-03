@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface BookDao {
 
     Optional<List<Book>> getBooks(Paginator paginator, BookFilter bookFilter);
-    Optional<Integer> getCountOfBooksId(BookFilter bookFilter);
+    Optional<Integer> getNumberOfBooksRecords(BookFilter bookFilter);
 
 
 }

@@ -23,7 +23,7 @@ public class SqlBookDao implements BookDao {
     private final static String GET_BOOKS = "SELECT book.id, title, publish_date, in_stock, author.id, author.name " +
             "FROM (SELECT * FROM book WHERE in_stock REGEXP ? LIMIT ?,?) as book " +
             "INNER JOIN author ON book.id=author.book_id;";
-    private final static String GET_COUNT_BOOKS_RECORDS = "SELECT count(id) FROM book WHERE in_stock REGEXP ?";
+    private final static String GET_NUMBER_OF_BOOKS_RECORDS = "SELECT count(id) FROM book WHERE in_stock REGEXP ?";
 
     private SqlBookDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -74,12 +74,12 @@ public class SqlBookDao implements BookDao {
     }
 
     @Override
-    public Optional<Integer> getCountOfBooksId(BookFilter bookFilter) {
+    public Optional<Integer> getNumberOfBooksRecords(BookFilter bookFilter) {
 
         int countBooksRecords = 0;
 
         try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(GET_COUNT_BOOKS_RECORDS)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_NUMBER_OF_BOOKS_RECORDS)) {
             preparedStatement.setString(1, bookFilter.isAvailableOnly() ? "[^0]" : "[0-9]");
             ResultSet resultSet = preparedStatement.executeQuery();
 

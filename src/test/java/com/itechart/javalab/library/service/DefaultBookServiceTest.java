@@ -30,8 +30,8 @@ public class DefaultBookServiceTest {
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
         boolean isAvailableOnly = true;
         Paginator paginator = new Paginator("10", "1");
-        Mockito.when(bookService.getAllBooks(paginator, isAvailableOnly)).thenReturn(Optional.empty());
-        Assert.assertEquals(bookService.getAllBooks(paginator, isAvailableOnly), Optional.empty());
+        Mockito.when(bookService.getBooks(paginator, isAvailableOnly)).thenReturn(Optional.empty());
+        Assert.assertEquals(bookService.getBooks(paginator, isAvailableOnly), Optional.empty());
     }
 
     @Test
@@ -80,8 +80,8 @@ public class DefaultBookServiceTest {
         books.add(javaBook);
         books.add(christmasBook);
 
-        Mockito.when(bookService.getAllBooks(paginator, isAvailableOnly)).thenReturn(Optional.of(books));
-        Assert.assertEquals(bookService.getAllBooks(paginator, isAvailableOnly), Optional.of(books));
+        Mockito.when(bookService.getBooks(paginator, isAvailableOnly)).thenReturn(Optional.of(books));
+        Assert.assertEquals(bookService.getBooks(paginator, isAvailableOnly), Optional.of(books));
     }
 
 

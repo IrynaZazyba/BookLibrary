@@ -32,7 +32,7 @@ public class GetBooksCommand implements Command {
         Paginator paginator = new Paginator(recordsPerPage, currentPage);
 
         BookService bookService = DefaultBookService.getInstance();
-        Optional<List<Book>> allBooks = bookService.getAllBooks(paginator, isAvailableOnly);
+        Optional<List<Book>> allBooks = bookService.getBooks(paginator, isAvailableOnly);
 
         Optional<Integer> numberOfBooksRecords = bookService.getNumberOfBooksRecords(isAvailableOnly);
 

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface BookService {
 
-    Optional<List<Book>> getAllBooks(Paginator paginator,boolean isAvailableOnly);
+    Optional<List<Book>> getBooks(Paginator paginator, boolean isAvailableOnly);
     Optional<Integer> getNumberOfBooksRecords(boolean isAvailableOnly);
 
 
