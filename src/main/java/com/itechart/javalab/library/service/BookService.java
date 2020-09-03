@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface BookService {
 
-    Optional<List<Book>> getAllBooks(Paginator paginator,boolean isFiltered);
-    Optional<Integer> getNumberOfBooksRecords(boolean isFiltered);
+    Optional<List<Book>> getAllBooks(Paginator paginator,boolean isAvailableOnly);
+    Optional<Integer> getNumberOfBooksRecords(boolean isAvailableOnly);
 
 
 }

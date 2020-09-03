@@ -23,10 +23,10 @@
         </div>
         <div class="col-auto">
             <div class="form-group form-check">
-                <c:if test="${requestScope.isFiltered}">
+                <c:if test="${requestScope.isAvailableOnly}">
                     <input type="checkbox" class="form-check-input" onclick="doFilter(this)" checked id="filterBook">
                 </c:if>
-                <c:if test="${not requestScope.isFiltered}">
+                <c:if test="${not requestScope.isAvailableOnly}">
                     <input type="checkbox" class="form-check-input" onclick="doFilter(this)" id="filterBook">
                 </c:if>
                 <label class="form-check-label" for="filterBook">Filter out unavailable books</label>
@@ -110,7 +110,7 @@
                     <c:if test="${i!=requestScope.currentPage}">
                         <li class="page-item">
                             <a class="page-link"
-                               href="${pageContext.request.contextPath}/books?currentPage=${i}&isFiltered=${requestScope.isFiltered}&recordsPerPage=${requestScope.recordsPerPage}">
+                               href="${pageContext.request.contextPath}/books?currentPage=${i}&isAvailableOnly=${requestScope.isAvailableOnly}&recordsPerPage=${requestScope.recordsPerPage}">
                                     ${i}
                             </a>
                         </li>

@@ -3,6 +3,7 @@ package com.itechart.javalab.library.service.impl;
 import com.itechart.javalab.library.dao.BookDao;
 import com.itechart.javalab.library.dao.impl.SqlBookDao;
 import com.itechart.javalab.library.model.Book;
+import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
 import com.itechart.javalab.library.service.BookService;
 
@@ -32,12 +33,20 @@ public class DefaultBookService implements BookService {
 
 
     @Override
-    public Optional<List<Book>> getAllBooks(Paginator paginator,boolean isFiltered) {
-        return bookDao.getBooks(paginator,isFiltered);
+    public Optional<List<Book>> getAllBooks(Paginator paginator, boolean isAvailableOnly) {
+        BookFilter bookFilter = BookFilter
+                .builder()
+                .isAvailableOnly(isAvailableOnly)
+                .build();
+        return bookDao.getBooks(paginator, bookFilter);
     }
 
     @Override
-    public Optional<Integer> getNumberOfBooksRecords(boolean isFiltered) {
-        return bookDao.getCountOfBooksId(isFiltered);
+    public Optional<Integer> getNumberOfBooksRecords(boolean isAvailableOnly) {
+        BookFilter bookFilter = BookFilter
+                .builder()
+                .isAvailableOnly(isAvailableOnly)
+                .build();
+        return bookDao.getCountOfBooksId(bookFilter);
     }
 }

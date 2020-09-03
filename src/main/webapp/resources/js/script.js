@@ -5,7 +5,7 @@ async function doFilter(obj) {
     if (history.pushState) {
         let baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
         let newUrl;
-        newUrl = baseUrl + '?isFiltered=' + obj.checked;
+        newUrl = baseUrl + '?isAvailableOnly=' + obj.checked;
 
         let countRecords = document.querySelector('input[type="radio"]:checked');
         newUrl = newUrl + '&recordsPerPage='+countRecords.value;
@@ -24,7 +24,7 @@ async function getCountRecords(obj) {
     if (history.pushState) {
         let baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
         let newUrl;
-        newUrl = baseUrl + '?isFiltered=' + filterValue;
+        newUrl = baseUrl + '?isAvailableOnly=' + filterValue;
 
         newUrl = newUrl + '&recordsPerPage=' + obj.value;
         history.pushState(null, null, newUrl);

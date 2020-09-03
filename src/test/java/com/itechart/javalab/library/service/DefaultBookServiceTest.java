@@ -28,15 +28,15 @@ public class DefaultBookServiceTest {
     @Test
     public void testGetAllBooksNegative() {
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        boolean isFiltered = true;
+        boolean isAvailableOnly = true;
         Paginator paginator = new Paginator("10", "1");
-        Mockito.when(bookService.getAllBooks(paginator, isFiltered)).thenReturn(Optional.empty());
-        Assert.assertEquals(bookService.getAllBooks(paginator, isFiltered), Optional.empty());
+        Mockito.when(bookService.getAllBooks(paginator, isAvailableOnly)).thenReturn(Optional.empty());
+        Assert.assertEquals(bookService.getAllBooks(paginator, isAvailableOnly), Optional.empty());
     }
 
     @Test
     public void testGetAllBooksPositive() {
-        boolean isFiltered = true;
+        boolean isAvailableOnly = true;
         Paginator paginator = new Paginator("2", "1");
 
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
@@ -80,27 +80,27 @@ public class DefaultBookServiceTest {
         books.add(javaBook);
         books.add(christmasBook);
 
-        Mockito.when(bookService.getAllBooks(paginator, isFiltered)).thenReturn(Optional.of(books));
-        Assert.assertEquals(bookService.getAllBooks(paginator, isFiltered), Optional.of(books));
+        Mockito.when(bookService.getAllBooks(paginator, isAvailableOnly)).thenReturn(Optional.of(books));
+        Assert.assertEquals(bookService.getAllBooks(paginator, isAvailableOnly), Optional.of(books));
     }
 
 
     @Test
     public void testGetNumberOfBooksRecordsPositive() {
-        boolean isFiltered = true;
+        boolean isAvailableOnly = true;
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(bookService.getNumberOfBooksRecords(isFiltered)).thenReturn(Optional.of(2));
+        Mockito.when(bookService.getNumberOfBooksRecords(isAvailableOnly)).thenReturn(Optional.of(2));
 
-        Assert.assertEquals(bookService.getNumberOfBooksRecords(isFiltered), Optional.of(2));
+        Assert.assertEquals(bookService.getNumberOfBooksRecords(isAvailableOnly), Optional.of(2));
     }
 
     @Test
     public void testGetNumberOfBooksRecordsNegative() {
-        boolean isFiltered = true;
+        boolean isAvailableOnly = true;
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(bookService.getNumberOfBooksRecords(isFiltered)).thenReturn(Optional.empty());
+        Mockito.when(bookService.getNumberOfBooksRecords(isAvailableOnly)).thenReturn(Optional.empty());
 
-        Assert.assertEquals(bookService.getNumberOfBooksRecords(isFiltered), Optional.empty());
+        Assert.assertEquals(bookService.getNumberOfBooksRecords(isAvailableOnly), Optional.empty());
     }
 
 

@@ -4,6 +4,7 @@ import com.itechart.javalab.library.dao.BookDao;
 import com.itechart.javalab.library.dao.conn.ConnectionPool;
 import com.itechart.javalab.library.model.Author;
 import com.itechart.javalab.library.model.Book;
+import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
 import lombok.extern.log4j.Log4j2;
 
@@ -19,7 +20,10 @@ public class SqlBookDao implements BookDao {
     private final ConnectionPool connectionPool;
     private static volatile BookDao instance;
 
-    private final static String GET_COUNT_BOOKS_RECORDS = "SELECT count(id) FROM book";
+    private final static String GET_BOOKS = "SELECT book.id, title, publish_date, in_stock, author.id, author.name " +
+            "FROM (SELECT * FROM book WHERE in_stock REGEXP ? LIMIT ?,?) as book " +
+            "INNER JOIN author ON book.id=author.book_id;";
+    private final static String GET_COUNT_BOOKS_RECORDS = "SELECT count(id) FROM book WHERE in_stock REGEXP ?";
 
     private SqlBookDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -38,15 +42,15 @@ public class SqlBookDao implements BookDao {
 
 
     @Override
-    public Optional<List<Book>> getBooks(Paginator paginator, boolean isFiltered) {
+    public Optional<List<Book>> getBooks(Paginator paginator, BookFilter bookFilter) {
 
         List<Book> books;
-        String query = buildQueryForMainPage(isFiltered);
 
         try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, paginator.getStart());
-            preparedStatement.setInt(2, paginator.getRecordsPerPage());
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_BOOKS)) {
+            preparedStatement.setString(1, bookFilter.isAvailableOnly() ? "[^0]" : "[0-9]");
+            preparedStatement.setInt(2, paginator.getStart());
+            preparedStatement.setInt(3, paginator.getRecordsPerPage());
 
             ResultSet resultSet = preparedStatement.executeQuery();
             Map<Integer, Book> tempBooks = new HashMap<>();
@@ -70,14 +74,13 @@ public class SqlBookDao implements BookDao {
     }
 
     @Override
-    public Optional<Integer> getCountOfBooksId(boolean isFiltered) {
+    public Optional<Integer> getCountOfBooksId(BookFilter bookFilter) {
 
         int countBooksRecords = 0;
 
-        String query = addAvailableConditions(GET_COUNT_BOOKS_RECORDS, isFiltered);
-
         try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_COUNT_BOOKS_RECORDS)) {
+            preparedStatement.setString(1, bookFilter.isAvailableOnly() ? "[^0]" : "[0-9]");
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
@@ -89,20 +92,6 @@ public class SqlBookDao implements BookDao {
             return Optional.empty();
         }
         return Optional.of(countBooksRecords);
-    }
-
-
-    private String addAvailableConditions(String query, boolean isFiltered) {
-        return isFiltered ? query + " WHERE in_stock > 0" : query;
-    }
-
-
-    private String buildQueryForMainPage(boolean isFiltered){
-        String query="SELECT book.id, title, publish_date, in_stock, author.id, author.name from (SELECT * FROM book ";
-        query=isFiltered?query+" WHERE in_stock>0":query;
-        query=query+" LIMIT ?,?";
-        query=query+") as book INNER JOIN author ON book.id=author.book_id;";
-        return query;
     }
 
 }

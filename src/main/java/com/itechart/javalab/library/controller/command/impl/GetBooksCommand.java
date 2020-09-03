@@ -17,7 +17,7 @@ import java.util.Optional;
 public class GetBooksCommand implements Command {
 
     private static final String REQUEST_ATTRIBUTE_LIST_BOOKS = "books";
-    private static final String REQUEST_FILTER_VALUE = "isFiltered";
+    private static final String REQUEST_IS_AVAILABLE_VALUE = "isAvailableOnly";
     private static final String REQUEST_RECORDS_PER_PAGE = "recordsPerPage";
     private static final String REQUEST_CURRENT_PAGE = "currentPage";
     private static final String REQUEST_COUNT_PAGES = "countPages";
@@ -25,22 +25,22 @@ public class GetBooksCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        boolean isFiltered = getFilterValue(request);
+        boolean isAvailableOnly = getFilterValue(request);
         String recordsPerPage = request.getParameter(REQUEST_RECORDS_PER_PAGE);
         String currentPage = request.getParameter(REQUEST_CURRENT_PAGE);
 
         Paginator paginator = new Paginator(recordsPerPage, currentPage);
 
         BookService bookService = DefaultBookService.getInstance();
-        Optional<List<Book>> allBooks = bookService.getAllBooks(paginator, isFiltered);
+        Optional<List<Book>> allBooks = bookService.getAllBooks(paginator, isAvailableOnly);
 
-        Optional<Integer> numberOfBooksRecords = bookService.getNumberOfBooksRecords(isFiltered);
+        Optional<Integer> numberOfBooksRecords = bookService.getNumberOfBooksRecords(isAvailableOnly);
 
         if (allBooks.isPresent() && numberOfBooksRecords.isPresent()) {
             paginator.setCountPages(numberOfBooksRecords.get());
 
             request.setAttribute(REQUEST_ATTRIBUTE_LIST_BOOKS, allBooks.get());
-            request.setAttribute(REQUEST_FILTER_VALUE, isFiltered);
+            request.setAttribute(REQUEST_IS_AVAILABLE_VALUE, isAvailableOnly);
             request.setAttribute(REQUEST_CURRENT_PAGE, paginator.getCurrentPage());
             request.setAttribute(REQUEST_RECORDS_PER_PAGE, paginator.getRecordsPerPage());
             request.setAttribute(REQUEST_COUNT_PAGES, paginator.getCountPages());
@@ -53,8 +53,8 @@ public class GetBooksCommand implements Command {
     }
 
     private boolean getFilterValue(HttpServletRequest request) {
-        String filterParameter = request.getParameter(REQUEST_FILTER_VALUE);
-        return filterParameter != null ? Boolean.valueOf(filterParameter) : false;
+        String filterParameter = request.getParameter(REQUEST_IS_AVAILABLE_VALUE);
+        return Boolean.parseBoolean(filterParameter);
     }
 
 
