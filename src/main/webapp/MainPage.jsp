@@ -17,55 +17,108 @@
     <jsp:include page="WEB-INF/jsp/parts/NavigationBar.jsp"/>
 
     <div class="row">
-        <div class="col-9">
+        <div class="col-8">
             <button type="button" class="btn  btn-info add-button">Add</button>
             <button type="button" class="btn  btn-outline-danger">Remove</button>
         </div>
         <div class="col-auto">
             <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="filterBook">
+                <c:if test="${requestScope.isAvailableOnly}">
+                    <input type="checkbox" class="form-check-input" onclick="doFilter(this)" checked id="filterBook">
+                </c:if>
+                <c:if test="${not requestScope.isAvailableOnly}">
+                    <input type="checkbox" class="form-check-input" onclick="doFilter(this)" id="filterBook">
+                </c:if>
                 <label class="form-check-label" for="filterBook">Filter out unavailable books</label>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <table class="table table-bordered mainPageTable">
-            <thead>
-            <tr>
-                <th></th>
-                <th scope="col">#</th>
-                <th scope="col">title</th>
-                <th scope="col">author(-s)</th>
-                <th scope="col">publish date</th>
-                <th scope="col">amount of book</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:set var="num" value="0" scope="page"/>
-            <c:forEach var="book" items="${requestScope.books}">
-                <tr>
-                    <th>
-                        <div class="form-group form-check">
-                            <input type="checkbox" class="form-check-input" id="delete-${book.id}">
-                            <label class="form-check-label" for="delete-${book.id}"></label>
-                        </div>
-                    </th>
-                    <th scope="row">${num=num+1}</th>
-                    <td><a href="#">${book.title}</a></td>
-                    <td>
-                        <c:forEach var="author" items="${book.author}" varStatus="loop">
-                            <c:out value="${author.name}"/>
-                            <c:if test="${not loop.last}">,</c:if>
-                        </c:forEach>
-                    </td>
-                    <td> ${book.publishDate} </td>
-                    <td>${book.inStock}</td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </div>
+        <div class="col-1">
+            <div class="form_toggle">
+                <c:if test="${requestScope.recordsPerPage==10}">
+                    <div class="form_toggle-item item-1">
+                        <input onclick="getCountRecords(this)" id="count-10" type="radio" name="radio" value="10"
+                               checked>
+                        <label for="count-10">10</label>
+                    </div>
+                    <div class="form_toggle-item item-2">
+                        <input onclick="getCountRecords(this)" id="count-20" type="radio" name="radio" value="20">
+                        <label for="count-20">20</label>
+                    </div>
+                </c:if>
+                <c:if test="${requestScope.recordsPerPage==20}">
+                    <div class="form_toggle-item item-1">
+                        <input onclick="getCountRecords(this)" id="count-10" type="radio" name="radio" value="10">
+                        <label for="count-10">10</label>
+                    </div>
+                    <div class="form_toggle-item item-2">
+                        <input onclick="getCountRecords(this)" id="count-20" type="radio" name="radio" value="20"
+                               checked>
+                        <label for="count-20">20</label>
+                    </div>
+                </c:if>
 
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered mainPageTable">
+        <thead>
+        <tr>
+            <th></th>
+            <th scope="col">title</th>
+            <th scope="col">author(-s)</th>
+            <th scope="col">publish date</th>
+            <th scope="col">amount of book</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:set var="num" value="0" scope="page"/>
+        <c:forEach var="book" items="${requestScope.books}">
+            <tr>
+                <th>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="delete-${book.id}">
+                        <label class="form-check-label" for="delete-${book.id}"></label>
+                    </div>
+                </th>
+                <td><a href="#">${book.title}</a></td>
+                <td>
+                    <c:forEach var="author" items="${book.author}" varStatus="loop">
+                        <c:out value="${author.name}"/>
+                        <c:if test="${not loop.last}">,</c:if>
+                    </c:forEach>
+                </td>
+                <td> ${book.publishDate} </td>
+                <td>${book.inStock}</td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+    <div>
+        <nav aria-label="..." class="m-t-27">
+            <ul class="pagination pagination-sm pagination_center">
+                <c:forEach var="i" begin="1" end="${requestScope.countPages}">
+                    <c:if test="${i==requestScope.currentPage}">
+
+                        <li class="page-item page-item-change active" aria-current="page">
+                                                <span class="page-link">${i}
+                                                            <span class="sr-only">(current)</span>
+                                                            </span>
+                        </li>
+                    </c:if>
+
+
+                    <c:if test="${i!=requestScope.currentPage}">
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="${pageContext.request.contextPath}/books?currentPage=${i}&isAvailableOnly=${requestScope.isAvailableOnly}&recordsPerPage=${requestScope.recordsPerPage}">
+                                    ${i}
+                            </a>
+                        </li>
+                    </c:if>
+                </c:forEach>
+            </ul>
+        </nav>
+    </div>
 
 </div>
 
@@ -78,5 +131,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+<script src="resources/js/script.js"></script>
+
 </body>
 </html>

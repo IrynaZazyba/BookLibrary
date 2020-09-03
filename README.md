@@ -28,4 +28,9 @@ Branch - add-main-page
 - add MainPage.jsp 
 - add navigation bar as import
 
+##### Task#5 - Add functionality to main page
+Branch - add-functionality-to-main-page
+- add CharsetFilter
+- add functionality to filter out unavailable books
+- add pagination
 
