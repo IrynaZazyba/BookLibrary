@@ -49,4 +49,21 @@ public class DefaultBookService implements BookService {
                 .build();
         return bookDao.getNumberOfBooksRecords(bookFilter);
     }
+
+    @Override
+    public Optional<List<Book>> findBooksByParameters(boolean isAvailableOnly,
+                                                      String bookTitleSearchParameter,
+                                                      String bookAuthorSearchParameter,
+                                                      String bookGenreSearchParameter,
+                                                      String bookDescriptionSearchParameter) {
+        BookFilter bookFilter = BookFilter
+                .builder()
+                .isAvailableOnly(isAvailableOnly)
+                .bookAuthor(bookAuthorSearchParameter)
+                .bookDescription(bookDescriptionSearchParameter)
+                .bookGenre(bookGenreSearchParameter)
+                .bookTitle(bookTitleSearchParameter)
+                .build();
+        return bookDao.findBooksByParameters(bookFilter);
+    }
 }

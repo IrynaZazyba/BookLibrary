@@ -34,3 +34,9 @@ Branch - add-functionality-to-main-page
 - add functionality to filter out unavailable books
 - add pagination
 
+##### Task#6 - Add search page
+Branch - add-search-page
+- add DAO and Service methods
+- add SearchBooksCommand
+- add SearchPage.jsp
+
