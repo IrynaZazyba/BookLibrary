@@ -31,14 +31,15 @@ async function getCountRecords(obj) {
         console.warn('History API не поддерживается');
     }
     window.location.reload();
-
 }
 
 
 async function searchBookWithAvailableFilter(obj) {
 
     document.getElementById("isAvailableOnly").value = obj.checked;
+    document.getElementById("currentPage").value = 1;
     document.querySelector("#searchForm button[type='submit']").click();
+
 }
 
 
@@ -70,6 +71,13 @@ searchInputs.forEach(elem => elem.onchange = hidePreviousResult);
 async function hidePreviousResult() {
     document.getElementById("searchResult").style.display = 'none';
     document.getElementById("deleteBookButton").setAttribute("disabled", "disabled");
+    document.querySelector("nav >ul.pagination").style.display = 'none';
 
+
+}
+
+async  function getCountRecordsSearchPage(obj){
+    document.getElementById("recordsPerPage").value = obj.value;
+    document.querySelector("#searchForm button[type='submit']").click();
 }
 

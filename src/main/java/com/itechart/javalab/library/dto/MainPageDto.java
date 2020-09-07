@@ -10,13 +10,9 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class SearchPageDto {
+public class MainPageDto {
 
     private Boolean isAvailableOnly;
-    private String bookTitle;
-    private String bookAuthor;
-    private String bookGenre;
-    private String bookDescription;
     private List<Book> books;
     private int recordsPerPage;
     private int currentPage;

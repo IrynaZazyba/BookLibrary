@@ -5,6 +5,7 @@ import com.itechart.javalab.library.controller.util.JspPageName;
 import com.itechart.javalab.library.dto.SearchPageDto;
 import com.itechart.javalab.library.model.Book;
 import com.itechart.javalab.library.model.BookFilter;
+import com.itechart.javalab.library.model.Paginator;
 import com.itechart.javalab.library.service.BookService;
 import com.itechart.javalab.library.service.impl.DefaultBookService;
 import org.apache.commons.lang3.ObjectUtils;
@@ -27,6 +28,8 @@ public class SearchBooksCommand implements Command {
     private static final String REQUEST_BOOK_AUTHOR_SEARCH_PARAMETER = "bookAuthor";
     private static final String REQUEST_BOOK_GENRE_SEARCH_PARAMETER = "bookGenre";
     private static final String REQUEST_BOOK_DESCRIPTION_SEARCH_PARAMETER = "bookDescription";
+    private static final String REQUEST_RECORDS_PER_PAGE = "recordsPerPage";
+    private static final String REQUEST_CURRENT_PAGE = "currentPage";
 
     public SearchBooksCommand() {
         this.bookService = DefaultBookService.getInstance();
@@ -40,7 +43,8 @@ public class SearchBooksCommand implements Command {
         String authorSearch = request.getParameter(REQUEST_BOOK_AUTHOR_SEARCH_PARAMETER);
         String genreSearch = request.getParameter(REQUEST_BOOK_GENRE_SEARCH_PARAMETER);
         String descriptionSearch = request.getParameter(REQUEST_BOOK_DESCRIPTION_SEARCH_PARAMETER);
-
+        String recordsPerPage = request.getParameter(REQUEST_RECORDS_PER_PAGE);
+        String currentPage = request.getParameter(REQUEST_CURRENT_PAGE);
 
         if (ObjectUtils.allNull(titleSearch, authorSearch, genreSearch, descriptionSearch)) {
             request.getServletContext().getRequestDispatcher(JspPageName.SEARCH_PAGE).forward(request, response);
@@ -49,7 +53,7 @@ public class SearchBooksCommand implements Command {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
         } else {
-
+            Paginator paginator = new Paginator(recordsPerPage, currentPage);
             BookFilter bookFilter = BookFilter.builder()
                     .bookTitle(titleSearch)
                     .bookAuthor(authorSearch)
@@ -58,9 +62,11 @@ public class SearchBooksCommand implements Command {
                     .isAvailableOnly(isAvailableOnly)
                     .build();
 
-            Optional<List<Book>> allBooks = bookService.findBooksByParameters(bookFilter);
+            Optional<List<Book>> allBooks = bookService.findBooksByParameters(paginator, bookFilter);
+            Optional<Integer> numberFoundRecords = bookService.getNumberFoundBooksRecords(bookFilter);
 
-            if (allBooks.isPresent()) {
+            if (allBooks.isPresent() && numberFoundRecords.isPresent()) {
+                paginator.setCountPages(numberFoundRecords.get());
 
                 SearchPageDto searchPageDto = SearchPageDto.builder()
                         .bookAuthor(authorSearch)
@@ -69,6 +75,9 @@ public class SearchBooksCommand implements Command {
                         .bookTitle(titleSearch)
                         .isAvailableOnly(isAvailableOnly)
                         .books(allBooks.get())
+                        .countPages(paginator.getCountPages())
+                        .currentPage(paginator.getCurrentPage())
+                        .recordsPerPage(paginator.getRecordsPerPage())
                         .build();
 
                 request.setAttribute(REQUEST_SEARCH_PAGE_DTO, searchPageDto);

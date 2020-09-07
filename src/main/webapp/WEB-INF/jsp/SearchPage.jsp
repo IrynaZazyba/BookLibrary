@@ -36,14 +36,17 @@
                 <input type="text" name="bookDescription" class="form-control" placeholder="description"
                        value="${requestScope.searchPageDto.bookDescription}"/>
             </div>
-            <input id="isAvailableOnly" type="hidden" name="isAvailableOnly" value=""/>
+            <input id="isAvailableOnly" type="hidden" name="isAvailableOnly" value="${requestScope.searchPageDto.isAvailableOnly}"/>
+            <input id="recordsPerPage" type="hidden" name="recordsPerPage" value="${requestScope.searchPageDto.recordsPerPage}"/>
+            <input id="currentPage" type="hidden" name="currentPage" value="${requestScope.searchPageDto.currentPage}"/>
+
             <div class="col">
                 <button type="submit" onclick="checkParameter(this)" class="btn btn-success">Search</button>
             </div>
         </div>
     </form>
     <div class="row">
-        <div class="col-9">
+        <div class="col-8">
             <button type="button" class="btn  btn-info add-button">Add</button>
             <c:if test="${empty requestScope.searchPageDto.books}">
                 <button type="button" id="deleteBookButton" disabled class="btn  btn-outline-danger">Remove</button>
@@ -65,6 +68,34 @@
                 <label class="form-check-label" for="filterBook">Filter out unavailable books</label>
             </div>
         </div>
+        <div class="col-1">
+            <div class="form_toggle">
+                <c:if test="${requestScope.searchPageDto.recordsPerPage==10||requestScope.searchPageDto.recordsPerPage==null}">
+                    <div class="form_toggle-item item-1">
+                        <input onclick="getCountRecordsSearchPage(this)" id="count-10" type="radio" name="radio" value="10"
+                               checked/>
+                        <label for="count-10">10</label>
+                    </div>
+                    <div class="form_toggle-item item-2">
+                        <input onclick="getCountRecordsSearchPage(this)" id="count-20" type="radio" name="radio" value="20"/>
+                        <label for="count-20">20</label>
+                    </div>
+                </c:if>
+                <c:if test="${requestScope.searchPageDto.recordsPerPage==20}">
+                    <div class="form_toggle-item item-1">
+                        <input onclick="getCountRecordsSearchPage(this)" id="count-10" type="radio" name="radio" value="10"/>
+                        <label for="count-10">10</label>
+                    </div>
+                    <div class="form_toggle-item item-2">
+                        <input onclick="getCountRecordsSearchPage(this)" id="count-20" type="radio" name="radio" value="20"
+                               checked/>
+                        <label for="count-20">20</label>
+                    </div>
+                </c:if>
+
+            </div>
+        </div>
+
     </div>
     <table id="searchResult" class="table table-bordered mainPageTable">
         <thead>
@@ -98,6 +129,34 @@
         </c:forEach>
         </tbody>
     </table>
+
+
+    <nav aria-label="..." class="m-t-27">
+        <ul class="pagination pagination-sm pagination_center">
+            <c:forEach var="i" begin="1" end="${requestScope.searchPageDto.countPages}">
+                <c:if test="${i==requestScope.searchPageDto.currentPage}">
+
+                    <li id="${i}" class="page-item page-item-change active" aria-current="page">
+                                                <span class="page-link">${i}
+                                                            <span class="sr-only">(current)</span>
+                                                            </span>
+                    </li>
+                </c:if>
+
+
+                <c:if test="${i!=requestScope.searchPageDto.currentPage}">
+                    <li class="page-item">
+                        <a class="page-link" id="${i}"
+                           href="${pageContext.request.contextPath}/books/search?currentPage=${i}&isAvailableOnly=${requestScope.searchPageDto.isAvailableOnly}&recordsPerPage=${requestScope.searchPageDto.recordsPerPage}&bookTitle=${requestScope.searchPageDto.bookTitle}&bookAuthor=${requestScope.searchPageDto.bookAuthor}&bookGenre=${requestScope.searchPageDto.bookGenre}&bookDescription=${requestScope.searchPageDto.bookDescription}">
+                                ${i}
+                        </a>
+                    </li>
+                </c:if>
+            </c:forEach>
+        </ul>
+    </nav>
+
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

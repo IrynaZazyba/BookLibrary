@@ -9,7 +9,11 @@ import java.util.Optional;
 
 public interface BookDao {
 
-    Optional<List<Book>> getBooks(Paginator paginator, BookFilter bookFilter);
-    Optional<Integer> getNumberOfBooksRecords(BookFilter bookFilter);
-    Optional<List<Book>> findBooksByParameters(BookFilter bookFilter);
+    Optional<List<Book>> getBooks(Paginator paginator, boolean isAvailableOnly);
+
+    Optional<Integer> getNumberBooksRecords(boolean isAvailableOnly);
+
+    Optional<List<Book>> findBooksByParameters(Paginator paginator, BookFilter bookFilter);
+
+    Optional<Integer> getNumberFoundBooksRecords(BookFilter bookFilter);
 }

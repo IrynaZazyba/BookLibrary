@@ -34,24 +34,22 @@ public class DefaultBookService implements BookService {
 
     @Override
     public Optional<List<Book>> getBooks(Paginator paginator, boolean isAvailableOnly) {
-        BookFilter bookFilter = BookFilter
-                .builder()
-                .isAvailableOnly(isAvailableOnly)
-                .build();
-        return bookDao.getBooks(paginator, bookFilter);
+        return bookDao.getBooks(paginator, isAvailableOnly);
     }
 
     @Override
-    public Optional<Integer> getNumberOfBooksRecords(boolean isAvailableOnly) {
-        BookFilter bookFilter = BookFilter
-                .builder()
-                .isAvailableOnly(isAvailableOnly)
-                .build();
-        return bookDao.getNumberOfBooksRecords(bookFilter);
+    public Optional<Integer> getNumberBooksRecords(boolean isAvailableOnly) {
+        return bookDao.getNumberBooksRecords(isAvailableOnly);
     }
 
     @Override
-    public Optional<List<Book>> findBooksByParameters(BookFilter bookFilter) {
-        return bookDao.findBooksByParameters(bookFilter);
+    public Optional<List<Book>> findBooksByParameters(Paginator paginator, BookFilter bookFilter) {
+        return bookDao.findBooksByParameters(paginator, bookFilter);
     }
+
+    @Override
+    public Optional<Integer> getNumberFoundBooksRecords(BookFilter bookFilter) {
+        return bookDao.getNumberFoundBooksRecords(bookFilter);
+    }
+
 }

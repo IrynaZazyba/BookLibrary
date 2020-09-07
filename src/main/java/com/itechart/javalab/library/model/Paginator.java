@@ -3,6 +3,7 @@ package com.itechart.javalab.library.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @NoArgsConstructor
@@ -36,7 +37,7 @@ public class Paginator {
     }
 
     private void setCurrentPage(String currentPage) {
-        if (currentPage != null) {
+        if (currentPage != null && !StringUtils.isEmpty(currentPage)) {
             int parsedValue = Integer.parseInt(currentPage);
             this.currentPage = parsedValue > 0 ? parsedValue : DEFAULT_CURRENT_PAGE;
         } else {
@@ -45,7 +46,7 @@ public class Paginator {
     }
 
     private void setRecordsPerPage(String recordsPerPage) {
-        if (recordsPerPage != null) {
+        if (recordsPerPage != null && !StringUtils.isEmpty(recordsPerPage)) {
             int parsedValue = Integer.parseInt(recordsPerPage);
             this.recordsPerPage = parsedValue > 0 ? parsedValue : DEFAULT_RECORDS_PER_PAGE;
         } else {

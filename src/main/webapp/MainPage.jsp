@@ -22,10 +22,10 @@
         </div>
         <div class="col-auto">
             <div class="form-group form-check">
-                <c:if test="${requestScope.isAvailableOnly}">
+                <c:if test="${requestScope.mainPageDto.isAvailableOnly}">
                     <input type="checkbox" class="form-check-input" onclick="doFilter(this)" checked id="filterBook">
                 </c:if>
-                <c:if test="${not requestScope.isAvailableOnly}">
+                <c:if test="${not requestScope.mainPageDto.isAvailableOnly}">
                     <input type="checkbox" class="form-check-input" onclick="doFilter(this)" id="filterBook">
                 </c:if>
                 <label class="form-check-label" for="filterBook">Filter out unavailable books</label>
@@ -33,7 +33,7 @@
         </div>
         <div class="col-1">
             <div class="form_toggle">
-                <c:if test="${requestScope.recordsPerPage==10}">
+                <c:if test="${requestScope.mainPageDto.recordsPerPage==10}">
                     <div class="form_toggle-item item-1">
                         <input onclick="getCountRecords(this)" id="count-10" type="radio" name="radio" value="10"
                                checked>
@@ -44,7 +44,7 @@
                         <label for="count-20">20</label>
                     </div>
                 </c:if>
-                <c:if test="${requestScope.recordsPerPage==20}">
+                <c:if test="${requestScope.mainPageDto.recordsPerPage==20}">
                     <div class="form_toggle-item item-1">
                         <input onclick="getCountRecords(this)" id="count-10" type="radio" name="radio" value="10">
                         <label for="count-10">10</label>
@@ -71,7 +71,7 @@
         </thead>
         <tbody>
         <c:set var="num" value="0" scope="page"/>
-        <c:forEach var="book" items="${requestScope.books}">
+        <c:forEach var="book" items="${requestScope.mainPageDto.books}">
             <tr>
                 <th>
                     <div class="form-group form-check">
@@ -95,8 +95,8 @@
     <div>
         <nav aria-label="..." class="m-t-27">
             <ul class="pagination pagination-sm pagination_center">
-                <c:forEach var="i" begin="1" end="${requestScope.countPages}">
-                    <c:if test="${i==requestScope.currentPage}">
+                <c:forEach var="i" begin="1" end="${requestScope.mainPageDto.countPages}">
+                    <c:if test="${i==requestScope.mainPageDto.currentPage}">
 
                         <li class="page-item page-item-change active" aria-current="page">
                                                 <span class="page-link">${i}
@@ -106,11 +106,11 @@
                     </c:if>
 
 
-                    <c:if test="${i!=requestScope.currentPage}">
+                    <c:if test="${i!=requestScope.mainPageDto.currentPage}">
                         <li class="page-item">
                             <a class="page-link"
-                               href="${pageContext.request.contextPath}/books?currentPage=${i}&isAvailableOnly=${requestScope.isAvailableOnly}&recordsPerPage=${requestScope.recordsPerPage}">
-                                    ${i}
+                            href="${pageContext.request.contextPath}/books?currentPage=${i}&isAvailableOnly=${requestScope.mainPageDto.isAvailableOnly}&recordsPerPage=${requestScope.mainPageDto.recordsPerPage}">
+                                ${i}
                             </a>
                         </li>
                     </c:if>

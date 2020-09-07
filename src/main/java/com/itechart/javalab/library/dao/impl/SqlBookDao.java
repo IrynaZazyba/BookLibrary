@@ -27,13 +27,26 @@ public class SqlBookDao implements BookDao {
 
     private final static String GET_NUMBER_OF_BOOKS_RECORDS = "SELECT count(id) FROM book WHERE in_stock REGEXP ?";
 
-    private final static String SEARCH_BOOKS = "SELECT book.title , book.id, book.publish_date, " +
-            "book.in_stock, author.id, author.name FROM book " +
+    private final static String SEARCH_BOOKS = "SELECT book.id, title, publish_date, author.id, author.name,in_stock " +
+            "FROM book INNER JOIN " +
+            "(SELECT book.id as book_id FROM book " +
             "INNER JOIN book_has_author ON book_has_author.book_id=book.id " +
             "INNER JOIN author ON book_has_author.author_id=author.id " +
             "INNER JOIN genre_has_book ON genre_has_book.book_id=book.id " +
             "INNER JOIN genre ON genre.id=genre_has_book.genre_id " +
-            "WHERE in_stock REGEXP ? AND title LIKE ? AND author.name LIKE ? AND genre.genre LIKE ? AND description LIKE ?";
+            "WHERE in_stock REGEXP ? AND title LIKE ? AND author.name LIKE ? AND genre.genre LIKE ? " +
+            "AND description LIKE ? GROUP BY book.id LIMIT ?,?) as temp on book.id=temp.book_id " +
+            "INNER JOIN book_has_author on book_has_author.book_id=book.id " +
+            "INNER JOIN author on author.id=book_has_author.author_id;";
+
+
+    private final static String GET_NUMBER_OF_FOUND_RECORDS = "SELECT count (DISTINCT book.id) FROM book " +
+            "INNER JOIN book_has_author ON book_has_author.book_id=book.id " +
+            "INNER JOIN author ON book_has_author.author_id=author.id " +
+            "INNER JOIN genre_has_book ON genre_has_book.book_id=book.id " +
+            "INNER JOIN genre ON genre.id=genre_has_book.genre_id " +
+            "WHERE in_stock REGEXP ? AND title LIKE ? AND author.name LIKE ? AND genre.genre LIKE ?" +
+            " AND description LIKE ?";
 
     private SqlBookDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -52,13 +65,13 @@ public class SqlBookDao implements BookDao {
 
 
     @Override
-    public Optional<List<Book>> getBooks(Paginator paginator, BookFilter bookFilter) {
+    public Optional<List<Book>> getBooks(Paginator paginator, boolean isAvailableOnly) {
 
         List<Book> books;
 
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_BOOKS)) {
-            preparedStatement.setString(1, bookFilter.isAvailableOnly() ? "[^0]" : "[0-9]");
+            preparedStatement.setString(1, isAvailableOnly ? "[^0]" : "[0-9]");
             preparedStatement.setInt(2, paginator.getStart());
             preparedStatement.setInt(3, paginator.getRecordsPerPage());
 
@@ -72,13 +85,13 @@ public class SqlBookDao implements BookDao {
     }
 
     @Override
-    public Optional<Integer> getNumberOfBooksRecords(BookFilter bookFilter) {
+    public Optional<Integer> getNumberBooksRecords(boolean isAvailableOnly) {
 
         int countBooksRecords = 0;
 
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_NUMBER_OF_BOOKS_RECORDS)) {
-            preparedStatement.setString(1, bookFilter.isAvailableOnly() ? "[^0]" : "[0-9]");
+            preparedStatement.setString(1, isAvailableOnly ? "[^0]" : "[0-9]");
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
@@ -92,18 +105,17 @@ public class SqlBookDao implements BookDao {
         return Optional.of(countBooksRecords);
     }
 
+
     @Override
-    public Optional<List<Book>> findBooksByParameters(BookFilter bookFilter) {
+    public Optional<List<Book>> findBooksByParameters(Paginator paginator, BookFilter bookFilter) {
 
         List<Book> books;
 
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_BOOKS)) {
-            preparedStatement.setString(1, bookFilter.isAvailableOnly() ? "[^0]" : "[0-9]");
-            preparedStatement.setString(2, "%" + bookFilter.getBookTitle() + "%");
-            preparedStatement.setString(3, "%" + bookFilter.getBookAuthor() + "%");
-            preparedStatement.setString(4, "%" + bookFilter.getBookGenre() + "%");
-            preparedStatement.setString(5, "%" + bookFilter.getBookDescription() + "%");
+            setQueryParameterValue(preparedStatement, bookFilter);
+            preparedStatement.setInt(6, paginator.getStart());
+            preparedStatement.setInt(7, paginator.getRecordsPerPage());
 
             ResultSet resultSet = preparedStatement.executeQuery();
             books = parseBooks(resultSet);
@@ -115,6 +127,35 @@ public class SqlBookDao implements BookDao {
         return Optional.of(books);
     }
 
+    @Override
+    public Optional<Integer> getNumberFoundBooksRecords(BookFilter bookFilter) {
+
+        int countBooksRecords = 0;
+
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_NUMBER_OF_FOUND_RECORDS)) {
+            setQueryParameterValue(preparedStatement, bookFilter);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                countBooksRecords = resultSet.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            log.error("SqlException in attempt to get Connection", e);
+            return Optional.empty();
+        }
+        return Optional.of(countBooksRecords);
+    }
+
+    private void setQueryParameterValue(PreparedStatement preparedStatement, BookFilter bookFilter)
+            throws SQLException {
+        preparedStatement.setString(1, bookFilter.isAvailableOnly() ? "[^0]" : "[0-9]");
+        preparedStatement.setString(2, "%" + bookFilter.getBookTitle() + "%");
+        preparedStatement.setString(3, "%" + bookFilter.getBookAuthor() + "%");
+        preparedStatement.setString(4, "%" + bookFilter.getBookGenre() + "%");
+        preparedStatement.setString(5, "%" + bookFilter.getBookDescription() + "%");
+    }
 
     private List<Book> parseBooks(ResultSet resultSet) throws SQLException {
         Map<Integer, Book> tempBooks = new HashMap<>();
