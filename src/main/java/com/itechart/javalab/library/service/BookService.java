@@ -1,6 +1,7 @@
 package com.itechart.javalab.library.service;
 
 import com.itechart.javalab.library.model.Book;
+import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
 
 import java.util.List;
@@ -12,11 +13,7 @@ public interface BookService {
 
     Optional<Integer> getNumberOfBooksRecords(boolean isAvailableOnly);
 
-    Optional<List<Book>> findBooksByParameters(boolean isAvailableOnly,
-                                               String bookTitleSearchParameter,
-                                               String bookAuthorSearchParameter,
-                                               String bookGenreSearchParameter,
-                                               String bookDescriptionSearchParameter);
+    Optional<List<Book>> findBooksByParameters(BookFilter bookFilter);
 
 
 }

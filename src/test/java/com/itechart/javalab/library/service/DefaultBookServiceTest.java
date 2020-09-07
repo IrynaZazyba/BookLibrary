@@ -4,6 +4,7 @@ import com.itechart.javalab.library.dao.BookDao;
 import com.itechart.javalab.library.dao.impl.SqlBookDao;
 import com.itechart.javalab.library.model.Author;
 import com.itechart.javalab.library.model.Book;
+import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
 import com.itechart.javalab.library.service.impl.DefaultBookService;
 import org.junit.Assert;
@@ -128,51 +129,40 @@ public class DefaultBookServiceTest {
         foundBooks.add(firstBook);
         foundBooks.add(secondBook);
 
-        boolean isAvailableOnly = true;
-        String bookTitleSearchParameter = "Ведьмак";
-        String bookAuthorSearchParameter = "";
-        String bookGenreSearchParameter = "";
-        String bookDescriptionSearchParameter = "";
+        BookFilter bookFilter = BookFilter.builder()
+                .isAvailableOnly(true)
+                .bookTitle("Ведьмак")
+                .bookGenre("")
+                .bookDescription("")
+                .bookAuthor("")
+                .build();
 
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
+
         Mockito.when(bookService.
-                findBooksByParameters(isAvailableOnly,
-                        bookTitleSearchParameter,
-                        bookAuthorSearchParameter,
-                        bookGenreSearchParameter,
-                        bookDescriptionSearchParameter))
+                findBooksByParameters(bookFilter))
                 .thenReturn(Optional.of(foundBooks));
 
-        Assert.assertEquals(bookService.findBooksByParameters(isAvailableOnly,
-                bookTitleSearchParameter,
-                bookAuthorSearchParameter,
-                bookGenreSearchParameter,
-                bookDescriptionSearchParameter), Optional.of(foundBooks));
+        Assert.assertEquals(bookService.findBooksByParameters(bookFilter), Optional.of(foundBooks));
     }
 
     @Test
     public void testFindBooksByParametersNegative() {
 
-        boolean isAvailableOnly = false;
-        String bookTitleSearchParameter = "Ведьмак";
-        String bookAuthorSearchParameter = "";
-        String bookGenreSearchParameter = "";
-        String bookDescriptionSearchParameter = "";
+        BookFilter bookFilter = BookFilter.builder()
+                .isAvailableOnly(true)
+                .bookTitle("Ведьмак")
+                .bookGenre("")
+                .bookDescription("")
+                .bookAuthor("")
+                .build();
 
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
         Mockito.when(bookService.
-                findBooksByParameters(isAvailableOnly,
-                        bookTitleSearchParameter,
-                        bookAuthorSearchParameter,
-                        bookGenreSearchParameter,
-                        bookDescriptionSearchParameter))
+                findBooksByParameters(bookFilter))
                 .thenReturn(Optional.empty());
 
-        Assert.assertEquals(bookService.findBooksByParameters(isAvailableOnly,
-                bookTitleSearchParameter,
-                bookAuthorSearchParameter,
-                bookGenreSearchParameter,
-                bookDescriptionSearchParameter), Optional.empty());
+        Assert.assertEquals(bookService.findBooksByParameters(bookFilter), Optional.empty());
     }
 
 }

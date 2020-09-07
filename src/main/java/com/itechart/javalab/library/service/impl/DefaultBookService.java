@@ -51,19 +51,7 @@ public class DefaultBookService implements BookService {
     }
 
     @Override
-    public Optional<List<Book>> findBooksByParameters(boolean isAvailableOnly,
-                                                      String bookTitleSearchParameter,
-                                                      String bookAuthorSearchParameter,
-                                                      String bookGenreSearchParameter,
-                                                      String bookDescriptionSearchParameter) {
-        BookFilter bookFilter = BookFilter
-                .builder()
-                .isAvailableOnly(isAvailableOnly)
-                .bookAuthor(bookAuthorSearchParameter)
-                .bookDescription(bookDescriptionSearchParameter)
-                .bookGenre(bookGenreSearchParameter)
-                .bookTitle(bookTitleSearchParameter)
-                .build();
+    public Optional<List<Book>> findBooksByParameters(BookFilter bookFilter) {
         return bookDao.findBooksByParameters(bookFilter);
     }
 }

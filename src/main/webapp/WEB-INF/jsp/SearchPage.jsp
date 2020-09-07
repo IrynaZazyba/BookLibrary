@@ -2,7 +2,6 @@
 <head>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-    <%@ page isELIgnored="false" %>
     <meta charset="UTF-8">
     <title>Book Library</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
@@ -23,19 +22,19 @@
         <div class="form-row">
             <div class="col">
                 <input type="text" name="bookTitle" class="form-control" placeholder="title"
-                       value="${requestScope.bookTitle}"/>
+                       value="${requestScope.searchPageDto.bookTitle}"/>
             </div>
             <div class="col">
                 <input type="text" name="bookAuthor" class="form-control" placeholder="author"
-                       value="${requestScope.bookAuthor}"/>
+                       value="${requestScope.searchPageDto.bookAuthor}"/>
             </div>
             <div class="col">
                 <input type="text" name="bookGenre" class="form-control" placeholder="genre"
-                       value="${requestScope.bookGenre}"/>
+                       value="${requestScope.searchPageDto.bookGenre}"/>
             </div>
             <div class="col">
                 <input type="text" name="bookDescription" class="form-control" placeholder="description"
-                       value="${requestScope.bookDescription}"/>
+                       value="${requestScope.searchPageDto.bookDescription}"/>
             </div>
             <input id="isAvailableOnly" type="hidden" name="isAvailableOnly" value=""/>
             <div class="col">
@@ -46,20 +45,20 @@
     <div class="row">
         <div class="col-9">
             <button type="button" class="btn  btn-info add-button">Add</button>
-            <c:if test="${empty requestScope.books}">
+            <c:if test="${empty requestScope.searchPageDto.books}">
                 <button type="button" id="deleteBookButton" disabled class="btn  btn-outline-danger">Remove</button>
             </c:if>
-            <c:if test="${not empty requestScope.books}">
+            <c:if test="${not empty requestScope.searchPageDto.books}">
                 <button type="button" id="deleteBookButton" class="btn  btn-outline-danger">Remove</button>
             </c:if>
         </div>
         <div class="col-auto">
             <div class="form-group form-check">
-                <c:if test="${requestScope.isAvailableOnly}">
+                <c:if test="${requestScope.searchPageDto.isAvailableOnly}">
                     <input type="checkbox" class="form-check-input" onclick="searchBookWithAvailableFilter(this)"
                            checked id="filterBook">
                 </c:if>
-                <c:if test="${not requestScope.isAvailableOnly}">
+                <c:if test="${!requestScope.searchPageDto.isAvailableOnly}">
                     <input type="checkbox" class="form-check-input" onclick="searchBookWithAvailableFilter(this)"
                            id="filterBook">
                 </c:if>
@@ -78,8 +77,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:set var="num" value="0" scope="page"/>
-        <c:forEach var="book" items="${requestScope.books}">
+        <c:forEach var="book" items="${requestScope.searchPageDto.books}">
             <tr>
                 <th>
                     <div class="form-group form-check">

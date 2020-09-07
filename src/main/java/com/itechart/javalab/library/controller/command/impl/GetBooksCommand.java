@@ -25,7 +25,7 @@ public class GetBooksCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        boolean isAvailableOnly = getFilterValue(request);
+        boolean isAvailableOnly = Boolean.parseBoolean(request.getParameter(REQUEST_IS_AVAILABLE_VALUE));
         String recordsPerPage = request.getParameter(REQUEST_RECORDS_PER_PAGE);
         String currentPage = request.getParameter(REQUEST_CURRENT_PAGE);
 
@@ -51,11 +51,5 @@ public class GetBooksCommand implements Command {
         }
 
     }
-
-    private boolean getFilterValue(HttpServletRequest request) {
-        String filterParameter = request.getParameter(REQUEST_IS_AVAILABLE_VALUE);
-        return Boolean.parseBoolean(filterParameter);
-    }
-
 
 }

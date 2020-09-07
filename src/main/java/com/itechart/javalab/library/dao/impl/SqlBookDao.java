@@ -63,7 +63,7 @@ public class SqlBookDao implements BookDao {
             preparedStatement.setInt(3, paginator.getRecordsPerPage());
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            books = parseResultSetToGetBooks(resultSet);
+            books = parseBooks(resultSet);
         } catch (SQLException ex) {
             log.error("SqlException in attempt to get Connection", ex);
             return Optional.empty();
@@ -106,7 +106,7 @@ public class SqlBookDao implements BookDao {
             preparedStatement.setString(5, "%" + bookFilter.getBookDescription() + "%");
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            books = parseResultSetToGetBooks(resultSet);
+            books = parseBooks(resultSet);
         } catch (SQLException e) {
             log.error("SqlException in attempt to get Connection", e);
             return Optional.empty();
@@ -116,7 +116,7 @@ public class SqlBookDao implements BookDao {
     }
 
 
-    private List<Book> parseResultSetToGetBooks(ResultSet resultSet) throws SQLException {
+    private List<Book> parseBooks(ResultSet resultSet) throws SQLException {
         Map<Integer, Book> tempBooks = new HashMap<>();
 
         while (resultSet.next()) {
