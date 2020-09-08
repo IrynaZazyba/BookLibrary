@@ -4,6 +4,7 @@ import com.itechart.javalab.library.dao.BookDao;
 import com.itechart.javalab.library.dao.impl.SqlBookDao;
 import com.itechart.javalab.library.model.Author;
 import com.itechart.javalab.library.model.Book;
+import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
 import com.itechart.javalab.library.service.impl.DefaultBookService;
 import org.junit.Assert;
@@ -19,6 +20,8 @@ import java.util.*;
 import static org.mockito.Mockito.mock;
 
 public class DefaultBookServiceTest {
+
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Mock
     private BookDao mockBookDao = mock(SqlBookDao.class);
@@ -40,7 +43,6 @@ public class DefaultBookServiceTest {
         Paginator paginator = new Paginator("2", "1");
 
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         List<Book> books = new ArrayList<>();
         Set<Author> javaBookAuthors = new HashSet<>();
@@ -89,19 +91,82 @@ public class DefaultBookServiceTest {
     public void testGetNumberOfBooksRecordsPositive() {
         boolean isAvailableOnly = true;
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(bookService.getNumberOfBooksRecords(isAvailableOnly)).thenReturn(Optional.of(2));
+        Mockito.when(bookService.getNumberBooksRecords(isAvailableOnly)).thenReturn(Optional.of(2));
 
-        Assert.assertEquals(bookService.getNumberOfBooksRecords(isAvailableOnly), Optional.of(2));
+        Assert.assertEquals(bookService.getNumberBooksRecords(isAvailableOnly), Optional.of(2));
     }
 
     @Test
     public void testGetNumberOfBooksRecordsNegative() {
         boolean isAvailableOnly = true;
         Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(bookService.getNumberOfBooksRecords(isAvailableOnly)).thenReturn(Optional.empty());
+        Mockito.when(bookService.getNumberBooksRecords(isAvailableOnly)).thenReturn(Optional.empty());
 
-        Assert.assertEquals(bookService.getNumberOfBooksRecords(isAvailableOnly), Optional.empty());
+        Assert.assertEquals(bookService.getNumberBooksRecords(isAvailableOnly), Optional.empty());
     }
 
+    @Test
+    public void testFindBooksByParametersPositive() {
+        Set<Author> bookAuthors = new HashSet<>();
+        bookAuthors.add(new Author(3, "Анджей Сапковский"));
+        Book firstBook = Book
+                .builder()
+                .id(1)
+                .title("Ведьмак. Меч Предназначения")
+                .author(bookAuthors)
+                .publishDate(LocalDateTime.parse("2015-08-25 00:00", formatter))
+                .inStock(10)
+                .build();
+        Book secondBook = Book
+                .builder()
+                .id(1)
+                .title("Ведьмак. Сезон гроз")
+                .author(bookAuthors)
+                .publishDate(LocalDateTime.parse("2015-08-25 00:00", formatter))
+                .inStock(3)
+                .build();
+        List<Book> foundBooks = new ArrayList<>();
+        foundBooks.add(firstBook);
+        foundBooks.add(secondBook);
+
+        BookFilter bookFilter = BookFilter.builder()
+                .isAvailableOnly(true)
+                .bookTitle("Ведьмак")
+                .bookGenre("")
+                .bookDescription("")
+                .bookAuthor("")
+                .build();
+
+        Paginator paginator = new Paginator("2", "2");
+
+        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
+
+        Mockito.when(bookService.
+                findBooksByParameters(paginator,bookFilter))
+                .thenReturn(Optional.of(foundBooks));
+
+        Assert.assertEquals(bookService.findBooksByParameters(paginator,bookFilter), Optional.of(foundBooks));
+    }
+
+    @Test
+    public void testFindBooksByParametersNegative() {
+
+        BookFilter bookFilter = BookFilter.builder()
+                .isAvailableOnly(true)
+                .bookTitle("Ведьмак")
+                .bookGenre("")
+                .bookDescription("")
+                .bookAuthor("")
+                .build();
+
+        Paginator paginator = new Paginator("2", "2");
+
+        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
+        Mockito.when(bookService.
+                findBooksByParameters(paginator,bookFilter))
+                .thenReturn(Optional.empty());
+
+        Assert.assertEquals(bookService.findBooksByParameters(paginator,bookFilter), Optional.empty());
+    }
 
 }

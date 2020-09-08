@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"/books",""}, name = "BookController")
+@WebServlet(urlPatterns = {"", "/books", "/books/search"}, name = "BookController")
 public class BookController extends HttpServlet {
 
 
@@ -30,7 +30,7 @@ public class BookController extends HttpServlet {
     }
 
 
-    private void doProcess(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException {
+    private void doProcess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         CommandProvider commandProvider = CommandProvider.getInstance();
         Command command = commandProvider.getCommand(req.getMethod(), req.getRequestURI());
         command.execute(req, resp);

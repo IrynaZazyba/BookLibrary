@@ -1,9 +1,6 @@
 package com.itechart.javalab.library.controller.command;
 
-import com.itechart.javalab.library.controller.command.impl.AddBookCommand;
-import com.itechart.javalab.library.controller.command.impl.EditBookCommand;
-import com.itechart.javalab.library.controller.command.impl.GetBooksCommand;
-import com.itechart.javalab.library.controller.command.impl.UnknownCommand;
+import com.itechart.javalab.library.controller.command.impl.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +16,8 @@ public class CommandProvider {
         commandRepository.put(new CommandKey("GET", "/books"), new GetBooksCommand());
         commandRepository.put(new CommandKey("PUT", "/books"), new AddBookCommand());
         commandRepository.put(new CommandKey("POST", "/books"), new EditBookCommand());
+        commandRepository.put(new CommandKey("GET", "/books/search"), new SearchBooksCommand());
+
     }
 
     public static CommandProvider getInstance() {

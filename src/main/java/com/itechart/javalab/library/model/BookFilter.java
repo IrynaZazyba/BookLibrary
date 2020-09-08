@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 public class BookFilter {
 
     private boolean isAvailableOnly;
+    private String bookTitle;
+    private String bookAuthor;
+    private String bookGenre;
+    private String bookDescription;
 
 }
 
