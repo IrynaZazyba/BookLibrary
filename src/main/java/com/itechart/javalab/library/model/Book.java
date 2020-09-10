@@ -28,6 +28,7 @@ public class Book {
     private String coverPath;
     private int totalAmount;
     private int inStock;
+    private String status;
 
 
     public static Book extractForMainPage(ResultSet resultSet) throws SQLException {

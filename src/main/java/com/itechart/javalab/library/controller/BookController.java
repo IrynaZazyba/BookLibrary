@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"", "/books", "/books/search"}, name = "BookController")
+@WebServlet(urlPatterns = {"", "/books", "/books/*"}, name = "BookController")
 public class BookController extends HttpServlet {
 
 

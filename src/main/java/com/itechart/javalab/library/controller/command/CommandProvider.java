@@ -1,10 +1,13 @@
 package com.itechart.javalab.library.controller.command;
 
 import com.itechart.javalab.library.controller.command.impl.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class CommandProvider {
 
@@ -17,6 +20,7 @@ public class CommandProvider {
         commandRepository.put(new CommandKey("PUT", "/books"), new AddBookCommand());
         commandRepository.put(new CommandKey("POST", "/books"), new EditBookCommand());
         commandRepository.put(new CommandKey("GET", "/books/search"), new SearchBooksCommand());
+        commandRepository.put(new CommandKey("GET", "/books/"), new GetBookCommand());
 
     }
 
@@ -34,6 +38,8 @@ public class CommandProvider {
     public Command getCommand(String method, String url) {
         Command command;
         if (method != null && url != null) {
+
+            url = parseUrl(url);
             command = commandRepository.get(new CommandKey(method, url));
         } else {
             command = new UnknownCommand();
@@ -45,48 +51,26 @@ public class CommandProvider {
         return command;
     }
 
+    private String parseUrl(String url) {
+        String[] urlParts = url.split("/");
 
-    static class CommandKey {
+        if (urlParts.length > 0) {
+            String s = urlParts[urlParts.length - 1];
+            return s.matches("\\d+") ? "/books/" : url;
+        } else {
+            return url;
+        }
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    private static class CommandKey {
 
         private String method;
         private String url;
-
-        CommandKey(String method, String url) {
-            this.method = method;
-            this.url = url;
-        }
-
-
-        public String getMethod() {
-            return method;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public void setMethod(String method) {
-            this.method = method;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            CommandKey that = (CommandKey) o;
-            return Objects.equals(method, that.method) &&
-                    Objects.equals(url, that.url);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(method, url);
-        }
-
 
     }
 
