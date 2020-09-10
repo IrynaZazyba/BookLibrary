@@ -20,7 +20,6 @@ public class GetBookCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("here");
 
     }
 }

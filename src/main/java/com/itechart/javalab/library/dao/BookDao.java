@@ -16,4 +16,7 @@ public interface BookDao {
     Optional<List<Book>> findBooksByParameters(Paginator paginator, BookFilter bookFilter);
 
     Optional<Integer> getNumberFoundBooksRecords(BookFilter bookFilter);
+
+    Optional<Book> getBookById(int bookId);
+
 }

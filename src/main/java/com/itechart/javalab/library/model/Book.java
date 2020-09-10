@@ -20,8 +20,9 @@ public class Book {
     private int id;
     private String title;
     private LocalDateTime publishDate;
-    private String publisher;
+    private Publisher publisher;
     private Set<Author> author;
+    private Set<Genre> genres;
     private int pageCount;
     private String ISBN;
     private String description;
@@ -45,5 +46,23 @@ public class Book {
                 .inStock(inStock)
                 .author(authors)
                 .build();
+    }
+
+    public static Book extractForBookPage(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("book.id");
+        String title = resultSet.getString("book.title");
+        LocalDateTime publishDate = resultSet.getTimestamp("book.publish_date").toLocalDateTime();
+        int inStock = resultSet.getInt("book.in_stock");
+        int pageCount = resultSet.getInt("book.page_count");
+        String isbn = resultSet.getString("book.isbn");
+        String description = resultSet.getString("book.description");
+        int totalAmount = resultSet.getInt("book.total_amount");
+        int publisherId = resultSet.getInt("publisher.id");
+        String publisherName = resultSet.getString("publisher.publisher");
+
+        return Book.builder()
+                .id(id).title(title).publishDate(publishDate).inStock(inStock).pageCount(pageCount)
+                .ISBN(isbn).description(description).totalAmount(totalAmount)
+                .publisher(new Publisher(publisherId, publisherName)).build();
     }
 }
