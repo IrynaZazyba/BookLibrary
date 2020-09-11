@@ -12,7 +12,7 @@ import java.util.Locale;
 
 public class DateTimeTag extends TagSupport {
 
-    private static final long serialVersionUID = -8517243223404530698L;
+    private static final long serialVersionUID = -8894517676471114286L;
     private static final String PATTERN_DATE = "MMMM dd, yyyy HH:mm:ss";
     private String date;
 

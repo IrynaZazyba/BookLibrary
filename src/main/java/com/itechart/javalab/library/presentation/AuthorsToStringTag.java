@@ -15,8 +15,7 @@ import java.util.Set;
 @Log4j2
 public class AuthorsToStringTag extends TagSupport {
 
-    private static final long serialVersionUID = -5845012029025545470L;
-
+    private static final long serialVersionUID = 1790934664492620922L;
     private Set<Author> authors;
 
     @Override

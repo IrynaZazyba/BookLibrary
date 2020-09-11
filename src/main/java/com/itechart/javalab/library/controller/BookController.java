@@ -14,6 +14,8 @@ import java.io.IOException;
 public class BookController extends HttpServlet {
 
 
+    private static final long serialVersionUID = -6704867576406749056L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doProcess(req, resp);

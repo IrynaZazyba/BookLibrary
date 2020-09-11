@@ -15,8 +15,8 @@ import java.util.Set;
 @Log4j2
 public class GenresToStringTag extends TagSupport {
 
-    private static final long serialVersionUID = -5845012029025545470L;
 
+    private static final long serialVersionUID = 1069760003032182702L;
     private Set<Genre> genres;
 
     @Override
