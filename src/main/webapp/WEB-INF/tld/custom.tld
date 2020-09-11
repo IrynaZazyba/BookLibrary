@@ -7,7 +7,7 @@
     <short-name>res</short-name>
     <uri>customtag</uri>
     <tag>
-        <name>authors-tag</name>
+        <name>authors</name>
         <tag-class>com.itechart.javalab.library.presentation.AuthorsToStringTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
@@ -17,7 +17,7 @@
         </attribute>
     </tag>
     <tag>
-        <name>genres-tag</name>
+        <name>genres</name>
         <tag-class>com.itechart.javalab.library.presentation.GenresToStringTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
@@ -27,7 +27,7 @@
         </attribute>
     </tag>
     <tag>
-        <name>local-date</name>
+        <name>local-date-time</name>
         <tag-class>com.itechart.javalab.library.presentation.DateTimeTag</tag-class>
         <body-content>empty</body-content>
         <attribute>

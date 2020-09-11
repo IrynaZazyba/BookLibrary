@@ -14,6 +14,6 @@ import java.util.List;
 public class BookPageDto {
 
     private Book book;
-    private List<BorrowRecord> borrowRecord;
+    private List<BorrowRecord> borrowRecords;
 
 }

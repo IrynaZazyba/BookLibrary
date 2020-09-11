@@ -46,7 +46,7 @@
                     <label for="author" class="col-sm-2 col-form-label"> <b>author(-s): </b></label>
                     <div class="col-sm-10">
                         <input type="text" name="author" class="form-control"
-                               value="<vh:authors-tag authors="${requestScope.bookPageDto.book.author}"/>"
+                               value="<vh:authors authors="${requestScope.bookPageDto.book.author}"/>"
                                id="author"/>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                     <label for="publishDate" class="col-sm-2 col-form-label"><b>publish date: </b></label>
                     <div class="col-sm-10">
                         <input type="text" name="publishDate" class="form-control"
-                               value="<vh:local-date date="${requestScope.bookPageDto.book.publishDate}"/>"
+                               value="<vh:local-date-time date="${requestScope.bookPageDto.book.publishDate}"/>"
                                id="publishDate">
 
 
@@ -72,7 +72,7 @@
                     <label for="genre" class="col-sm-2 col-form-label"><b>genre(-s): </b></label>
                     <div class="col-sm-10">
                         <input type="text" name="genre" class="form-control"
-                               value="<vh:genres-tag genres="${requestScope.bookPageDto.book.genres}"/>"
+                               value="<vh:genres genres="${requestScope.bookPageDto.book.genres}"/>"
                                id="genre"/>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
     <table id="borrowRecordsList" class="table table-bordered table-sm">
         <thead>
         <tr>
-            <th scope="col">reader email adress</th>
+            <th scope="col">reader email address</th>
             <th scope="col">reader name</th>
             <th scope="col">borrow date</th>
             <th scope="col">due date</th>
@@ -138,6 +138,19 @@
         </tr>
         </thead>
         <tbody>
+        <c:forEach var="borrowRecord" items="${requestScope.bookPageDto.borrowRecords}">
+            <tr id="${borrowRecord.id}">
+                <td>${borrowRecord.reader.email}</td>
+                <td><a href="#">${borrowRecord.reader.name}</a></td>
+                <td><vh:local-date-time date="${borrowRecord.borrowDate}"/></td>
+                <td><vh:local-date-time date="${borrowRecord.dueDate}"/></td>
+                <td>
+                    <c:if test="${not empty borrowRecord.returnDate}">
+                        <vh:local-date-time date="${borrowRecord.returnDate}"/>
+                    </c:if>
+                </td>
+            </tr>
+        </c:forEach>
         </tbody>
     </table>
 
