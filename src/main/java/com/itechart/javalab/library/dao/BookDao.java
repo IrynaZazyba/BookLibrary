@@ -4,6 +4,7 @@ import com.itechart.javalab.library.model.Book;
 import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +20,5 @@ public interface BookDao {
 
     Optional<Book> getBookById(int bookId);
 
+    Optional<LocalDateTime> getEarliestDueDate(int bookId);
 }

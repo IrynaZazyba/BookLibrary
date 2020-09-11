@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 @Data
@@ -16,6 +17,9 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class Book {
+
+    private static final String AVAILABLE_STATUS = "Available (%d out of %d)";
+    private static final String UNAVAILABLE_STATUS = "Unavailable (expected to become available on  %1$tB %1$te, %1$tY)";
 
     private int id;
     private String title;
@@ -31,6 +35,13 @@ public class Book {
     private int inStock;
     private String status;
 
+    public void setAvailableStatus() {
+        this.status = String.format(AVAILABLE_STATUS, this.inStock, this.totalAmount);
+    }
+
+    public void setUnavailableStatus(LocalDateTime earliestAvailabilityDate) {
+        this.status = String.format(Locale.UK, UNAVAILABLE_STATUS, earliestAvailabilityDate);
+    }
 
     public static Book extractForMainPage(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("book.id");

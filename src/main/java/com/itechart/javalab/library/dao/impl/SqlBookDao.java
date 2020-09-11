@@ -6,10 +6,8 @@ import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
 import com.itechart.javalab.library.model.*;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Log4j2
@@ -56,6 +54,10 @@ public class SqlBookDao implements BookDao {
             "INNER JOIN genre ON genre.id=genre_has_book.genre_id " +
             "INNER JOIN publisher ON publisher.id=book.publisher_id " +
             "WHERE book.id=?";
+
+    private final static String GET_EARLIEST_DUE_DATE_BY_BOOK_ID = "SELECT MIN(due_date) FROM borrow_list " +
+            "WHERE book_id=? and return_date is null";
+
 
     private SqlBookDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -189,6 +191,30 @@ public class SqlBookDao implements BookDao {
             throw new DaoRuntimeException("SqlException in SqlBookDao getBookById() method", e);
         }
         return Optional.ofNullable(book);
+    }
+
+    @Override
+    public Optional<LocalDateTime> getEarliestDueDate(int bookId) {
+
+        LocalDateTime earliestDueDate = null;
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_EARLIEST_DUE_DATE_BY_BOOK_ID)) {
+            preparedStatement.setInt(1, bookId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                Timestamp timestamp = resultSet.getTimestamp(1);
+                if (timestamp != null) {
+                    earliestDueDate = timestamp.toLocalDateTime();
+                }
+            }
+
+        } catch (SQLException e) {
+            log.error("SqlException in attempt to get Connection", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao getEarliestDueDate() method", e);
+        }
+        return Optional.ofNullable(earliestDueDate);
     }
 
 
