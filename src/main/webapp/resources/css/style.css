@@ -52,3 +52,18 @@
 .form_toggle .item-2 input[type=radio]:checked + label {
     background: lightgrey;
 }
+
+
+.downloadImageLabel {
+    background-color: #A3A3CD;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px ridge black;
+    font-size: 0.8rem;
+    height: auto;
+}
+
+.downloadImageLabel:hover {
+    color: white;
+    background-color: #666AAD;
+}

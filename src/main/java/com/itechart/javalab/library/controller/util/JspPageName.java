@@ -7,5 +7,6 @@ public class JspPageName {
 
     public static final String MAIN_PAGE = "MainPage.jsp";
     public static final String SEARCH_PAGE = "/WEB-INF/jsp/SearchPage.jsp";
+    public static final String BOOK_PAGE = "/WEB-INF/jsp/BookPage.jsp";
 
 }
