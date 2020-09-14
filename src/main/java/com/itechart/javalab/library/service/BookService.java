@@ -13,8 +13,10 @@ public interface BookService {
 
     Optional<Integer> getNumberBooksRecords(boolean isAvailableOnly);
 
-    Optional<List<Book>> findBooksByParameters(Paginator paginator,BookFilter bookFilter);
-
+    Optional<List<Book>> findBooksByParameters(Paginator paginator, BookFilter bookFilter);
 
     Optional<Integer> getNumberFoundBooksRecords(BookFilter bookFilter);
+
+    Optional<Book> getBookById(int bookId);
+
 }

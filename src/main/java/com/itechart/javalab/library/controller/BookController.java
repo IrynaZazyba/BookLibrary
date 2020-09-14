@@ -10,9 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"", "/books", "/books/search"}, name = "BookController")
+@WebServlet(urlPatterns = {"", "/books", "/books/*"}, name = "BookController")
 public class BookController extends HttpServlet {
 
+
+    private static final long serialVersionUID = -6704867576406749056L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

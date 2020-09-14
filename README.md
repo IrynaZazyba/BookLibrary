@@ -40,3 +40,11 @@ Branch - add-search-page
 - add SearchBooksCommand
 - add SearchPage.jsp
 
+##### Task#6 - Add book page
+Branch - add-book-page
+- add beans
+- add GetBookCommand
+- add DAO and Service methods
+- add dto object
+- add BookPage.jsp
+

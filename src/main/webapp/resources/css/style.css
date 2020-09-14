@@ -20,13 +20,16 @@
     display: inline-block;
     overflow: hidden;
 }
+
 .form_toggle-item {
     float: left;
     display: inline-block;
 }
+
 .form_toggle-item input[type=radio] {
     display: none;
 }
+
 .form_toggle-item label {
     display: inline-block;
     padding: 0px 5px;
@@ -40,6 +43,7 @@
 .form_toggle .item-1 label {
     border-radius: 6px 0 0 6px;
 }
+
 .form_toggle .item-2 label {
     border-radius: 0 6px 6px 0;
     border-right: 1px solid #999;
@@ -49,6 +53,26 @@
 .form_toggle .item-1 input[type=radio]:checked + label {
     background: lightgrey;
 }
+
 .form_toggle .item-2 input[type=radio]:checked + label {
     background: lightgrey;
+}
+
+
+.downloadImageLabel {
+    background-color: #A3A3CD;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px ridge black;
+    font-size: 0.8rem;
+    height: auto;
+}
+
+.downloadImageLabel:hover {
+    color: white;
+    background-color: #666AAD;
+}
+
+.container {
+    margin-bottom: 30px;
 }

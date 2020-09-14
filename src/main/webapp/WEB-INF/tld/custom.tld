@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://java.sun.com/xml/ns/j2ee"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+    <tlib-version>1.0</tlib-version>
+    <short-name>res</short-name>
+    <uri>customtag</uri>
+    <tag>
+        <name>authors</name>
+        <tag-class>com.itechart.javalab.library.presentation.AuthorsToStringTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>authors</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>genres</name>
+        <tag-class>com.itechart.javalab.library.presentation.GenresToStringTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>genres</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>local-date-time</name>
+        <tag-class>com.itechart.javalab.library.presentation.DateTimeTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>date</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+</taglib>

@@ -52,4 +52,25 @@ public class DefaultBookService implements BookService {
         return bookDao.getNumberFoundBooksRecords(bookFilter);
     }
 
+    @Override
+    public Optional<Book> getBookById(int bookId) {
+
+        Optional<Book> bookById = bookDao.getBookById(bookId);
+        if (bookById.isPresent()) {
+            Book book = bookById.get();
+            calculateBookStatus(book);
+            return Optional.of(book);
+        }
+        return bookById;
+    }
+
+    private void calculateBookStatus(Book book) {
+        if (book.getInStock() > 0) {
+            book.setAvailableStatus();
+        } else {
+            bookDao.getEarliestDueDate(book.getId()).ifPresent(book::setUnavailableStatus);
+        }
+    }
+
+
 }
