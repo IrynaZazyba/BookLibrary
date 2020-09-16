@@ -1,6 +1,10 @@
 package com.itechart.javalab.library.controller.command;
 
-import com.itechart.javalab.library.controller.command.impl.*;
+import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
+import com.itechart.javalab.library.controller.command.ajax.impl.AjaxUnknownCommand;
+import com.itechart.javalab.library.controller.command.ajax.impl.UpdateBookCommand;
+import com.itechart.javalab.library.controller.command.front.Command;
+import com.itechart.javalab.library.controller.command.front.impl.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +17,7 @@ public class CommandProvider {
 
     private static volatile CommandProvider instance;
     private final Map<CommandKey, Command> commandRepository = new HashMap<>();
+    private final Map<CommandKey, AjaxCommand> ajaxCommandRepository = new HashMap<>();
 
     private CommandProvider() {
         commandRepository.put(new CommandKey("GET", "/"), new GetBooksCommand());
@@ -21,6 +26,8 @@ public class CommandProvider {
         commandRepository.put(new CommandKey("POST", "/books"), new EditBookCommand());
         commandRepository.put(new CommandKey("GET", "/books/search"), new SearchBooksCommand());
         commandRepository.put(new CommandKey("GET", "/books/"), new GetBookCommand());
+
+        ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/book"), new UpdateBookCommand());
 
     }
 
@@ -49,6 +56,22 @@ public class CommandProvider {
             command = new UnknownCommand();
         }
         return command;
+    }
+
+    public AjaxCommand getAjaxCommand(String method, String url) {
+        AjaxCommand ajaxCommand;
+        if (method != null && url != null) {
+
+            url = parseUrl(url);
+            ajaxCommand = ajaxCommandRepository.get(new CommandKey(method, url));
+        } else {
+            ajaxCommand = new AjaxUnknownCommand();
+        }
+
+        if (ajaxCommand == null) {
+            ajaxCommand = new AjaxUnknownCommand();
+        }
+        return ajaxCommand;
     }
 
     private String parseUrl(String url) {

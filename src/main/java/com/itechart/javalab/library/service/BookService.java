@@ -1,5 +1,6 @@
 package com.itechart.javalab.library.service;
 
+import com.itechart.javalab.library.dto.BookDto;
 import com.itechart.javalab.library.model.Book;
 import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
@@ -19,4 +20,5 @@ public interface BookService {
 
     Optional<Book> getBookById(int bookId);
 
+    Optional<Boolean> updateBookInfo(BookDto book);
 }

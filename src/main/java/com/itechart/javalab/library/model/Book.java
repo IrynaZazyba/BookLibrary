@@ -1,13 +1,16 @@
 package com.itechart.javalab.library.model;
 
+import com.itechart.javalab.library.dto.BookDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -20,6 +23,7 @@ public class Book {
 
     private static final String AVAILABLE_STATUS = "Available (%d out of %d)";
     private static final String UNAVAILABLE_STATUS = "Unavailable (expected to become available on  %1$tB %1$te, %1$tY)";
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy HH:mm:ss", Locale.UK);
 
     private int id;
     private String title;
@@ -75,5 +79,26 @@ public class Book {
                 .id(id).title(title).publishDate(publishDate).inStock(inStock).pageCount(pageCount)
                 .ISBN(isbn).description(description).totalAmount(totalAmount)
                 .publisher(new Publisher(publisherId, publisherName)).build();
+    }
+
+    public static Book buildFrom(BookDto bookDto) {
+        int id = bookDto.getId();
+        String title = StringEscapeUtils.escapeHtml4(bookDto.getTitle());
+        LocalDateTime publishDate = LocalDateTime.parse(bookDto.getPublishDate(), formatter);
+        int pageCount = bookDto.getPageCount();
+        String isbn = StringEscapeUtils.escapeHtml4(bookDto.getIsbn());
+        String description = StringEscapeUtils.escapeHtml4(bookDto.getDescription());
+        int totalAmount = bookDto.getTotalAmount();
+        String publisherName = StringEscapeUtils.escapeHtml4(bookDto.getPublisher());
+        Set<Author> authors = Author.buildFrom(StringEscapeUtils.escapeHtml4(bookDto.getAuthor()));
+        Set<Genre> genres = Genre.buildFrom(StringEscapeUtils.escapeHtml4(bookDto.getGenre()));
+
+        return Book.builder()
+                .id(id).title(title).publishDate(publishDate).pageCount(pageCount)
+                .ISBN(isbn).description(description).totalAmount(totalAmount)
+                .publisher(Publisher.builder().publisherName(publisherName).build())
+                .author(authors)
+                .genres(genres)
+                .build();
     }
 }

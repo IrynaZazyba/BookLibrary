@@ -1,6 +1,6 @@
-package com.itechart.javalab.library.controller.command.impl;
+package com.itechart.javalab.library.controller.command.front.impl;
 
-import com.itechart.javalab.library.controller.command.Command;
+import com.itechart.javalab.library.controller.command.front.Command;
 import com.itechart.javalab.library.controller.util.JspPageName;
 import com.itechart.javalab.library.dto.BookPageDto;
 import com.itechart.javalab.library.model.Book;
