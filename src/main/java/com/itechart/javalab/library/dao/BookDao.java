@@ -1,6 +1,8 @@
 package com.itechart.javalab.library.dao;
 
-import com.itechart.javalab.library.model.*;
+import com.itechart.javalab.library.model.Book;
+import com.itechart.javalab.library.model.BookFilter;
+import com.itechart.javalab.library.model.Paginator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,11 +21,4 @@ public interface BookDao {
     Optional<Book> getBookById(int bookId);
 
     Optional<LocalDateTime> getEarliestDueDate(int bookId);
-
-    Optional<Integer> getAuthorByName(String name);
-
-    Optional<Integer> getGenreByName(String genre);
-
-    Optional<Integer> getPublisherByName(String name);
-
 }
