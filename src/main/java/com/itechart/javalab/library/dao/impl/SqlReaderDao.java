@@ -39,6 +39,15 @@ public class SqlReaderDao implements ReaderDao {
             "reader_id) VALUES (?,?,?,?,(SELECT id FROM reader WHERE email=?))";
 
     private static final String GET_READER_BY_EMAIL = "SELECT id FROM reader WHERE email=?";
+    private static final String GET_BORROW_STATUS_BY_ID = "SELECT status  FROM `borrow_list` " +
+            "LEFT JOIN status on borrow_list.status_id=status.id WHERE borrow_list.id=?";
+
+    private static final String UPDATE_BORROW_RECORD_STATUS = "UPDATE `borrow_list` SET " +
+            "`status_id`=(SELECT id FROM status WHERE status=?) WHERE id=?";
+
+    private static final String UPDATE_BOOK_STOCK_TOTAL = "UPDATE `book` SET total_amount=total_amount+?, " +
+            "in_stock=in_stock+? WHERE id=?";
+
 
     private SqlReaderDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -155,6 +164,86 @@ public class SqlReaderDao implements ReaderDao {
         return result;
     }
 
+    @Override
+    public boolean updateStatusBorrowRecords(List<BorrowRecord> borrowRecords) {
+        boolean result = true;
+        try (Connection connection = connectionPool.getConnection()) {
+            try {
+                int totalAmount = 0;
+                int inStock = 0;
+                for (BorrowRecord record : borrowRecords) {
+                    connection.setAutoCommit(false);
+                    Optional<Status> borrowRecordStatus = getBorrowRecordStatus(record.getId());
+                    if (borrowRecordStatus.isEmpty()) {
+                        result = false;
+                        continue;
+                    }
+                    Status status = borrowRecordStatus.get();
+                    if (record.getStatus() == Status.RETURNED && Status.RETURNED != status) {
+                        totalAmount++;
+                        inStock++;
+                        updateBorrowRecordStatus(connection, record);
+                    }
+
+                    if (record.getStatus() != Status.RETURNED && Status.RETURNED == status) {
+                        totalAmount--;
+                        inStock--;
+                        updateBorrowRecordStatus(connection, record);
+
+                    }
+                    updateBookOnValue(connection, inStock, totalAmount, record.getBook().getId());
+                    connection.commit();
+                    connection.setAutoCommit(true);
+                    totalAmount = 0;
+                    inStock = 0;
+                }
+
+            } catch (SQLException e) {
+                connection.rollback();
+                connection.setAutoCommit(true);
+                log.error("SqlException in updateStatusBorrowRecords() method", e);
+                throw new DaoRuntimeException("SqlException in SqlBookDao updateStatusBorrowRecords() method", e);
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in attempt to get Connection", e);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao updateStatusBorrowRecords() method", e);
+        }
+        return result;
+    }
+
+    private void updateBookOnValue(Connection conn, int inStockCountToUpdate, int totalAmountCountToUpdate, int bookId)
+            throws SQLException {
+        try (PreparedStatement psUpdateBook = conn.prepareStatement(UPDATE_BOOK_STOCK_TOTAL)) {
+            psUpdateBook.setInt(1, totalAmountCountToUpdate);
+            psUpdateBook.setInt(2, inStockCountToUpdate);
+            psUpdateBook.setInt(3, bookId);
+            psUpdateBook.executeUpdate();
+        }
+    }
+
+    private void updateBorrowRecordStatus(Connection connection, BorrowRecord record) throws SQLException {
+        try (PreparedStatement psUpdateStatus = connection.prepareStatement(UPDATE_BORROW_RECORD_STATUS)) {
+            psUpdateStatus.setString(1, record.getStatus().toString());
+            psUpdateStatus.setInt(2, record.getId());
+            psUpdateStatus.executeUpdate();
+        }
+    }
+
+    private Optional<Status> getBorrowRecordStatus(int borrowRecordId) {
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement psGetStatus = connection.prepareStatement(GET_BORROW_STATUS_BY_ID)) {
+            psGetStatus.setInt(1, borrowRecordId);
+            ResultSet rs = psGetStatus.executeQuery();
+            if (rs.next()) {
+                Status status = Status.valueOf(rs.getString("status"));
+                return Optional.of(status);
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in getBorrowRecordStatus method", e);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao getBorrowRecordStatus() method", e);
+        }
+        return Optional.empty();
+    }
 
     private boolean getReaderByEmail(String email) {
         try (Connection connection = connectionPool.getConnection();

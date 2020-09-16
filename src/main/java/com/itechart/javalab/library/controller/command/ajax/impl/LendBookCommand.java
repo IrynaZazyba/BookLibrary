@@ -1,8 +1,6 @@
 package com.itechart.javalab.library.controller.command.ajax.impl;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
 import com.itechart.javalab.library.controller.util.BorrowRecordValidator;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
@@ -18,7 +16,6 @@ public class LendBookCommand implements AjaxCommand {
 
     private ReaderService readerService;
     private static final String REQUEST_PARAMETER_EDITED_RECORDS = "addedRecords";
-    private static final String RESPONSE_PARAMETER_MESSAGE = "message";
     private static final String RESPONSE_MESSAGE_PARTLY_FAILED = "partlyFailed";
 
     public LendBookCommand() {
@@ -40,10 +37,7 @@ public class LendBookCommand implements AjaxCommand {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             response.setStatus(HttpServletResponse.SC_OK);
-            JsonObject responseMessage = new JsonObject();
-            JsonElement jsonElement = gson.toJsonTree(RESPONSE_MESSAGE_PARTLY_FAILED);
-            responseMessage.add(RESPONSE_PARAMETER_MESSAGE, jsonElement);
-            return responseMessage.toString();
+            return addResponseMessage(response, RESPONSE_MESSAGE_PARTLY_FAILED, gson);
         }
         return null;
     }

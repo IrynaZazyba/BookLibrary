@@ -12,4 +12,6 @@ public interface ReaderDao {
     boolean setBorrowRecordStatus(List<BorrowRecord> borrowRecord);
 
     boolean createBorrowRecord(List<BorrowRecord> borrowRecords);
+
+    boolean updateStatusBorrowRecords(List<BorrowRecord> borrowRecords);
 }
