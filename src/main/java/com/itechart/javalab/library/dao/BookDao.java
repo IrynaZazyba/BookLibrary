@@ -21,4 +21,13 @@ public interface BookDao {
     Optional<Book> getBookById(int bookId);
 
     Optional<LocalDateTime> getEarliestDueDate(int bookId);
+
+    Optional<Boolean> updateBookInfo(Book book);
+
+    Optional<Integer> getAuthorByName(String name);
+
+    Optional<Integer> getGenreByName(String genre);
+
+    Optional<Integer> getPublisherByName(String name);
+
 }
