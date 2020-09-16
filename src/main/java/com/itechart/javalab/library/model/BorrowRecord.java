@@ -1,9 +1,11 @@
 package com.itechart.javalab.library.model;
 
+import com.itechart.javalab.library.dto.BorrowRecordDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,6 +25,7 @@ public class BorrowRecord {
     private String comment;
     private Book book;
     private Reader reader;
+    private Status status;
 
     public static BorrowRecord extractForBookPage(ResultSet resultSet, int bookId) throws SQLException {
 
@@ -40,6 +43,16 @@ public class BorrowRecord {
 
         return BorrowRecord.builder().id(borrowId).borrowDate(borrowDate)
                 .dueDate(dueDate).returnDate(returnDate).book(book).reader(reader).build();
+    }
+
+    public static BorrowRecord extractForEditRecord(BorrowRecordDto borrowRecordDto) {
+        return BorrowRecord.builder()
+                .id(borrowRecordDto.getId())
+                .comment(StringEscapeUtils.escapeHtml4(borrowRecordDto.getComment().trim()))
+                .status(Status.valueOf(borrowRecordDto.getStatus().replace(" ", "_").toUpperCase()))
+                .returnDate(LocalDateTime.now())
+                .book(Book.builder().id(borrowRecordDto.getBook().getId()).build())
+                .build();
     }
 
 }

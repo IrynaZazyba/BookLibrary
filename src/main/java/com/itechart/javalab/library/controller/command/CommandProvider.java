@@ -2,6 +2,7 @@ package com.itechart.javalab.library.controller.command;
 
 import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
 import com.itechart.javalab.library.controller.command.ajax.impl.AjaxUnknownCommand;
+import com.itechart.javalab.library.controller.command.ajax.impl.ReturnBookCommand;
 import com.itechart.javalab.library.controller.command.ajax.impl.UpdateBookCommand;
 import com.itechart.javalab.library.controller.command.front.Command;
 import com.itechart.javalab.library.controller.command.front.impl.*;
@@ -28,6 +29,7 @@ public class CommandProvider {
         commandRepository.put(new CommandKey("GET", "/books/"), new GetBookCommand());
 
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/book"), new UpdateBookCommand());
+        ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/newStatus"), new ReturnBookCommand());
 
     }
 

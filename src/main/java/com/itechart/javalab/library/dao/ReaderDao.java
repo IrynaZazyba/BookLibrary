@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface ReaderDao {
 
     Optional<List<BorrowRecord>> getBorrowRecords(int bookId);
+
+    boolean setBorrowRecordStatus(List<BorrowRecord> borrowRecord);
 }
