@@ -44,5 +44,13 @@ public class DefaultReaderService implements ReaderService {
         return readerDao.setBorrowRecordStatus(borrowRecordList);
     }
 
+    @Override
+    public boolean lendBook(BorrowRecordDto[] records) {
+        List<BorrowRecord> borrowRecordList = new ArrayList<>();
+        for (BorrowRecordDto borrowRecordDto : records) {
+            borrowRecordList.add(BorrowRecord.extractForAddRecord(borrowRecordDto));
+        }
+        return readerDao.createBorrowRecord(borrowRecordList);
+    }
 
 }

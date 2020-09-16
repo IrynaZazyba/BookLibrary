@@ -12,4 +12,6 @@ public interface ReaderService {
 
 
     boolean returnBook(BorrowRecordDto[] records);
+
+    boolean lendBook(BorrowRecordDto[] records);
 }

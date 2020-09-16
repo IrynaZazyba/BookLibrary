@@ -55,4 +55,15 @@ public class BorrowRecord {
                 .build();
     }
 
+    public static BorrowRecord extractForAddRecord(BorrowRecordDto borrowRecordDto) {
+        LocalDateTime current=LocalDateTime.now();
+        int timePeriod = Integer.parseInt(borrowRecordDto.getTimePeriod());
+        return BorrowRecord.builder()
+                .borrowDate(current)
+                .dueDate(current.plusMonths(timePeriod))
+                .comment(StringEscapeUtils.escapeHtml4(borrowRecordDto.getComment().trim()))
+                .reader(Reader.buildFrom(borrowRecordDto))
+                .book(Book.builder().id(borrowRecordDto.getBook().getId()).build())
+                .build();
+    }
 }

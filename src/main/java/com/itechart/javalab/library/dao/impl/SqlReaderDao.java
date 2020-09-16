@@ -4,6 +4,7 @@ import com.itechart.javalab.library.dao.ReaderDao;
 import com.itechart.javalab.library.dao.conn.ConnectionPool;
 import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
 import com.itechart.javalab.library.model.BorrowRecord;
+import com.itechart.javalab.library.model.Reader;
 import com.itechart.javalab.library.model.Status;
 import lombok.extern.log4j.Log4j2;
 
@@ -29,6 +30,15 @@ public class SqlReaderDao implements ReaderDao {
 
     private static final String REDUCE_BOOK_TOTAL_AMOUNT_ON_VALUE = "UPDATE book SET total_amount=total_amount-?, " +
             "in_stock=in_stock+? WHERE id=?";
+
+    private static final String REDUCE_IN_STOCK_BOOK_VALUE_ON_NUMBER = "UPDATE book SET in_stock=in_stock-? " +
+            "WHERE in_stock>0 and id=? and total_amount>=in_stock-?;";
+    private static final String INSERT_READER = "INSERT INTO reader(`name`, email) VALUES (?,?)";
+    private static final String UPDATE_READER_NAME = "UPDATE reader SET name=? WHERE email=? and name!=?";
+    private static final String ADD_BORROW_RECORD = "INSERT INTO borrow_list(borrow_date, due_date,comment, book_id, " +
+            "reader_id) VALUES (?,?,?,?,(SELECT id FROM reader WHERE email=?))";
+
+    private static final String GET_READER_BY_EMAIL = "SELECT id FROM reader WHERE email=?";
 
     private SqlReaderDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -107,6 +117,98 @@ public class SqlReaderDao implements ReaderDao {
             throw new DaoRuntimeException("SqlException in SqlReaderDao setBorrowRecordStatus() method", e);
         }
         return result;
+    }
+
+    @Override
+    public boolean createBorrowRecord(List<BorrowRecord> borrowRecords) {
+        boolean result = true;
+        try (Connection connection = connectionPool.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                for (BorrowRecord record : borrowRecords) {
+                    if (reduceInStockBookValueOnNumber(connection, record) == 0) {
+                        result = false;
+                        continue;
+                    }
+                    Reader reader = record.getReader();
+                    if (!getReaderByEmail(reader.getEmail())) {
+                        insertReader(connection, reader);
+                    } else {
+                        updateReaderName(connection, reader);
+                    }
+                    addBorrowRecord(connection, record);
+                }
+
+                connection.commit();
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                connection.rollback();
+                connection.setAutoCommit(true);
+                log.error("SqlException in createBorrowRecord() method", e);
+                throw new DaoRuntimeException("SqlException in SqlBookDao createBorrowRecord() method", e);
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in attempt to get Connection", e);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao createBorrowRecord() method", e);
+        }
+
+        return result;
+    }
+
+
+    private boolean getReaderByEmail(String email) {
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_READER_BY_EMAIL)) {
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in getReaderByEmail method", e);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao getReaderByEmail() method", e);
+        }
+        return false;
+    }
+
+
+    private int reduceInStockBookValueOnNumber(Connection connection, BorrowRecord record) throws SQLException {
+        try (PreparedStatement psBookTable = connection.prepareStatement(REDUCE_IN_STOCK_BOOK_VALUE_ON_NUMBER)) {
+            psBookTable.setInt(1, 1);
+            psBookTable.setInt(2, record.getBook().getId());
+            psBookTable.setInt(2, 1);
+            return psBookTable.executeUpdate();
+        }
+    }
+
+
+    private void insertReader(Connection connection, Reader reader) throws SQLException {
+        try (PreparedStatement psReaderAdd = connection.prepareStatement(INSERT_READER)) {
+            psReaderAdd.setString(1, reader.getName());
+            psReaderAdd.setString(2, reader.getEmail());
+            psReaderAdd.executeUpdate();
+        }
+    }
+
+
+    private void updateReaderName(Connection connection, Reader reader) throws SQLException {
+        try (PreparedStatement psReaderUpdate = connection.prepareStatement(UPDATE_READER_NAME)) {
+            psReaderUpdate.setString(1, reader.getName());
+            psReaderUpdate.setString(2, reader.getEmail());
+            psReaderUpdate.setString(3, reader.getName());
+            psReaderUpdate.executeUpdate();
+        }
+    }
+
+    private void addBorrowRecord(Connection connection, BorrowRecord record) throws SQLException {
+        try (PreparedStatement psBorrowRecordTable = connection.prepareStatement(ADD_BORROW_RECORD)) {
+            psBorrowRecordTable.setTimestamp(1, Timestamp.valueOf(record.getBorrowDate()));
+            psBorrowRecordTable.setTimestamp(2, Timestamp.valueOf(record.getDueDate()));
+            psBorrowRecordTable.setString(3, record.getComment());
+            psBorrowRecordTable.setInt(4, record.getBook().getId());
+            psBorrowRecordTable.setString(5, record.getReader().getEmail());
+            psBorrowRecordTable.executeUpdate();
+        }
     }
 
 }
