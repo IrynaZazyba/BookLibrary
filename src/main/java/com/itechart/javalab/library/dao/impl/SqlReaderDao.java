@@ -41,24 +41,19 @@ public class SqlReaderDao implements ReaderDao {
 
     @Override
     public Optional<List<BorrowRecord>> getBorrowRecords(int bookId) {
-
         List<BorrowRecord> borrowRecords = new ArrayList<>();
-
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_BOOK_READERS)) {
             preparedStatement.setInt(1, bookId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-
             while (resultSet.next()) {
                 borrowRecords.add(BorrowRecord.extractForBookPage(resultSet, bookId));
             }
-
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
+            log.error("SqlException in getBorrowRecords() method", e);
             throw new DaoRuntimeException("SqlException in SqlReaderDao getBorrowRecords() method", e);
         }
-
         return Optional.of(borrowRecords);
     }
 

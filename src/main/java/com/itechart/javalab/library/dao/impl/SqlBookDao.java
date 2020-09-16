@@ -74,12 +74,9 @@ public class SqlBookDao implements BookDao {
         return instance;
     }
 
-
     @Override
     public Optional<List<Book>> getBooks(Paginator paginator, boolean isAvailableOnly) {
-
         List<Book> books;
-
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_BOOKS)) {
             preparedStatement.setString(1, isAvailableOnly ? "[^0]" : "[0-9]");
@@ -89,17 +86,15 @@ public class SqlBookDao implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             books = parseBooks(resultSet);
         } catch (SQLException ex) {
-            log.error("SqlException in attempt to get Connection", ex);
-            return Optional.empty();
+            log.error("SqlException in getBooks() method", ex);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao getBooks() method", ex);
         }
         return Optional.of(books);
     }
 
     @Override
     public Optional<Integer> getNumberBooksRecords(boolean isAvailableOnly) {
-
         int countBooksRecords = 0;
-
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_NUMBER_OF_BOOKS_RECORDS)) {
             preparedStatement.setString(1, isAvailableOnly ? "[^0]" : "[0-9]");
@@ -108,10 +103,9 @@ public class SqlBookDao implements BookDao {
             if (resultSet.next()) {
                 countBooksRecords = resultSet.getInt(1);
             }
-
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
-            return Optional.empty();
+            log.error("SqlException in getNumberBooksRecords() method", e);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao getNumberBooksRecords() method", e);
         }
         return Optional.of(countBooksRecords);
     }
@@ -119,9 +113,7 @@ public class SqlBookDao implements BookDao {
 
     @Override
     public Optional<List<Book>> findBooksByParameters(Paginator paginator, BookFilter bookFilter) {
-
         List<Book> books;
-
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_BOOKS)) {
             setQueryParameterValue(preparedStatement, bookFilter);
@@ -131,18 +123,15 @@ public class SqlBookDao implements BookDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             books = parseBooks(resultSet);
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
-            return Optional.empty();
+            log.error("SqlException in findBooksByParameters() method", e);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao findBooksByParameters() method", e);
         }
-
         return Optional.of(books);
     }
 
     @Override
     public Optional<Integer> getNumberFoundBooksRecords(BookFilter bookFilter) {
-
         int countBooksRecords = 0;
-
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_NUMBER_OF_FOUND_RECORDS)) {
             setQueryParameterValue(preparedStatement, bookFilter);
@@ -153,17 +142,15 @@ public class SqlBookDao implements BookDao {
             }
 
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
-            return Optional.empty();
+            log.error("SqlException in getNumberFoundBooksRecords() method", e);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao getNumberFoundBooksRecords() method", e);
         }
         return Optional.of(countBooksRecords);
     }
 
     @Override
     public Optional<Book> getBookById(int bookId) {
-
         Book book = null;
-
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_BOOK_BY_ID)) {
             preparedStatement.setInt(1, bookId);
@@ -171,9 +158,7 @@ public class SqlBookDao implements BookDao {
 
             Set<Author> authors = new HashSet<>();
             Set<Genre> genres = new HashSet<>();
-
             while (resultSet.next()) {
-
                 if (book == null) {
                     book = Book.extractForBookPage(resultSet);
                 }
@@ -185,9 +170,8 @@ public class SqlBookDao implements BookDao {
                 book.setGenres(genres);
                 book.setAuthor(authors);
             }
-
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
+            log.error("SqlException in getBookById() method", e);
             throw new DaoRuntimeException("SqlException in SqlBookDao getBookById() method", e);
         }
         return Optional.ofNullable(book);
@@ -195,7 +179,6 @@ public class SqlBookDao implements BookDao {
 
     @Override
     public Optional<LocalDateTime> getEarliestDueDate(int bookId) {
-
         LocalDateTime earliestDueDate = null;
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_EARLIEST_DUE_DATE_BY_BOOK_ID)) {
@@ -209,9 +192,8 @@ public class SqlBookDao implements BookDao {
                     earliestDueDate = timestamp.toLocalDateTime();
                 }
             }
-
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
+            log.error("SqlException in getEarliestDueDate() method", e);
             throw new DaoRuntimeException("SqlException in SqlBookDao getEarliestDueDate() method", e);
         }
         return Optional.ofNullable(earliestDueDate);
@@ -229,7 +211,6 @@ public class SqlBookDao implements BookDao {
 
     private List<Book> parseBooks(ResultSet resultSet) throws SQLException {
         Map<Integer, Book> tempBooks = new HashMap<>();
-
         while (resultSet.next()) {
             int id = resultSet.getInt("book.id");
             if (tempBooks.containsKey(id)) {
@@ -244,3 +225,6 @@ public class SqlBookDao implements BookDao {
     }
 
 }
+
+
+

@@ -40,7 +40,7 @@ Branch - add-search-page
 - add SearchBooksCommand
 - add SearchPage.jsp
 
-##### Task#6 - Add book page
+##### Task#7 - Add book page
 Branch - add-book-page
 - add beans
 - add GetBookCommand
@@ -48,3 +48,10 @@ Branch - add-book-page
 - add dto object
 - add BookPage.jsp
 
+##### Task#8 - Add actions to book page
+Branch - book-page-action
+- add functionality to update book info, return/lend book
+- add DAO and Service methods
+- add dto objects
+- add commands
+- add actions to BookPage.jsp
