@@ -1,17 +1,20 @@
 package com.itechart.javalab.library.controller.command.ajax.impl;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
-import com.itechart.javalab.library.controller.util.BorrowRecordValidator;
-import com.itechart.javalab.library.dto.BorrowRecordDto;
+import com.itechart.javalab.library.controller.util.JsonConverter;
+import com.itechart.javalab.library.model.BorrowRecord;
 import com.itechart.javalab.library.service.ReaderService;
 import com.itechart.javalab.library.service.impl.DefaultReaderService;
+import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Log4j2
 public class UpdateStatusBorrowRecordCommand implements AjaxCommand {
 
     private ReaderService readerService;
@@ -24,38 +27,22 @@ public class UpdateStatusBorrowRecordCommand implements AjaxCommand {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Gson gson = new Gson();
-        BorrowRecordDto[] records = parseBorrowRecords(request, gson);
-        boolean result = true;
+        String editedRecords = request.getParameter(REQUEST_PARAMETER_UPDATED_STATUS);
+        try {
+            BorrowRecord[] records = JsonConverter.fromJsonBorrowRecordArray(editedRecords);
 
-        if (validateBorrowRecordsDto(records)) {
-            result = readerService.changeBorrowStatus(records);
-        }
-
-        if (result) {
-            response.setStatus(HttpServletResponse.SC_OK);
-        } else {
-            response.setStatus(HttpServletResponse.SC_OK);
-            return addResponseMessage(response, RESPONSE_MESSAGE_PARTLY_FAILED, gson);
+            boolean result = readerService.changeBorrowStatus(records);
+            if (result) {
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.setStatus(HttpServletResponse.SC_OK);
+                return JsonConverter.addResponseMessage(RESPONSE_MESSAGE_PARTLY_FAILED);
+            }
+        } catch (JsonParseException | JsonMappingException e) {
+            log.error("Json transformation exception", e);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
         return null;
     }
 
-
-    private BorrowRecordDto[] parseBorrowRecords(HttpServletRequest request, Gson gson) {
-        String editedRecords = request.getParameter(REQUEST_PARAMETER_UPDATED_STATUS);
-        return gson.fromJson(editedRecords, BorrowRecordDto[].class);
-    }
-
-    private boolean validateBorrowRecordsDto(BorrowRecordDto[] records) {
-        boolean validationResult = true;
-
-        for (BorrowRecordDto borrowRecordDto : records) {
-            boolean validate = BorrowRecordValidator.validateEditRecord(borrowRecordDto);
-            if (!validate) {
-                validationResult = false;
-            }
-        }
-        return validationResult;
-    }
 }

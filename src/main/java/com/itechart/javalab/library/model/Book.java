@@ -9,6 +9,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
@@ -23,11 +24,11 @@ public class Book {
 
     private static final String AVAILABLE_STATUS = "Available (%d out of %d)";
     private static final String UNAVAILABLE_STATUS = "Unavailable (expected to become available on  %1$tB %1$te, %1$tY)";
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy HH:mm:ss", Locale.UK);
+  //  private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
 
     private int id;
     private String title;
-    private LocalDateTime publishDate;
+    private LocalDate publishDate;
     private Publisher publisher;
     private Set<Author> author;
     private Set<Genre> genres;
@@ -50,7 +51,7 @@ public class Book {
     public static Book extractForMainPage(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("book.id");
         String title = resultSet.getString("book.title");
-        LocalDateTime publishDate = resultSet.getTimestamp("book.publish_date").toLocalDateTime();
+        LocalDate publishDate = resultSet.getDate("book.publish_date").toLocalDate();
         int inStock = resultSet.getInt("book.in_stock");
         Set<Author> authors = new HashSet<>();
         authors.add(Author.buildFrom(resultSet));
@@ -66,7 +67,7 @@ public class Book {
     public static Book extractForBookPage(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("book.id");
         String title = resultSet.getString("book.title");
-        LocalDateTime publishDate = resultSet.getTimestamp("book.publish_date").toLocalDateTime();
+        LocalDate publishDate = resultSet.getDate("book.publish_date").toLocalDate();
         int inStock = resultSet.getInt("book.in_stock");
         int pageCount = resultSet.getInt("book.page_count");
         String isbn = resultSet.getString("book.isbn");
@@ -84,7 +85,7 @@ public class Book {
     public static Book buildFrom(BookDto bookDto) {
         int id = bookDto.getId();
         String title = StringEscapeUtils.escapeHtml4(bookDto.getTitle());
-        LocalDateTime publishDate = LocalDateTime.parse(bookDto.getPublishDate(), formatter);
+        LocalDate publishDate = LocalDate.parse(bookDto.getPublishDate());
         int pageCount = bookDto.getPageCount();
         String isbn = StringEscapeUtils.escapeHtml4(bookDto.getIsbn());
         String description = StringEscapeUtils.escapeHtml4(bookDto.getDescription());

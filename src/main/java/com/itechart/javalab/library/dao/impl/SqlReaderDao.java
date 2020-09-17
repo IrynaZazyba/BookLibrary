@@ -20,8 +20,10 @@ public class SqlReaderDao implements ReaderDao {
     private static volatile ReaderDao instance;
 
     private static final String GET_BOOK_READERS = "SELECT borrow_list.id, borrow_date, due_date, return_date, " +
-            "reader.id, reader.name, reader.email  FROM borrow_list " +
-            "INNER JOIN reader on reader.id=borrow_list.reader_id WHERE borrow_list.book_id=?";
+            "reader.id, reader.name, reader.email, status  FROM borrow_list " +
+            "INNER JOIN reader on reader.id=borrow_list.reader_id " +
+            "LEFT JOIN status on status.id=borrow_list.status_id " +
+            "WHERE borrow_list.book_id=?";
 
 
     private static final String UPDATE_BORROW_LIST = "UPDATE borrow_list SET return_date=?, comment=?, " +
@@ -111,6 +113,7 @@ public class SqlReaderDao implements ReaderDao {
                     psBookTable.setInt(1, countDamaged);
                     psBookTable.setInt(2, countUpdatedRecords - countDamaged);
                     psBookTable.setInt(3, record.getBook().getId());
+                    psBookTable.executeUpdate();
                     connection.commit();
                 }
 
@@ -265,7 +268,7 @@ public class SqlReaderDao implements ReaderDao {
         try (PreparedStatement psBookTable = connection.prepareStatement(REDUCE_IN_STOCK_BOOK_VALUE_ON_NUMBER)) {
             psBookTable.setInt(1, 1);
             psBookTable.setInt(2, record.getBook().getId());
-            psBookTable.setInt(2, 1);
+            psBookTable.setInt(3, 1);
             return psBookTable.executeUpdate();
         }
     }

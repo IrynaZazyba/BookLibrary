@@ -7,6 +7,7 @@ import com.itechart.javalab.library.model.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -61,12 +62,12 @@ public class SqlBookDao implements BookDao {
     private final static String GET_AUTHOR_BY_NAME = "SELECT id FROM `author` WHERE name=?";
     private static final String INSERT_AUTHOR = "INSERT INTO `author`(name) VALUES (?)";
     private static final String ADD_AUTHOR_TO_BOOK = "INSERT INTO `book_has_author`(`book_id`, `author_id`) " +
-            "VALUES (?,(Select id FROM author WHERE name=?))";
+            "VALUES (?,(SELECT id FROM author where name=?))";
 
     private static final String GET_GENRE = "SELECT `id` FROM `genre` WHERE genre=?";
     private static final String CREATE_GENRE = "INSERT INTO `genre`(`genre`) VALUES (?)";
     private static final String ADD_GENRE_TO_BOOK = "INSERT INTO `genre_has_book`(`genre_id`, `book_id`) " +
-            "VALUES ((SELECT id FROM genre WHERE genre=?),?)";
+            "VALUES ((SELECT id from genre WHERE genre=?),?)";
 
     private static final String GET_PUBLISHER = "SELECT `id` FROM `publisher` WHERE publisher=?";
     private static final String ADD_PUBLISHER = "INSERT INTO `publisher`(`publisher`) VALUES (?)";
@@ -240,19 +241,17 @@ public class SqlBookDao implements BookDao {
                     Set<Genre> genres = book.getGenres();
                     for (Genre genre : genres) {
                         if (getGenreByName(genre.getGenre()).isEmpty()) {
-                            int genreId = createGenre(connection, genre);
-                            genre.setId(genreId);
+                            createGenre(connection, genre);
                         }
-                        addGenreToBook(connection, genre.getId(), book.getId());
+                        addGenreToBook(connection, genre.getGenre(), book.getId());
                     }
 
                     Set<Author> authors = book.getAuthor();
                     for (Author author : authors) {
                         if (getAuthorByName(author.getName()).isEmpty()) {
-                            int authorId = createAuthor(connection, author);
-                            author.setId(authorId);
+                            createAuthor(connection, author);
                         }
-                        addAuthorToBook(connection, author.getId(), book.getId());
+                        addAuthorToBook(connection, author.getName(), book.getId());
                     }
                     connection.commit();
                     connection.setAutoCommit(true);
@@ -328,7 +327,7 @@ public class SqlBookDao implements BookDao {
     private int updateBook(Connection connection, Book book) throws SQLException {
         try (PreparedStatement ps = connection.prepareStatement(UPDATE_BOOK_INFO)) {
             ps.setString(1, book.getTitle());
-            ps.setTimestamp(2, Timestamp.valueOf(book.getPublishDate()));
+            ps.setDate(2, Date.valueOf(book.getPublishDate()));
             ps.setInt(3, book.getPageCount());
             ps.setString(4, book.getISBN());
             ps.setString(5, book.getDescription());
@@ -345,7 +344,12 @@ public class SqlBookDao implements BookDao {
         try (PreparedStatement ps = connection
                 .prepareStatement(INSERT_AUTHOR, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, author.getName());
-            return ps.executeUpdate();
+            ps.executeUpdate();
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            }
+            return 0;
         }
     }
 
@@ -358,9 +362,9 @@ public class SqlBookDao implements BookDao {
         }
     }
 
-    private void addGenreToBook(Connection connection, int genreId, int bookId) throws SQLException {
+    private void addGenreToBook(Connection connection, String genreName, int bookId) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_GENRE_TO_BOOK)) {
-            preparedStatement.setInt(1, genreId);
+            preparedStatement.setString(1, genreName);
             preparedStatement.setInt(2, bookId);
             preparedStatement.executeUpdate();
         }
@@ -380,10 +384,10 @@ public class SqlBookDao implements BookDao {
         }
     }
 
-    private void addAuthorToBook(Connection connection, int authorId, int bookId) throws SQLException {
+    private void addAuthorToBook(Connection connection, String authorName, int bookId) throws SQLException {
         try (PreparedStatement ps = connection.prepareStatement(ADD_AUTHOR_TO_BOOK)) {
             ps.setInt(1, bookId);
-            ps.setInt(2, authorId);
+            ps.setString(2, authorName);
             ps.executeUpdate();
         }
     }
@@ -392,7 +396,12 @@ public class SqlBookDao implements BookDao {
         try (PreparedStatement preparedStatement = connection
                 .prepareStatement(CREATE_GENRE, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, genre.getGenre());
-            return preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            }
+            return 0;
         }
     }
 
@@ -400,7 +409,12 @@ public class SqlBookDao implements BookDao {
         try (PreparedStatement preparedStatement = connection
                 .prepareStatement(ADD_PUBLISHER, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, publisher.getPublisherName());
-            return preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            }
+            return 0;
         }
     }
 

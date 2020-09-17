@@ -2,12 +2,13 @@ package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.dao.ReaderDao;
 import com.itechart.javalab.library.dao.impl.SqlReaderDao;
-import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.model.BorrowRecord;
 import com.itechart.javalab.library.service.BookService;
 import com.itechart.javalab.library.service.ReaderService;
+import org.apache.commons.text.StringEscapeUtils;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,30 +37,29 @@ public class DefaultReaderService implements ReaderService {
     }
 
     @Override
-    public boolean returnBook(BorrowRecordDto[] records) {
-        List<BorrowRecord> borrowRecordList = new ArrayList<>();
-        for (BorrowRecordDto borrowRecordDto : records) {
-            borrowRecordList.add(BorrowRecord.extractForEditRecord(borrowRecordDto));
+    public boolean returnBook(BorrowRecord[] records) {
+        LocalDateTime current = LocalDateTime.now();
+        for (BorrowRecord record : records) {
+            record.setReturnDate(current);
+            record.setComment(StringEscapeUtils.escapeHtml4(record.getComment()));
         }
-        return readerDao.setBorrowRecordStatus(borrowRecordList);
+        return readerDao.setBorrowRecordStatus(Arrays.asList(records));
     }
 
     @Override
-    public boolean lendBook(BorrowRecordDto[] records) {
-        List<BorrowRecord> borrowRecordList = new ArrayList<>();
-        for (BorrowRecordDto borrowRecordDto : records) {
-            borrowRecordList.add(BorrowRecord.extractForAddRecord(borrowRecordDto));
+    public boolean lendBook(BorrowRecord[] records) {
+        LocalDateTime current = LocalDateTime.now();
+        for (BorrowRecord record : records) {
+            record.setBorrowDate(current);
+            record.setDueDate(current.plusMonths(record.getTimePeriod().getMonthPeriod()));
+            record.setComment(StringEscapeUtils.escapeHtml4(record.getComment()));
         }
-        return readerDao.createBorrowRecord(borrowRecordList);
+        return readerDao.createBorrowRecord(Arrays.asList(records));
     }
 
 
     @Override
-    public boolean changeBorrowStatus(BorrowRecordDto[] records) {
-        List<BorrowRecord> borrowRecordList = new ArrayList<>();
-        for (BorrowRecordDto borrowRecordDto : records) {
-            borrowRecordList.add(BorrowRecord.extractForEditRecord(borrowRecordDto));
-        }
-        return readerDao.updateStatusBorrowRecords(borrowRecordList);
+    public boolean changeBorrowStatus(BorrowRecord[] records) {
+        return readerDao.updateStatusBorrowRecords(Arrays.asList(records));
     }
 }

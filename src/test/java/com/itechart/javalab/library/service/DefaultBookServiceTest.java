@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 
 public class DefaultBookServiceTest {
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Mock
     private BookDao mockBookDao = mock(SqlBookDao.class);
@@ -61,7 +61,7 @@ public class DefaultBookServiceTest {
         Book javaBook = Book.builder()
                 .id(1)
                 .title("Изучаем Java")
-                .publishDate(LocalDateTime.parse("2015-08-25 00:00", formatter))
+                .publishDate(LocalDate.parse("2015-08-25", formatter))
                 .inStock(1)
                 .author(javaBookAuthors)
                 .build();
@@ -75,7 +75,7 @@ public class DefaultBookServiceTest {
         Book christmasBook = Book.builder()
                 .id(2)
                 .title("A Christmas Carol")
-                .publishDate(LocalDateTime.parse("2020-08-26 00:00", formatter))
+                .publishDate(LocalDate.parse("2020-08-26", formatter))
                 .inStock(7)
                 .author(authors)
                 .build();
@@ -114,7 +114,7 @@ public class DefaultBookServiceTest {
                 .id(1)
                 .title("Ведьмак. Меч Предназначения")
                 .author(bookAuthors)
-                .publishDate(LocalDateTime.parse("2015-08-25 00:00", formatter))
+                .publishDate(LocalDate.parse("2015-08-25", formatter))
                 .inStock(10)
                 .build();
         Book secondBook = Book
@@ -122,7 +122,7 @@ public class DefaultBookServiceTest {
                 .id(1)
                 .title("Ведьмак. Сезон гроз")
                 .author(bookAuthors)
-                .publishDate(LocalDateTime.parse("2015-08-25 00:00", formatter))
+                .publishDate(LocalDate.parse("2015-08-25", formatter))
                 .inStock(3)
                 .build();
         List<Book> foundBooks = new ArrayList<>();
