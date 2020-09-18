@@ -88,35 +88,20 @@ public class SqlReaderDao implements ReaderDao {
     public boolean setBorrowRecordStatus(List<BorrowRecord> borrowRecord) {
         boolean result = true;
         try (Connection connection = connectionPool.getConnection()) {
-            try (PreparedStatement psBorrowListTable = connection.prepareStatement(UPDATE_BORROW_LIST);
-                 PreparedStatement psBookTable = connection
-                         .prepareStatement(REDUCE_BOOK_TOTAL_AMOUNT_ON_VALUE)) {
+            try {
                 connection.setAutoCommit(false);
-
                 for (BorrowRecord record : borrowRecord) {
-                    Status borrowRecordStatus = record.getStatus();
-                    psBorrowListTable.setTimestamp(1, Timestamp.valueOf(record.getReturnDate()));
-                    psBorrowListTable.setString(2, record.getComment());
-                    psBorrowListTable.setString(3, borrowRecordStatus.toString());
-                    psBorrowListTable.setInt(4, record.getId());
-                    psBorrowListTable.setInt(5, record.getBook().getId());
-                    int countUpdatedRecords = psBorrowListTable.executeUpdate();
-
-                    if (countUpdatedRecords == 0) {
+                    if (updateBorrowStatus(connection, record) == 0) {
                         result = false;
                         continue;
                     }
                     int countDamaged = 0;
-                    if (borrowRecordStatus != Status.RETURNED) {
+                    if (record.getStatus() != Status.RETURNED) {
                         countDamaged++;
                     }
-                    psBookTable.setInt(1, countDamaged);
-                    psBookTable.setInt(2, countUpdatedRecords - countDamaged);
-                    psBookTable.setInt(3, record.getBook().getId());
-                    psBookTable.executeUpdate();
+                    changeBookNumber(connection, record, countDamaged);
                     connection.commit();
                 }
-
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
                 connection.rollback();
@@ -131,6 +116,28 @@ public class SqlReaderDao implements ReaderDao {
         return result;
     }
 
+
+    private void changeBookNumber(Connection connection, BorrowRecord record, int countDamaged) throws SQLException {
+        try (PreparedStatement psBookTable = connection.prepareStatement(REDUCE_BOOK_TOTAL_AMOUNT_ON_VALUE)) {
+            psBookTable.setInt(1, countDamaged);
+            psBookTable.setInt(2, 1 - countDamaged);
+            psBookTable.setInt(3, record.getBook().getId());
+            psBookTable.executeUpdate();
+        }
+    }
+
+    private int updateBorrowStatus(Connection connection, BorrowRecord record) throws SQLException {
+        try (PreparedStatement psBorrowListTable = connection.prepareStatement(UPDATE_BORROW_LIST)) {
+            psBorrowListTable.setTimestamp(1, Timestamp.valueOf(record.getReturnDate()));
+            psBorrowListTable.setString(2, record.getComment());
+            psBorrowListTable.setString(3, record.getStatus().toString());
+            psBorrowListTable.setInt(4, record.getId());
+            psBorrowListTable.setInt(5, record.getBook().getId());
+            return psBorrowListTable.executeUpdate();
+        }
+    }
+
+
     @Override
     public boolean createBorrowRecord(List<BorrowRecord> borrowRecords) {
         boolean result = true;
@@ -138,7 +145,7 @@ public class SqlReaderDao implements ReaderDao {
             try {
                 connection.setAutoCommit(false);
                 for (BorrowRecord record : borrowRecords) {
-                    if (reduceInStockBookValueOnNumber(connection, record) == 0) {
+                    if (reduceBookInStock(connection, record) == 0) {
                         result = false;
                         continue;
                     }
@@ -264,7 +271,7 @@ public class SqlReaderDao implements ReaderDao {
     }
 
 
-    private int reduceInStockBookValueOnNumber(Connection connection, BorrowRecord record) throws SQLException {
+    private int reduceBookInStock(Connection connection, BorrowRecord record) throws SQLException {
         try (PreparedStatement psBookTable = connection.prepareStatement(REDUCE_IN_STOCK_BOOK_VALUE_ON_NUMBER)) {
             psBookTable.setInt(1, 1);
             psBookTable.setInt(2, record.getBook().getId());

@@ -1,6 +1,5 @@
 package com.itechart.javalab.library.model;
 
-import com.itechart.javalab.library.dto.BorrowRecordDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,10 +26,4 @@ public class Reader {
         return Reader.builder().id(readerId).name(readerName).email(readerEmail).build();
     }
 
-    public static Reader buildFrom(BorrowRecordDto borrowRecordDto) {
-        return Reader.builder()
-                .email(borrowRecordDto.getReader().getEmail())
-                .name(borrowRecordDto.getReader().getName())
-                .build();
-    }
 }

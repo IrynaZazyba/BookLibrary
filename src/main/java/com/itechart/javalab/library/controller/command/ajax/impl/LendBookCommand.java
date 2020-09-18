@@ -2,9 +2,7 @@ package com.itechart.javalab.library.controller.command.ajax.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
-import com.itechart.javalab.library.controller.util.JsonConverter;
-import com.itechart.javalab.library.controller.util.ReaderValidator;
-import com.itechart.javalab.library.model.BorrowRecord;
+import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.service.ReaderService;
 import com.itechart.javalab.library.service.impl.DefaultReaderService;
 import lombok.extern.log4j.Log4j2;
@@ -14,12 +12,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.itechart.javalab.library.controller.util.ResponseParameterName.*;
+
 @Log4j2
 public class LendBookCommand implements AjaxCommand {
 
     private ReaderService readerService;
     private static final String REQUEST_PARAMETER_EDITED_RECORDS = "addedRecords";
     private static final String RESPONSE_MESSAGE_PARTLY_FAILED = "partlyFailed";
+    private static final String RESPONSE_MESSAGE_OK = "ok";
 
     public LendBookCommand() {
         this.readerService = DefaultReaderService.getInstance();
@@ -28,38 +29,23 @@ public class LendBookCommand implements AjaxCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String editedRecords = request.getParameter(REQUEST_PARAMETER_EDITED_RECORDS);
+        String responseBody;
         try {
-            BorrowRecord[] borrowRecords = JsonConverter.fromJsonBorrowRecordArray(editedRecords);
-            if (!validateReaders(borrowRecords)) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            BorrowRecordDto[] borrowRecords = BorrowRecordDto.parseBorrowRecords(editedRecords);
+            boolean result = readerService.addBorrowRecords(borrowRecords);
+            if (result) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                responseBody = addResponseBodyParameter(RESPONSE_PARAMETER_SUCCESS, RESPONSE_MESSAGE_OK);
+            } else {
+                response.setStatus(HttpServletResponse.SC_OK);
+                responseBody = addResponseBodyParameter(RESPONSE_PARAMETER_MESSAGE, RESPONSE_MESSAGE_PARTLY_FAILED);
             }
-
-            if (validateReaders(borrowRecords)) {
-                boolean result = readerService.lendBook(borrowRecords);
-                if (result) {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    return JsonConverter.addResponseMessage(RESPONSE_MESSAGE_PARTLY_FAILED);
-                }
-            }
-        } catch (JsonProcessingException e) {
-            log.error("Json transformation exception", e);
+        } catch (JsonProcessingException | IllegalArgumentException e) {
+            log.error("Invalid parameters", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            responseBody = addResponseBodyParameter(RESPONSE_PARAMETER_ERROR, "Invalid parameters");
         }
-        return null;
-    }
-
-
-    private boolean validateReaders(BorrowRecord[] borrowRecords) {
-        boolean validationResult = true;
-        for (BorrowRecord borrowRecord : borrowRecords) {
-            boolean validate = ReaderValidator.validate(borrowRecord.getReader());
-            if (!validate) {
-                validationResult = false;
-            }
-        }
-        return validationResult;
+        return responseBody;
     }
 
 

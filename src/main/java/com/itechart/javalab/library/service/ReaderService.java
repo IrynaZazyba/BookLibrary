@@ -1,5 +1,6 @@
 package com.itechart.javalab.library.service;
 
+import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.model.BorrowRecord;
 
 import java.util.List;
@@ -9,10 +10,9 @@ public interface ReaderService {
 
     Optional<List<BorrowRecord>> getBorrowRecords(int bookId);
 
+    boolean addBorrowStatus(BorrowRecordDto[] records);
 
-    boolean returnBook(BorrowRecord[] records);
+    boolean addBorrowRecords(BorrowRecordDto[] records);
 
-    boolean lendBook(BorrowRecord[] records);
-
-    boolean changeBorrowStatus(BorrowRecord[] records);
+    boolean changeBorrowStatus(BorrowRecordDto[] records);
 }

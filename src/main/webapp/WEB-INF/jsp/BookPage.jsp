@@ -60,11 +60,11 @@
                             <div class="col">
                                 <select name="timePeriod" required class="form-control" id="addBorrowTimePeriod">
                                     <option selected>Choose...</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="6">6</option>
-                                    <option value="12">12</option>
+                                    <option value="ONE">1</option>
+                                    <option value="TWO">2</option>
+                                    <option value="THREE">3</option>
+                                    <option value="SIX">6</option>
+                                    <option value="TWELVE">12</option>
                                 </select>
                             </div>
                         </div>

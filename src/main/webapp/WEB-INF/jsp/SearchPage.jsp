@@ -116,7 +116,7 @@
                         <label class="form-check-label" for="delete-${book.id}"></label>
                     </div>
                 </th>
-                <td><a href="#">${book.title}</a></td>
+                <td><a href="${pageContext.request.contextPath}/books/${book.id}">${book.title}</a></td>
                 <td>
                     <c:forEach var="author" items="${book.author}" varStatus="loop">
                         <c:out value="${author.name}"/>

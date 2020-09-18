@@ -487,9 +487,7 @@ function createAddBorrowRecord(elem) {
             email: email,
             name: name,
         },
-        book: {
-            id: bookId,
-        },
+        bookId: bookId,
         timePeriod: period,
         comment: comment
     };
@@ -503,9 +501,7 @@ function createEditBorrowRecord(elem, id) {
 
     return {
         id: id,
-        book: {
-            id: bookId,
-        },
+        bookId: bookId,
         status: status,
         comment: comment
     };
@@ -546,7 +542,8 @@ function validateName(name) {
 
 function validateEmail(email) {
     let pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    return email.length !== 0 && pattern.test(email);
+   // return email.length !== 0 && pattern.test(email);
+    return true;
 }
 
 function validateDescriptionSize (description) {
