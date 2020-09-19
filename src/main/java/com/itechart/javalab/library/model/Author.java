@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -24,6 +28,15 @@ public class Author {
                 .id(authorId)
                 .name(authorName)
                 .build();
+    }
+
+    static Set<Author> buildFrom(String authorNames) {
+        List<String> namesToList = Arrays.asList(authorNames.split(","));
+        Set<Author> authorSet = new HashSet<>();
+        namesToList.forEach(authorName -> authorSet.add(Author.builder()
+                .name(authorName.trim())
+                .build()));
+        return authorSet;
     }
 
 }

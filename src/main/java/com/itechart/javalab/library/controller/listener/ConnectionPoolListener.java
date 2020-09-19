@@ -26,7 +26,6 @@ public class ConnectionPoolListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-
         Properties dbProperties = getDbProperties(sce);
         String dbUrl = dbProperties.getProperty(DB_URL);
         String dbUser = dbProperties.getProperty(DB_USER);

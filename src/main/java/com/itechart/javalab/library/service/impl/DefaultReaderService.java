@@ -2,10 +2,15 @@ package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.dao.ReaderDao;
 import com.itechart.javalab.library.dao.impl.SqlReaderDao;
+import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.model.BorrowRecord;
 import com.itechart.javalab.library.service.BookService;
 import com.itechart.javalab.library.service.ReaderService;
+import org.apache.commons.text.StringEscapeUtils;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,5 +38,38 @@ public class DefaultReaderService implements ReaderService {
         return readerDao.getBorrowRecords(bookId);
     }
 
+    @Override
+    public boolean addBorrowStatus(BorrowRecordDto[] records) {
+        List<BorrowRecord> borrowRecords = new ArrayList<>();
+        Arrays.stream(records).forEach(record ->
+                borrowRecords.add(record.toModel()));
+        LocalDateTime current = LocalDateTime.now();
+        borrowRecords.forEach(r -> {
+            r.setReturnDate(current);
+            r.setComment(StringEscapeUtils.escapeHtml4(r.getComment()));
+        });
+        return readerDao.setBorrowRecordStatus(borrowRecords);
+    }
 
+    @Override
+    public boolean addBorrowRecords(BorrowRecordDto[] records) {
+        List<BorrowRecord> borrowRecords = new ArrayList<>();
+        Arrays.stream(records).forEach(record ->
+                borrowRecords.add(record.toModel()));
+        LocalDateTime current = LocalDateTime.now();
+        borrowRecords.forEach(r -> {
+            r.setBorrowDate(current);
+            r.setDueDate(current.plusMonths(r.getTimePeriod().getMonthPeriod()));
+            r.setComment(StringEscapeUtils.escapeHtml4(r.getComment()));
+        });
+        return readerDao.createBorrowRecord(borrowRecords);
+    }
+
+    @Override
+    public boolean changeBorrowStatus(BorrowRecordDto[] records) {
+        List<BorrowRecord> borrowRecords = new ArrayList<>();
+        Arrays.stream(records).forEach(record ->
+                borrowRecords.add(record.toModel()));
+        return readerDao.updateStatusBorrowRecords(borrowRecords);
+    }
 }

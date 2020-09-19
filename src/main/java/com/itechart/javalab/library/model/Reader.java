@@ -18,11 +18,11 @@ public class Reader {
     private String name;
     private String email;
 
-
-    public static Reader buildFrom(ResultSet resultSet) throws SQLException {
+    static Reader buildFrom(ResultSet resultSet) throws SQLException {
         int readerId = resultSet.getInt("reader.id");
         String readerName = resultSet.getString("reader.name");
         String readerEmail = resultSet.getString("reader.email");
         return Reader.builder().id(readerId).name(readerName).email(readerEmail).build();
     }
+
 }

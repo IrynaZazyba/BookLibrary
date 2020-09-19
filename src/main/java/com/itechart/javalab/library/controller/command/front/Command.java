@@ -1,4 +1,4 @@
-package com.itechart.javalab.library.controller.command;
+package com.itechart.javalab.library.controller.command.front;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;

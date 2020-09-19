@@ -23,23 +23,23 @@ public class BorrowRecord {
     private String comment;
     private Book book;
     private Reader reader;
+    private Status status;
+    private TimePeriod timePeriod;
 
     public static BorrowRecord extractForBookPage(ResultSet resultSet, int bookId) throws SQLException {
-
         int borrowId = resultSet.getInt("borrow_list.id");
         LocalDateTime borrowDate = resultSet.getTimestamp("borrow_list.borrow_date").toLocalDateTime();
         LocalDateTime dueDate = resultSet.getTimestamp("borrow_list.due_date").toLocalDateTime();
         Timestamp timestampReturnDate = resultSet.getTimestamp("borrow_list.return_date");
         LocalDateTime returnDate = null;
+        Status status = null;
         if (timestampReturnDate != null) {
             returnDate = timestampReturnDate.toLocalDateTime();
+            status = Status.valueOf(resultSet.getString("status.status"));
         }
-
         Reader reader = Reader.buildFrom(resultSet);
         Book book = Book.builder().id(bookId).build();
-
         return BorrowRecord.builder().id(borrowId).borrowDate(borrowDate)
-                .dueDate(dueDate).returnDate(returnDate).book(book).reader(reader).build();
+                .dueDate(dueDate).returnDate(returnDate).book(book).reader(reader).status(status).build();
     }
-
 }

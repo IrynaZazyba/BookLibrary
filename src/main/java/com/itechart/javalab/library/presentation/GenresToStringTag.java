@@ -21,9 +21,7 @@ public class GenresToStringTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-
         JspWriter out = pageContext.getOut();
-
         List<String> genreNames = new ArrayList<>();
         genres.forEach(genre -> genreNames.add(genre.getGenre()));
         String genresToString = StringUtils.join(genreNames, ", ");
