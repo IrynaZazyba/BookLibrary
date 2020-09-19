@@ -3,12 +3,6 @@ package com.itechart.javalab.library.dto;
 import com.itechart.javalab.library.model.Reader;
 import lombok.*;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,10 +10,12 @@ import javax.validation.constraints.Pattern;
 @Setter
 public class ReaderDto {
 
+    private static final String NAME_PATTERN = "^[a-zA-Z- ]{2,25}$";
+    private static final String EMAIL_PATTERN =
+            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
+                    "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private int id;
-    @Pattern(regexp = "^[a-zA-Z- ]{2,25}$", message = "Invalid reader name")
     private String name;
-    @Email
     private String email;
 
 
@@ -29,9 +25,7 @@ public class ReaderDto {
     }
 
     private void validate() throws IllegalArgumentException {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        Validator validator = validatorFactory.getValidator();
-        if (validator.validate(this).size() != 0) {
+        if (!this.email.matches(EMAIL_PATTERN) || !this.name.matches(NAME_PATTERN)) {
             throw new IllegalArgumentException();
         }
     }
