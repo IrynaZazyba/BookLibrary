@@ -36,6 +36,5 @@ public class BookController extends HttpServlet {
         CommandProvider commandProvider = CommandProvider.getInstance();
         Command command = commandProvider.getCommand(req.getMethod(), req.getRequestURI());
         command.execute(req, resp);
-
     }
 }

@@ -23,11 +23,11 @@ import static org.mockito.Mockito.mock;
 
 public class DefaultBookServiceTest {
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Mock
     private BookDao mockBookDao = mock(SqlBookDao.class);
-    private BookService bookService = DefaultBookService.getInstance();
+    private final BookService bookService = DefaultBookService.getInstance();
 
 
     @Test

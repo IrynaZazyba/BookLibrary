@@ -20,13 +20,10 @@ public class AuthorsToStringTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-
         JspWriter out = pageContext.getOut();
-
         List<String> authorNames = new ArrayList<>();
         authors.forEach(author -> authorNames.add(author.getName()));
         String authors = StringUtils.join(authorNames, ", ");
-
         try {
             out.write(authors);
         } catch (IOException e) {

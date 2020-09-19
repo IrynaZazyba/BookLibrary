@@ -36,7 +36,6 @@ public class SqlBookDao implements BookDao {
             "INNER JOIN book_has_author on book_has_author.book_id=book.id " +
             "INNER JOIN author on author.id=book_has_author.author_id;";
 
-
     private final static String GET_NUMBER_OF_FOUND_RECORDS = "SELECT count (DISTINCT book.id) FROM book " +
             "INNER JOIN book_has_author ON book_has_author.book_id=book.id " +
             "INNER JOIN author ON book_has_author.author_id=author.id " +
@@ -44,7 +43,6 @@ public class SqlBookDao implements BookDao {
             "INNER JOIN genre ON genre.id=genre_has_book.genre_id " +
             "WHERE in_stock REGEXP ? AND title LIKE ? AND author.name LIKE ? AND genre.genre LIKE ?" +
             " AND description LIKE ?";
-
 
     private final static String GET_BOOK_BY_ID = "SELECT book.id, title,author.id, author.name, " +
             "publisher.id,publisher.publisher, book.publish_date,book.page_count,book.ISBN,book.description, " +
@@ -105,7 +103,6 @@ public class SqlBookDao implements BookDao {
             preparedStatement.setString(1, isAvailableOnly ? "[^0]" : "[0-9]");
             preparedStatement.setInt(2, paginator.getStart());
             preparedStatement.setInt(3, paginator.getRecordsPerPage());
-
             ResultSet resultSet = preparedStatement.executeQuery();
             books = parseBooks(resultSet);
         } catch (SQLException ex) {
@@ -122,7 +119,6 @@ public class SqlBookDao implements BookDao {
              PreparedStatement preparedStatement = connection.prepareStatement(GET_NUMBER_OF_BOOKS_RECORDS)) {
             preparedStatement.setString(1, isAvailableOnly ? "[^0]" : "[0-9]");
             ResultSet resultSet = preparedStatement.executeQuery();
-
             if (resultSet.next()) {
                 countBooksRecords = resultSet.getInt(1);
             }
@@ -142,7 +138,6 @@ public class SqlBookDao implements BookDao {
             setQueryParameterValue(preparedStatement, bookFilter);
             preparedStatement.setInt(6, paginator.getStart());
             preparedStatement.setInt(7, paginator.getRecordsPerPage());
-
             ResultSet resultSet = preparedStatement.executeQuery();
             books = parseBooks(resultSet);
         } catch (SQLException e) {
@@ -159,11 +154,9 @@ public class SqlBookDao implements BookDao {
              PreparedStatement preparedStatement = connection.prepareStatement(GET_NUMBER_OF_FOUND_RECORDS)) {
             setQueryParameterValue(preparedStatement, bookFilter);
             ResultSet resultSet = preparedStatement.executeQuery();
-
             if (resultSet.next()) {
                 countBooksRecords = resultSet.getInt(1);
             }
-
         } catch (SQLException e) {
             log.error("SqlException in getNumberFoundBooksRecords() method", e);
             throw new DaoRuntimeException("SqlException in SqlReaderDao getNumberFoundBooksRecords() method", e);
@@ -188,7 +181,6 @@ public class SqlBookDao implements BookDao {
                 genres.add(Genre.buildFrom(resultSet));
                 authors.add(Author.buildFrom(resultSet));
             }
-
             if (book != null) {
                 book.setGenres(genres);
                 book.setAuthor(authors);
@@ -206,9 +198,7 @@ public class SqlBookDao implements BookDao {
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_EARLIEST_DUE_DATE_BY_BOOK_ID)) {
             preparedStatement.setInt(1, bookId);
-
             ResultSet resultSet = preparedStatement.executeQuery();
-
             if (resultSet.next()) {
                 Timestamp timestamp = resultSet.getTimestamp(1);
                 if (timestamp != null) {
@@ -230,14 +220,12 @@ public class SqlBookDao implements BookDao {
                 if (updateBook(connection, book) != 0) {
                     deleteBookAuthors(connection, book.getId());
                     deleteBookGenre(connection, book.getId());
-
                     Publisher publisher = book.getPublisher();
                     if (getPublisherByName(publisher.getPublisherName()).isEmpty()) {
                         int publisherId = createPublisher(connection, book.getPublisher());
                         publisher.setId(publisherId);
                     }
                     updateBookPublisher(connection, publisher, book.getId());
-
                     Set<Genre> genres = book.getGenres();
                     for (Genre genre : genres) {
                         if (getGenreByName(genre.getGenre()).isEmpty()) {
@@ -245,7 +233,6 @@ public class SqlBookDao implements BookDao {
                         }
                         addGenreToBook(connection, genre.getGenre(), book.getId());
                     }
-
                     Set<Author> authors = book.getAuthor();
                     for (Author author : authors) {
                         if (getAuthorByName(author.getName()).isEmpty()) {
@@ -257,7 +244,6 @@ public class SqlBookDao implements BookDao {
                     connection.setAutoCommit(true);
                     return Optional.of(true);
                 }
-
                 connection.commit();
                 connection.setAutoCommit(true);
                 return Optional.empty();
@@ -278,7 +264,6 @@ public class SqlBookDao implements BookDao {
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_AUTHOR_BY_NAME)) {
             preparedStatement.setString(1, name);
-
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(resultSet.getInt("id"));
@@ -295,7 +280,6 @@ public class SqlBookDao implements BookDao {
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_GENRE)) {
             preparedStatement.setString(1, genre);
-
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(resultSet.getInt("id"));
@@ -312,7 +296,6 @@ public class SqlBookDao implements BookDao {
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_PUBLISHER)) {
             preparedStatement.setString(1, name);
-
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(resultSet.getInt("id"));

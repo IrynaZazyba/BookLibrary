@@ -65,7 +65,6 @@ public class DefaultReaderService implements ReaderService {
         return readerDao.createBorrowRecord(borrowRecords);
     }
 
-
     @Override
     public boolean changeBorrowStatus(BorrowRecordDto[] records) {
         List<BorrowRecord> borrowRecords = new ArrayList<>();

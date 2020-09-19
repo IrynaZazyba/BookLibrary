@@ -19,7 +19,7 @@ public class DefaultReaderServiceTest {
 
     @Mock
     private ReaderDao mockReaderDao = mock(SqlReaderDao.class);
-    private ReaderService readerService = DefaultReaderService.getInstance();
+    private final ReaderService readerService = DefaultReaderService.getInstance();
 
 
     @Test

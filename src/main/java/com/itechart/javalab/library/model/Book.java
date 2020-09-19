@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -24,7 +23,6 @@ public class Book {
 
     private static final String AVAILABLE_STATUS = "Available (%d out of %d)";
     private static final String UNAVAILABLE_STATUS = "Unavailable (expected to become available on  %1$tB %1$te, %1$tY)";
-  //  private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
 
     private int id;
     private String title;
@@ -75,7 +73,6 @@ public class Book {
         int totalAmount = resultSet.getInt("book.total_amount");
         int publisherId = resultSet.getInt("publisher.id");
         String publisherName = resultSet.getString("publisher.publisher");
-
         return Book.builder()
                 .id(id).title(title).publishDate(publishDate).inStock(inStock).pageCount(pageCount)
                 .ISBN(isbn).description(description).totalAmount(totalAmount)
@@ -93,7 +90,6 @@ public class Book {
         String publisherName = StringEscapeUtils.escapeHtml4(bookDto.getPublisher());
         Set<Author> authors = Author.buildFrom(StringEscapeUtils.escapeHtml4(bookDto.getAuthor()));
         Set<Genre> genres = Genre.buildFrom(StringEscapeUtils.escapeHtml4(bookDto.getGenre()));
-
         return Book.builder()
                 .id(id).title(title).publishDate(publishDate).pageCount(pageCount)
                 .ISBN(isbn).description(description).totalAmount(totalAmount)

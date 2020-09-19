@@ -19,8 +19,8 @@ import java.util.Optional;
 
 public class GetBookCommand implements Command {
 
-    private BookService bookService;
-    private ReaderService readerService;
+    private final BookService bookService;
+    private final ReaderService readerService;
 
     private static final String BOOK_PAGE_DTO = "bookPageDto";
 
@@ -31,24 +31,16 @@ public class GetBookCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         int bookId = getBookId(request);
-
         Optional<Book> bookById = bookService.getBookById(bookId);
         Optional<List<BorrowRecord>> borrowRecords = readerService.getBorrowRecords(bookId);
-
         if (bookById.isPresent() && borrowRecords.isPresent()) {
-
             BookPageDto bookPageDto = new BookPageDto(bookById.get(),borrowRecords.get());
-
             request.setAttribute(BOOK_PAGE_DTO, bookPageDto);
             forwardToPage(request, response, JspPageName.BOOK_PAGE);
-
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
-
-
     }
 
     private int getBookId(HttpServletRequest request) {

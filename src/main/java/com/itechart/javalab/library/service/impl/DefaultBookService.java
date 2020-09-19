@@ -13,7 +13,6 @@ import java.util.Optional;
 
 public class DefaultBookService implements BookService {
 
-
     private final BookDao bookDao;
     private static volatile BookService instance;
 

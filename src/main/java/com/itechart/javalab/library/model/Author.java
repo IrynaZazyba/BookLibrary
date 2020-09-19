@@ -30,10 +30,9 @@ public class Author {
                 .build();
     }
 
-    public static Set<Author> buildFrom(String authorNames) {
+    static Set<Author> buildFrom(String authorNames) {
         List<String> namesToList = Arrays.asList(authorNames.split(","));
         Set<Author> authorSet = new HashSet<>();
-
         namesToList.forEach(authorName -> authorSet.add(Author.builder()
                 .name(authorName.trim())
                 .build()));

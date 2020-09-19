@@ -12,7 +12,8 @@ import static com.itechart.javalab.library.controller.util.ResponseParameterName
 public class AjaxUnknownCommand implements AjaxCommand {
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String execute(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         return addResponseBodyParameter(RESPONSE_PARAMETER_ERROR, "Invalid parameters");
     }

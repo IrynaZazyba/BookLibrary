@@ -25,7 +25,6 @@ public class SqlReaderDao implements ReaderDao {
             "LEFT JOIN status on status.id=borrow_list.status_id " +
             "WHERE borrow_list.book_id=?";
 
-
     private static final String UPDATE_BORROW_LIST = "UPDATE borrow_list SET return_date=?, comment=?, " +
             "status_id=(SELECT id FROM status WHERE status=?) WHERE id=? " +
             "AND status_id IS NULL AND book_id=?";
@@ -99,7 +98,7 @@ public class SqlReaderDao implements ReaderDao {
                     if (record.getStatus() != Status.RETURNED) {
                         countDamaged++;
                     }
-                    changeBookNumber(connection, record, countDamaged);
+                    updateBookStock(connection, record, countDamaged);
                     connection.commit();
                 }
                 connection.setAutoCommit(true);
@@ -117,7 +116,7 @@ public class SqlReaderDao implements ReaderDao {
     }
 
 
-    private void changeBookNumber(Connection connection, BorrowRecord record, int countDamaged) throws SQLException {
+    private void updateBookStock(Connection connection, BorrowRecord record, int countDamaged) throws SQLException {
         try (PreparedStatement psBookTable = connection.prepareStatement(REDUCE_BOOK_TOTAL_AMOUNT_ON_VALUE)) {
             psBookTable.setInt(1, countDamaged);
             psBookTable.setInt(2, 1 - countDamaged);
@@ -136,7 +135,6 @@ public class SqlReaderDao implements ReaderDao {
             return psBorrowListTable.executeUpdate();
         }
     }
-
 
     @Override
     public boolean createBorrowRecord(List<BorrowRecord> borrowRecords) {
@@ -157,7 +155,6 @@ public class SqlReaderDao implements ReaderDao {
                     }
                     addBorrowRecord(connection, record);
                 }
-
                 connection.commit();
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
@@ -170,7 +167,6 @@ public class SqlReaderDao implements ReaderDao {
             log.error("SqlException in attempt to get Connection", e);
             throw new DaoRuntimeException("SqlException in SqlReaderDao createBorrowRecord() method", e);
         }
-
         return result;
     }
 
@@ -194,7 +190,6 @@ public class SqlReaderDao implements ReaderDao {
                         inStock++;
                         updateBorrowRecordStatus(connection, record);
                     }
-
                     if (record.getStatus() != Status.RETURNED && Status.RETURNED == status) {
                         totalAmount--;
                         inStock--;
@@ -207,7 +202,6 @@ public class SqlReaderDao implements ReaderDao {
                     totalAmount = 0;
                     inStock = 0;
                 }
-
             } catch (SQLException e) {
                 connection.rollback();
                 connection.setAutoCommit(true);
@@ -270,7 +264,6 @@ public class SqlReaderDao implements ReaderDao {
         return false;
     }
 
-
     private int reduceBookInStock(Connection connection, BorrowRecord record) throws SQLException {
         try (PreparedStatement psBookTable = connection.prepareStatement(REDUCE_IN_STOCK_BOOK_VALUE_ON_NUMBER)) {
             psBookTable.setInt(1, 1);
@@ -280,7 +273,6 @@ public class SqlReaderDao implements ReaderDao {
         }
     }
 
-
     private void insertReader(Connection connection, Reader reader) throws SQLException {
         try (PreparedStatement psReaderAdd = connection.prepareStatement(INSERT_READER)) {
             psReaderAdd.setString(1, reader.getName());
@@ -288,7 +280,6 @@ public class SqlReaderDao implements ReaderDao {
             psReaderAdd.executeUpdate();
         }
     }
-
 
     private void updateReaderName(Connection connection, Reader reader) throws SQLException {
         try (PreparedStatement psReaderUpdate = connection.prepareStatement(UPDATE_READER_NAME)) {
@@ -309,5 +300,4 @@ public class SqlReaderDao implements ReaderDao {
             psBorrowRecordTable.executeUpdate();
         }
     }
-
 }

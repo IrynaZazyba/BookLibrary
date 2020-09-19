@@ -13,11 +13,11 @@ public class LoggingFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         log.info("{} {}, {}", httpServletRequest.getMethod(),
                 httpServletRequest.getRequestURI(),
@@ -27,6 +27,5 @@ public class LoggingFilter implements Filter {
 
     @Override
     public void destroy() {
-
     }
 }

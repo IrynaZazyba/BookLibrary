@@ -18,8 +18,7 @@ public class ReaderDto {
     private String name;
     private String email;
 
-
-    public Reader toModel() {
+    Reader toModel() {
         validate();
         return Reader.builder().name(name).email(email).build();
     }

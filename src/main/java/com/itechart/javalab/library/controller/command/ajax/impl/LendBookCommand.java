@@ -17,7 +17,7 @@ import static com.itechart.javalab.library.controller.util.ResponseParameterName
 @Log4j2
 public class LendBookCommand implements AjaxCommand {
 
-    private ReaderService readerService;
+    private final ReaderService readerService;
     private static final String REQUEST_PARAMETER_EDITED_RECORDS = "addedRecords";
     private static final String RESPONSE_MESSAGE_PARTLY_FAILED = "partlyFailed";
     private static final String RESPONSE_MESSAGE_OK = "ok";
@@ -27,7 +27,8 @@ public class LendBookCommand implements AjaxCommand {
     }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String execute(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String editedRecords = request.getParameter(REQUEST_PARAMETER_EDITED_RECORDS);
         String responseBody;
         try {

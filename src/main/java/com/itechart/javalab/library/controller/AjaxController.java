@@ -43,7 +43,6 @@ public class AjaxController extends HttpServlet {
     private void doProcess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         CommandProvider commandProvider = CommandProvider.getInstance();
         AjaxCommand command = commandProvider.getAjaxCommand(req.getMethod(), req.getRequestURI());
-
         String jsonAnswer = command.execute(req, resp);
         PrintWriter out = resp.getWriter();
         out.print(jsonAnswer);

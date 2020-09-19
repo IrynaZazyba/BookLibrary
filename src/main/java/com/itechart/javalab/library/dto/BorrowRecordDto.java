@@ -24,7 +24,6 @@ public class BorrowRecordDto {
     private ReaderDto reader;
     private TimePeriod timePeriod;
 
-
     public BorrowRecord toModel() {
         return BorrowRecord.builder().id(id).status(status).comment(comment)
                 .timePeriod(timePeriod)

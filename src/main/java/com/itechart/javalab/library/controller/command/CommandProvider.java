@@ -25,12 +25,10 @@ public class CommandProvider {
         commandRepository.put(new CommandKey("POST", "/books"), new EditBookCommand());
         commandRepository.put(new CommandKey("GET", "/books/search"), new SearchBooksCommand());
         commandRepository.put(new CommandKey("GET", "/books/"), new GetBookCommand());
-
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/book"), new UpdateBookCommand());
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/newStatus"), new ReturnBookCommand());
         ajaxCommandRepository.put(new CommandKey("POST", "/ajax/record"), new LendBookCommand());
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/oldStatus"), new UpdateStatusBorrowRecordCommand());
-
     }
 
     public static CommandProvider getInstance() {
@@ -78,7 +76,6 @@ public class CommandProvider {
 
     private String parseUrl(String url) {
         String[] urlParts = url.split("/");
-
         if (urlParts.length > 0) {
             String s = urlParts[urlParts.length - 1];
             return s.matches("\\d+") ? "/books/" : url;

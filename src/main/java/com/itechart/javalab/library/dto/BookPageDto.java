@@ -15,5 +15,4 @@ public class BookPageDto {
 
     private Book book;
     private List<BorrowRecord> borrowRecords;
-
 }

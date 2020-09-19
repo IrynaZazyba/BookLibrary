@@ -18,7 +18,6 @@ public class DateTimeTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-
         JspWriter out = pageContext.getOut();
         try {
             LocalDateTime ldt = LocalDateTime.parse(date);

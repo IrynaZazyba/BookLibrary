@@ -27,7 +27,6 @@ public class BorrowRecord {
     private TimePeriod timePeriod;
 
     public static BorrowRecord extractForBookPage(ResultSet resultSet, int bookId) throws SQLException {
-
         int borrowId = resultSet.getInt("borrow_list.id");
         LocalDateTime borrowDate = resultSet.getTimestamp("borrow_list.borrow_date").toLocalDateTime();
         LocalDateTime dueDate = resultSet.getTimestamp("borrow_list.due_date").toLocalDateTime();
@@ -40,7 +39,6 @@ public class BorrowRecord {
         }
         Reader reader = Reader.buildFrom(resultSet);
         Book book = Book.builder().id(bookId).build();
-
         return BorrowRecord.builder().id(borrowId).borrowDate(borrowDate)
                 .dueDate(dueDate).returnDate(returnDate).book(book).reader(reader).status(status).build();
     }

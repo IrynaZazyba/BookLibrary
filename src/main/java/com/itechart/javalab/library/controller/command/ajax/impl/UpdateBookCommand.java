@@ -19,7 +19,7 @@ import static com.itechart.javalab.library.controller.util.ResponseParameterName
 @Log4j2
 public class UpdateBookCommand implements AjaxCommand {
 
-    private BookService bookService;
+    private final BookService bookService;
     private static final String REQUEST_BOOK_PARAMETER = "bookDto";
     private static final String RESPONSE_MESSAGE_OK = "ok";
     private static final String RESPONSE_MESSAGE_CONFLICT = "Impossible to update";
@@ -29,7 +29,8 @@ public class UpdateBookCommand implements AjaxCommand {
     }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String execute(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String responseBody;
         try {
             BookDto book = BookDto.fromJson(request.getParameter(REQUEST_BOOK_PARAMETER));
