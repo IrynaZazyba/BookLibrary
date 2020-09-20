@@ -46,7 +46,7 @@ public class SqlBookDao implements BookDao {
 
     private final static String GET_BOOK_BY_ID = "SELECT book.id, title,author.id, author.name, " +
             "publisher.id,publisher.publisher, book.publish_date,book.page_count,book.ISBN,book.description, " +
-            "book.total_amount, book.in_stock, genre.id, genre.genre FROM book " +
+            "book.total_amount, book.in_stock, genre.id, genre.genre,cover FROM book " +
             "INNER JOIN book_has_author ON book_has_author.book_id=book.id " +
             "INNER JOIN author ON book_has_author.author_id=author.id " +
             "INNER JOIN genre_has_book ON genre_has_book.book_id=book.id " +
@@ -71,7 +71,7 @@ public class SqlBookDao implements BookDao {
     private static final String ADD_PUBLISHER = "INSERT INTO `publisher`(`publisher`) VALUES (?)";
 
     private final static String UPDATE_BOOK_INFO = "UPDATE `book` SET title=?, publish_date=?, page_count=?, " +
-            "ISBN=?, description=?, total_amount=?,in_stock=(?-(SELECT count(id) FROM `borrow_list` " +
+            "ISBN=?, description=?, total_amount=?,cover=?,in_stock=(?-(SELECT count(id) FROM `borrow_list` " +
             "WHERE book_id=? and return_date is NULL)) WHERE id=? AND ?>=total_amount-in_stock";
 
     private final static String UPDATE_BOOK_PUBLISHER = "UPDATE `book` SET " +
@@ -315,10 +315,11 @@ public class SqlBookDao implements BookDao {
             ps.setString(4, book.getISBN());
             ps.setString(5, book.getDescription());
             ps.setInt(6, book.getTotalAmount());
-            ps.setInt(7, book.getTotalAmount());
-            ps.setInt(8, book.getId());
+            ps.setString(7, book.getCoverPath());
+            ps.setInt(8, book.getTotalAmount());
             ps.setInt(9, book.getId());
-            ps.setInt(10, book.getTotalAmount());
+            ps.setInt(10, book.getId());
+            ps.setInt(11, book.getTotalAmount());
             return ps.executeUpdate();
         }
     }

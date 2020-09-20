@@ -11,7 +11,10 @@ import lombok.extern.log4j.Log4j2;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 import static com.itechart.javalab.library.controller.util.ResponseParameterName.RESPONSE_PARAMETER_ERROR;
 import static com.itechart.javalab.library.controller.util.ResponseParameterName.RESPONSE_PARAMETER_SUCCESS;
@@ -31,10 +34,20 @@ public class UpdateBookCommand implements AjaxCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String appPath = request.getServletContext().getRealPath("");
+        String uploadDirectory = request.getServletContext().getInitParameter("fileUploadPath");
+        String savePath = appPath + File.separator + uploadDirectory;
+        Part file = null;
+        Collection<Part> parts = request.getParts();
+        for (Part part : request.getParts()) {
+            if (part.getName().equals("image_uploads"))
+                file = part;
+        }
+
         String responseBody;
         try {
             BookDto book = BookDto.fromJson(request.getParameter(REQUEST_BOOK_PARAMETER));
-            if (bookService.updateBookInfo(book).isPresent()) {
+            if (bookService.updateBookInfo(book,file,savePath).isPresent()) {
                 response.setStatus(HttpServletResponse.SC_OK);
                 responseBody = addResponseBodyParameter(RESPONSE_PARAMETER_SUCCESS, RESPONSE_MESSAGE_OK);
             } else {

@@ -72,8 +72,6 @@ async function hidePreviousResult() {
     document.getElementById("searchResult").style.display = 'none';
     document.getElementById("deleteBookButton").setAttribute("disabled", "disabled");
     document.querySelector("nav >ul.pagination").style.display = 'none';
-
-
 }
 
 async  function getCountRecordsSearchPage(obj){
@@ -81,3 +79,25 @@ async  function getCountRecordsSearchPage(obj){
     document.querySelector("#searchForm button[type='submit']").click();
 }
 
+
+let input = document.getElementById('image_uploads');
+let preview = document.querySelector('.preview');
+input.style.display = "none";
+input.addEventListener('change', updateImageDisplay);
+
+function updateImageDisplay() {
+    while (preview.firstChild) {
+        preview.removeChild(preview.firstChild);
+    }
+
+    let curFiles = input.files;
+    let image = document.createElement('img');
+    image.style.width = "200px";
+    image.style.height = "200px";
+    if (curFiles[0] == null) {
+        image.src = "img/book.png";
+    } else {
+        image.src = window.URL.createObjectURL(curFiles[0]);
+    }
+    preview.appendChild(image);
+}

@@ -330,7 +330,8 @@ async function updateBookInfo() {
         totalAmount: serverTotalAmount,
     };
 
-    let requestBody = new FormData();
+    let imageForm=document.getElementById("cover");
+    let requestBody = new FormData(imageForm);
     requestBody.append("bookDto", JSON.stringify(bookDto));
 
     let response = await fetch("/ajax/book", {

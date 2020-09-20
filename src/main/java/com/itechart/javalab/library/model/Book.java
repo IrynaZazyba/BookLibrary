@@ -73,10 +73,12 @@ public class Book {
         int totalAmount = resultSet.getInt("book.total_amount");
         int publisherId = resultSet.getInt("publisher.id");
         String publisherName = resultSet.getString("publisher.publisher");
+        String coverPath=resultSet.getString("cover");
         return Book.builder()
                 .id(id).title(title).publishDate(publishDate).inStock(inStock).pageCount(pageCount)
                 .ISBN(isbn).description(description).totalAmount(totalAmount)
-                .publisher(new Publisher(publisherId, publisherName)).build();
+                .publisher(new Publisher(publisherId, publisherName))
+                .coverPath(coverPath).build();
     }
 
     public static Book buildFrom(BookDto bookDto) {

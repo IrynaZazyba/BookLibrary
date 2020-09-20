@@ -9,6 +9,10 @@
         <param-value>db.properties</param-value>
     </context-param>
     <context-param>
+        <param-name>fileUploadPath</param-name>
+        <param-value>/bookUpload</param-value>
+    </context-param>
+    <context-param>
         <param-name>log4j2</param-name>
         <param-value>log4j2.properties</param-value>
     </context-param>

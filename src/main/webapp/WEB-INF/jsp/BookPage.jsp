@@ -187,7 +187,13 @@
                            style="display: none">
                 </div>
                 <div class="preview">
-                    <img src="#">
+                    <c:if test="${not empty requestScope.bookPageDto.book.coverPath}">
+                        <img style="width:250px;height: 250px"
+                             src="${pageContext.request.contextPath}/book/cover?name=${requestScope.bookPageDto.book.coverPath}">
+                    </c:if>
+                    <c:if test="${empty requestScope.bookPageDto.book.coverPath}">
+                        <img style="width:250px;height: 250px" src="/resources/img/book.png">
+                    </c:if>
                 </div>
             </form>
         </div>

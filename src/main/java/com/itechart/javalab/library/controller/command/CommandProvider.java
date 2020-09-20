@@ -25,6 +25,7 @@ public class CommandProvider {
         commandRepository.put(new CommandKey("POST", "/books"), new EditBookCommand());
         commandRepository.put(new CommandKey("GET", "/books/search"), new SearchBooksCommand());
         commandRepository.put(new CommandKey("GET", "/books/"), new GetBookCommand());
+        commandRepository.put(new CommandKey("GET", "/book/cover"), new GetFileCommand());
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/book"), new UpdateBookCommand());
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/newStatus"), new ReturnBookCommand());
         ajaxCommandRepository.put(new CommandKey("POST", "/ajax/record"), new LendBookCommand());

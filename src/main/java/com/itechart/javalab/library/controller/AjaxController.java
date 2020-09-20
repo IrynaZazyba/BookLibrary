@@ -16,7 +16,6 @@ import java.io.PrintWriter;
 @MultipartConfig
 public class AjaxController extends HttpServlet {
 
-
     private static final long serialVersionUID = -6704867576406749056L;
 
     @Override

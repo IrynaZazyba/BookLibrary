@@ -7,24 +7,29 @@ import com.itechart.javalab.library.model.Book;
 import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
 import com.itechart.javalab.library.service.BookService;
+import com.itechart.javalab.library.service.UploadFileService;
+import org.apache.commons.io.FilenameUtils;
 
+import javax.servlet.http.Part;
 import java.util.List;
 import java.util.Optional;
 
 public class DefaultBookService implements BookService {
 
     private final BookDao bookDao;
+    private final UploadFileService uploadFileService;
     private static volatile BookService instance;
 
-    private DefaultBookService(BookDao bookDao) {
+    private DefaultBookService(BookDao bookDao, UploadFileService uploadFileService) {
         this.bookDao = bookDao;
+        this.uploadFileService = uploadFileService;
     }
 
     public static BookService getInstance() {
         if (instance == null) {
             synchronized (BookService.class) {
                 if (instance == null) {
-                    instance = new DefaultBookService(SqlBookDao.getInstance());
+                    instance = new DefaultBookService(SqlBookDao.getInstance(), DefaultUploadFileService.getInstance());
                 }
             }
         }
@@ -63,8 +68,20 @@ public class DefaultBookService implements BookService {
     }
 
     @Override
-    public Optional<Boolean> updateBookInfo(BookDto book) {
-        return bookDao.updateBookInfo(Book.buildFrom(book));
+    public Optional<Boolean> updateBookInfo(BookDto bookDto, Part part, String savePath) {
+        Book book = Book.buildFrom(bookDto);
+        String nameForDb = null;
+        if (part != null) {
+            nameForDb = book.getId() + "." + FilenameUtils.getExtension(part.getSubmittedFileName());
+            book.setCoverPath(nameForDb);
+        }
+        Optional<Boolean> updateResult = bookDao.updateBookInfo(book);
+        if (part != null && updateResult.isPresent()) {
+            if (part.getSize() != 0) {
+                uploadFileService.uploadFile(savePath, part, nameForDb);
+            }
+        }
+        return updateResult;
     }
 
     private void calculateBookStatus(Book book) {

@@ -5,6 +5,7 @@ import com.itechart.javalab.library.model.Book;
 import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
 
+import javax.servlet.http.Part;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,5 +21,5 @@ public interface BookService {
 
     Optional<Book> getBookById(int bookId);
 
-    Optional<Boolean> updateBookInfo(BookDto book);
+    Optional<Boolean> updateBookInfo(BookDto bookDto, Part part, String savePath);
 }

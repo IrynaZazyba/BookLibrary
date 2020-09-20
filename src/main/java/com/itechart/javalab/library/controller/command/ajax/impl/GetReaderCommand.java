@@ -28,7 +28,7 @@ public class GetReaderCommand implements AjaxCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String readerEmail = request.getParameter(REQUEST_PARAMETER_EMAIL);
-        String responseBody = null;
+        String responseBody;
 
         Optional<Set<Reader>> readersByEmail = readerService.getReadersByEmail(StringEscapeUtils.escapeHtml4(readerEmail));
         if (readersByEmail.isPresent()) {
