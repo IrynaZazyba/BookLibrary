@@ -256,7 +256,7 @@ $('.basicAutoComplete').autoComplete({
         events: {
             search: async function (qry, callback) {
                 // let's do a custom ajax call
-                let response = await fetch("/reader?email=" + qry, {
+                let response = await fetch("/ajax/reader?email=" + qry, {
                     method: 'GET',
                 });
 

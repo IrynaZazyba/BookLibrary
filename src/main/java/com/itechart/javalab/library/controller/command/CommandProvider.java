@@ -28,7 +28,10 @@ public class CommandProvider {
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/book"), new UpdateBookCommand());
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/newStatus"), new ReturnBookCommand());
         ajaxCommandRepository.put(new CommandKey("POST", "/ajax/record"), new LendBookCommand());
-        ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/oldStatus"), new UpdateStatusBorrowRecordCommand());
+        ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/oldStatus"),
+                new UpdateStatusBorrowRecordCommand());
+        ajaxCommandRepository.put(new CommandKey("GET", "/ajax/reader"), new GetReaderCommand());
+
     }
 
     public static CommandProvider getInstance() {

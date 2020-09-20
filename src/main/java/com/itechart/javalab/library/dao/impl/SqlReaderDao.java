@@ -9,9 +9,7 @@ import com.itechart.javalab.library.model.Status;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j2
 public class SqlReaderDao implements ReaderDao {
@@ -48,6 +46,8 @@ public class SqlReaderDao implements ReaderDao {
 
     private static final String UPDATE_BOOK_STOCK_TOTAL = "UPDATE `book` SET total_amount=total_amount+?, " +
             "in_stock=in_stock+? WHERE id=?";
+
+    private static final String GET_READERS = "SELECT id, email, name FROM `reader` WHERE email LIKE ?";
 
 
     private SqlReaderDao(ConnectionPool connectionPool) {
@@ -213,6 +213,25 @@ public class SqlReaderDao implements ReaderDao {
             throw new DaoRuntimeException("SqlException in SqlReaderDao updateStatusBorrowRecords() method", e);
         }
         return result;
+    }
+
+    @Override
+    public Optional<Set<Reader>> getReadersByEmail(String email) {
+        Set<Reader> readers = new HashSet<>();
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_READERS)) {
+            preparedStatement.setString(1, "%" + email + "%");
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Reader reader = Reader.buildFrom(resultSet);
+                readers.add(reader);
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in getReadersByEmail() method", e);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao getReadersByEmail() method", e);
+        }
+        return Optional.of(readers);
     }
 
     private void updateBookOnValue(Connection conn, int inStockCountToUpdate, int totalAmountCountToUpdate, int bookId)

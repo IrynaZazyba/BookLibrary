@@ -13,13 +13,11 @@ public interface AjaxCommand {
 
     String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 
-    default String addResponseBodyParameter(String key, String value) throws JsonProcessingException {
+    default String addResponseBodyParameter(String key, Object value) throws JsonProcessingException {
         HashMap<String, Object> parameterMap = new HashMap<>();
         parameterMap.put(key, value);
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writerWithDefaultPrettyPrinter()
                 .writeValueAsString(parameterMap);
     }
-
-
 }
