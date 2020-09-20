@@ -2,6 +2,7 @@ package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.service.UploadFileService;
 import com.itechart.javalab.library.service.exception.UploadFileRuntimeException;
+import com.itechart.javalab.library.service.util.FileFormatValidator;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.http.Part;
@@ -27,13 +28,17 @@ public class DefaultUploadFileService implements UploadFileService {
         return instance;
     }
 
-    public void uploadFile(String savePath, Part part, String nameForDb) {
+    public void uploadFile(String savePath, Part part, String fileName) {
+        FileFormatValidator fileFormatValidator = FileFormatValidator.getInstance();
+        if (!fileFormatValidator.validate(part.getSubmittedFileName())) {
+            throw new UploadFileRuntimeException("Impossible file format");
+        }
         try {
             File dir = new File(savePath);
             if (!dir.exists()) {
                 dir.mkdir();
             }
-            part.write(savePath + File.separator + nameForDb);
+            part.write(savePath + File.separator + fileName);
         } catch (IOException e) {
             log.error("Error with write file to the directory", e);
             throw new UploadFileRuntimeException("Impossible to write file");

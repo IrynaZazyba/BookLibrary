@@ -42,4 +42,13 @@ public class BorrowRecord {
         return BorrowRecord.builder().id(borrowId).borrowDate(borrowDate)
                 .dueDate(dueDate).returnDate(returnDate).book(book).reader(reader).status(status).build();
     }
+
+    public static BorrowRecord extractForNotification(ResultSet resultSet) throws SQLException {
+        int borrowId = resultSet.getInt("borrow_list.id");
+        LocalDateTime dueDate = resultSet.getTimestamp("borrow_list.due_date").toLocalDateTime();
+        Reader reader = Reader.buildFrom(resultSet);
+        Book book = Book.extractForNotification(resultSet);
+        return BorrowRecord.builder().id(borrowId).dueDate(dueDate).book(book).reader(reader).build();
+    }
+
 }

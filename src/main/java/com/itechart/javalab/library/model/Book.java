@@ -73,7 +73,7 @@ public class Book {
         int totalAmount = resultSet.getInt("book.total_amount");
         int publisherId = resultSet.getInt("publisher.id");
         String publisherName = resultSet.getString("publisher.publisher");
-        String coverPath=resultSet.getString("cover");
+        String coverPath = resultSet.getString("cover");
         return Book.builder()
                 .id(id).title(title).publishDate(publishDate).inStock(inStock).pageCount(pageCount)
                 .ISBN(isbn).description(description).totalAmount(totalAmount)
@@ -98,6 +98,15 @@ public class Book {
                 .publisher(Publisher.builder().publisherName(publisherName).build())
                 .author(authors)
                 .genres(genres)
+                .build();
+    }
+
+    public static Book extractForNotification(ResultSet resultSet) throws SQLException {
+        String title = resultSet.getString("book.title");
+        String isbn = resultSet.getString("book.isbn");
+        return Book.builder()
+                .title(title)
+                .ISBN(isbn)
                 .build();
     }
 }

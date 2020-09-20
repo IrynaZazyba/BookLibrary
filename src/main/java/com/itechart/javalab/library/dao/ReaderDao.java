@@ -18,4 +18,8 @@ public interface ReaderDao {
     boolean updateStatusBorrowRecords(List<BorrowRecord> borrowRecords);
 
     Optional<Set<Reader>> getReadersByEmail(String email);
+
+    List<BorrowRecord> getReturnNotificationInfo();
+
+    List<BorrowRecord> getDelayNotificationInfo();
 }

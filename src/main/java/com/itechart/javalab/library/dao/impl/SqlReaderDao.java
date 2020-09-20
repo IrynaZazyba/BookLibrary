@@ -49,6 +49,17 @@ public class SqlReaderDao implements ReaderDao {
 
     private static final String GET_READERS = "SELECT id, email, name FROM `reader` WHERE email LIKE ?";
 
+    private static final String GET_INFO_TO_RETURN_NOTIFICATION = "SELECT borrow_list.id,reader.name,reader.email, " +
+            "reader.id, book.title,isbn, due_date FROM `borrow_list` " +
+            "INNER JOIN reader on reader.id=borrow_list.reader_id " +
+            "INNER JOIN book on book.id=borrow_list.book_id " +
+            "WHERE DATEDIFF(due_date, NOW())=8";
+
+    private static final String GET_DELAY_NOTIFICATION_INFO = "SELECT borrow_list.id, due_date,reader.name, " +
+            "reader.email, reader.id, book.title,isbn, borrow_date FROM `borrow_list` " +
+            "INNER JOIN reader on reader.id=borrow_list.reader_id " +
+            "INNER JOIN book on book.id=borrow_list.book_id " +
+            "WHERE DATEDIFF(due_date, NOW())<0 and return_date is NULL";
 
     private SqlReaderDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -232,6 +243,40 @@ public class SqlReaderDao implements ReaderDao {
             throw new DaoRuntimeException("SqlException in SqlReaderDao getReadersByEmail() method", e);
         }
         return Optional.of(readers);
+    }
+
+    @Override
+    public List<BorrowRecord> getReturnNotificationInfo() {
+        List<BorrowRecord> borrowRecords = new ArrayList<>();
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_INFO_TO_RETURN_NOTIFICATION)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                BorrowRecord record = BorrowRecord.extractForNotification(resultSet);
+                borrowRecords.add(record);
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in getReturnNotificationInfo() method", e);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao getReturnNotificationInfo() method", e);
+        }
+        return borrowRecords;
+    }
+
+    @Override
+    public List<BorrowRecord> getDelayNotificationInfo() {
+        List<BorrowRecord> borrowRecords = new ArrayList<>();
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_DELAY_NOTIFICATION_INFO)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                BorrowRecord record = BorrowRecord.extractForNotification(resultSet);
+                borrowRecords.add(record);
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in getDelayNotificationInfo() method", e);
+            throw new DaoRuntimeException("SqlException in SqlReaderDao getDelayNotificationInfo() method", e);
+        }
+        return borrowRecords;
     }
 
     private void updateBookOnValue(Connection conn, int inStockCountToUpdate, int totalAmountCountToUpdate, int bookId)

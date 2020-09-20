@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 @Log4j2
-@WebListener
 public class ConnectionPoolListener implements ServletContextListener {
 
     private final static String DB_PROPERTIES_FILE_NAME = "db";
