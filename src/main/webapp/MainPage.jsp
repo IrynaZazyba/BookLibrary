@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col-8">
             <button type="button" class="btn  btn-info add-button">Add</button>
-            <button type="button" class="btn  btn-outline-danger">Remove</button>
+            <button type="button" onclick="deleteBooks()"  class="btn  btn-outline-danger">Remove</button>
         </div>
         <div class="col-auto">
             <div class="form-group form-check">
@@ -75,7 +75,7 @@
             <tr>
                 <th>
                     <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="delete-${book.id}">
+                        <input type="checkbox" value="${book.id}"  class="form-check-input" id="delete-${book.id}">
                         <label class="form-check-label" for="delete-${book.id}"></label>
                     </div>
                 </th>

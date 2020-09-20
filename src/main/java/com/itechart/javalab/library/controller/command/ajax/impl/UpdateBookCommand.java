@@ -38,12 +38,10 @@ public class UpdateBookCommand implements AjaxCommand {
         String uploadDirectory = request.getServletContext().getInitParameter("fileUploadPath");
         String savePath = appPath + File.separator + uploadDirectory;
         Part file = null;
-        Collection<Part> parts = request.getParts();
         for (Part part : request.getParts()) {
             if (part.getName().equals("image_uploads"))
                 file = part;
         }
-
         String responseBody;
         try {
             BookDto book = BookDto.fromJson(request.getParameter(REQUEST_BOOK_PARAMETER));

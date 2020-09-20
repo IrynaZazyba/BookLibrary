@@ -101,3 +101,37 @@ function updateImageDisplay() {
     }
     preview.appendChild(image);
 }
+
+
+async function deleteBooks() {
+    let deletedBookIds=[];
+    const deleteInputs = document.querySelectorAll(".mainPageTable tbody th input[id^='delete']");
+    deleteInputs.forEach(input=>{
+        if(input.checked){
+            deletedBookIds.push(input.value);
+        }
+    });
+
+    let formData=new FormData;
+    formData.append("deletedBooks", JSON.stringify(deletedBookIds));
+
+    let response = await fetch("/ajax/books", {
+        method: 'DELETE',
+        body: formData,
+    });
+
+    const navBar = document.querySelector("nav");
+    if (response.ok) {
+        navBar.insertAdjacentHTML('afterend', addSuccessNotification("Books was successfully deleted"));
+    } else {
+        navBar.insertAdjacentHTML('afterend', addDangerNotification("Books  weren't delete. Please, check borrow list."));
+    }
+}
+
+function addDangerNotification(message) {
+    return "<div class='alert alert-danger' role='alert'>" + message + "</div>";
+}
+
+function addSuccessNotification(message) {
+    return "<div class='alert alert-success' role='alert'>" + message + "</div>";
+}

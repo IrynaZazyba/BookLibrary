@@ -84,6 +84,11 @@ public class DefaultBookService implements BookService {
         return updateResult;
     }
 
+    @Override
+    public boolean deleteBooks(int[] booksId) {
+        return bookDao.deleteBooks(booksId);
+    }
+
     private void calculateBookStatus(Book book) {
         if (book.getInStock() > 0) {
             book.setAvailableStatus();

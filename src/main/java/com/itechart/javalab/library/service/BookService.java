@@ -22,4 +22,6 @@ public interface BookService {
     Optional<Book> getBookById(int bookId);
 
     Optional<Boolean> updateBookInfo(BookDto bookDto, Part part, String savePath);
+
+    boolean deleteBooks(int[] booksId);
 }

@@ -6,8 +6,8 @@ import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
 import com.itechart.javalab.library.model.*;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -79,6 +79,9 @@ public class SqlBookDao implements BookDao {
 
     private final static String DELETE_BOOK_AUTHORS = "DELETE FROM `book_has_author` WHERE book_id=?";
     private final static String DELETE_BOOK_GENRE = "DELETE FROM `genre_has_book` WHERE book_id=?";
+
+    private static final String DELETE_BOOK = "DELETE FROM `book` WHERE id=? AND  total_amount=in_stock;";
+
 
     private SqlBookDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -306,6 +309,38 @@ public class SqlBookDao implements BookDao {
         }
         return Optional.empty();
     }
+
+    @Override
+    public boolean deleteBooks(int[] bookId) {
+        boolean result = true;
+        try (Connection connection = connectionPool.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BOOK)) {
+                connection.setAutoCommit(false);
+                for (int id : bookId) {
+                    deleteBookGenre(connection, id);
+                    deleteBookAuthors(connection, id);
+                    preparedStatement.setInt(1, id);
+                    if (preparedStatement.executeUpdate() == 0) {
+                        result = false;
+                        connection.rollback();
+                        continue;
+                    }
+                    connection.commit();
+                }
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                connection.rollback();
+                connection.setAutoCommit(true);
+                log.error("SqlException in deleteBooks() method", e);
+                throw new DaoRuntimeException("SqlException in SqlBookDao deleteBooks() method", e);
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in attempt to get Connection", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao deleteBooks() method", e);
+        }
+        return result;
+    }
+
 
     private int updateBook(Connection connection, Book book) throws SQLException {
         try (PreparedStatement ps = connection.prepareStatement(UPDATE_BOOK_INFO)) {
