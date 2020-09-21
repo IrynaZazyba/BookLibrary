@@ -31,4 +31,6 @@ public interface BookDao {
     Optional<Integer> getPublisherByName(String name);
 
     boolean deleteBooks(int[] bookId);
+
+    boolean createBook(Book book);
 }

@@ -60,12 +60,12 @@ public class SqlBookDao implements BookDao {
     private final static String GET_AUTHOR_BY_NAME = "SELECT id FROM `author` WHERE name=?";
     private static final String INSERT_AUTHOR = "INSERT INTO `author`(name) VALUES (?)";
     private static final String ADD_AUTHOR_TO_BOOK = "INSERT INTO `book_has_author`(`book_id`, `author_id`) " +
-            "VALUES (?,(SELECT id FROM author where name=?))";
+            "VALUES (?,?)";
 
     private static final String GET_GENRE = "SELECT `id` FROM `genre` WHERE genre=?";
-    private static final String CREATE_GENRE = "INSERT INTO `genre`(`genre`) VALUES (?)";
+    private static final String INSERT_GENRE = "INSERT INTO `genre`(`genre`) VALUES (?)";
     private static final String ADD_GENRE_TO_BOOK = "INSERT INTO `genre_has_book`(`genre_id`, `book_id`) " +
-            "VALUES ((SELECT id from genre WHERE genre=?),?)";
+            "VALUES (?,?)";
 
     private static final String GET_PUBLISHER = "SELECT `id` FROM `publisher` WHERE publisher=?";
     private static final String ADD_PUBLISHER = "INSERT INTO `publisher`(`publisher`) VALUES (?)";
@@ -82,6 +82,9 @@ public class SqlBookDao implements BookDao {
 
     private static final String DELETE_BOOK = "DELETE FROM `book` WHERE id=? AND  total_amount=in_stock;";
 
+    private static final String INSERT_BOOK = "INSERT INTO `book`( `title`, `publish_date`, `page_count`, `ISBN`, " +
+            "`description`, `total_amount`, `cover`, `in_stock`, `publisher_id`) " +
+            "VALUES (?,?,?,?,?,?,?,?,?)";
 
     private SqlBookDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -223,26 +226,10 @@ public class SqlBookDao implements BookDao {
                 if (updateBook(connection, book) != 0) {
                     deleteBookAuthors(connection, book.getId());
                     deleteBookGenre(connection, book.getId());
-                    Publisher publisher = book.getPublisher();
-                    if (getPublisherByName(publisher.getPublisherName()).isEmpty()) {
-                        int publisherId = createPublisher(connection, book.getPublisher());
-                        publisher.setId(publisherId);
-                    }
-                    updateBookPublisher(connection, publisher, book.getId());
-                    Set<Genre> genres = book.getGenres();
-                    for (Genre genre : genres) {
-                        if (getGenreByName(genre.getGenre()).isEmpty()) {
-                            createGenre(connection, genre);
-                        }
-                        addGenreToBook(connection, genre.getGenre(), book.getId());
-                    }
-                    Set<Author> authors = book.getAuthor();
-                    for (Author author : authors) {
-                        if (getAuthorByName(author.getName()).isEmpty()) {
-                            createAuthor(connection, author);
-                        }
-                        addAuthorToBook(connection, author.getName(), book.getId());
-                    }
+                    linkPublisherWithBook(connection, book);
+                    updateBookPublisher(connection, book.getPublisher(), book.getId());
+                    linkGenresWithBook(connection, book.getGenres(), book.getId());
+                    linkAuthorsWithBook(connection, book.getAuthor(), book.getId());
                     connection.commit();
                     connection.setAutoCommit(true);
                     return Optional.of(true);
@@ -341,6 +328,50 @@ public class SqlBookDao implements BookDao {
         return result;
     }
 
+    @Override
+    public boolean createBook(Book book) {
+        boolean result = true;
+        try (Connection connection = connectionPool.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                linkPublisherWithBook(connection, book);
+                if (insertBook(connection, book) > 0) {
+                    linkGenresWithBook(connection, book.getGenres(), book.getId());
+                    linkAuthorsWithBook(connection, book.getAuthor(), book.getId());
+                } else {
+                    connection.rollback();
+                    result = false;
+                }
+                connection.commit();
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                connection.rollback();
+                connection.setAutoCommit(true);
+                log.error("SqlException in createBook() method", e);
+                throw new DaoRuntimeException("SqlException in SqlBookDao createBook() method", e);
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in attempt to get Connection", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao createBook() method", e);
+        }
+        return result;
+    }
+
+
+    private int insertBook(Connection connection, Book book) throws SQLException {
+        try (PreparedStatement ps = connection.prepareStatement(INSERT_BOOK)) {
+            ps.setString(1, book.getTitle());
+            ps.setDate(2, Date.valueOf(book.getPublishDate()));
+            ps.setInt(3, book.getPageCount());
+            ps.setString(4, book.getISBN());
+            ps.setString(5, book.getDescription());
+            ps.setInt(6, book.getTotalAmount());
+            ps.setString(7, book.getCoverPath());
+            ps.setInt(8, book.getInStock());
+            ps.setInt(9, book.getPublisher().getId());
+            return ps.executeUpdate();
+        }
+    }
 
     private int updateBook(Connection connection, Book book) throws SQLException {
         try (PreparedStatement ps = connection.prepareStatement(UPDATE_BOOK_INFO)) {
@@ -381,9 +412,9 @@ public class SqlBookDao implements BookDao {
         }
     }
 
-    private void addGenreToBook(Connection connection, String genreName, int bookId) throws SQLException {
+    private void addGenreToBook(Connection connection, int genreId, int bookId) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_GENRE_TO_BOOK)) {
-            preparedStatement.setString(1, genreName);
+            preparedStatement.setInt(1, genreId);
             preparedStatement.setInt(2, bookId);
             preparedStatement.executeUpdate();
         }
@@ -403,17 +434,51 @@ public class SqlBookDao implements BookDao {
         }
     }
 
-    private void addAuthorToBook(Connection connection, String authorName, int bookId) throws SQLException {
+    private void addAuthorToBook(Connection connection, int authorId, int bookId) throws SQLException {
         try (PreparedStatement ps = connection.prepareStatement(ADD_AUTHOR_TO_BOOK)) {
             ps.setInt(1, bookId);
-            ps.setString(2, authorName);
+            ps.setInt(2, authorId);
             ps.executeUpdate();
+        }
+    }
+
+    private void linkGenresWithBook(Connection connection, Set<Genre> genres, int bookId) throws SQLException {
+        for (Genre genre : genres) {
+            Optional<Integer> genreByName = getGenreByName(genre.getGenre());
+            if (genreByName.isEmpty()) {
+                genre.setId(createGenre(connection, genre));
+            } else {
+                genre.setId(genreByName.get());
+            }
+            addGenreToBook(connection, genre.getId(), bookId);
+        }
+    }
+
+    private void linkAuthorsWithBook(Connection connection, Set<Author> authors, int bookId) throws SQLException {
+        for (Author author : authors) {
+            Optional<Integer> authorByName = getAuthorByName(author.getName());
+            if (authorByName.isEmpty()) {
+                author.setId(createAuthor(connection, author));
+            } else {
+                author.setId(authorByName.get());
+            }
+            addAuthorToBook(connection, author.getId(), bookId);
+        }
+    }
+
+    private void linkPublisherWithBook(Connection connection, Book book) throws SQLException {
+        Publisher publisher = book.getPublisher();
+        Optional<Integer> publisherByName = getPublisherByName(book.getPublisher().getPublisherName());
+        if (publisherByName.isEmpty()) {
+            publisher.setId(createPublisher(connection, publisher));
+        } else {
+            publisher.setId(publisherByName.get());
         }
     }
 
     private int createGenre(Connection connection, Genre genre) throws SQLException {
         try (PreparedStatement preparedStatement = connection
-                .prepareStatement(CREATE_GENRE, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                .prepareStatement(INSERT_GENRE, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, genre.getGenre());
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();

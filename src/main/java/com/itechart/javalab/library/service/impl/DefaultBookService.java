@@ -70,11 +70,7 @@ public class DefaultBookService implements BookService {
     @Override
     public Optional<Boolean> updateBookInfo(BookDto bookDto, Part part, String savePath) {
         Book book = Book.buildFrom(bookDto);
-        String nameForDb = null;
-        if (part != null) {
-            nameForDb = book.getId() + "." + FilenameUtils.getExtension(part.getSubmittedFileName());
-            book.setCoverPath(nameForDb);
-        }
+        String nameForDb = defineFileName(part, book);
         Optional<Boolean> updateResult = bookDao.updateBookInfo(book);
         if (part != null && updateResult.isPresent()) {
             if (part.getSize() != 0) {
@@ -97,5 +93,26 @@ public class DefaultBookService implements BookService {
         }
     }
 
+    @Override
+    public boolean createBook(BookDto bookDto, Part part, String savePath) {
+        Book book = Book.buildFrom(bookDto);
+        String nameForDb = defineFileName(part, book);
+        boolean createdResult = bookDao.createBook(book);
+        if (part!=null&&part.getSize() != 0 && createdResult) {
+            if (part.getSize() != 0) {
+                uploadFileService.uploadFile(savePath, part, nameForDb);
+            }
+        }
+        return createdResult;
+    }
+
+    private String defineFileName(Part part, Book book) {
+        String nameForDb = null;
+        if (part!=null&&part.getSize() != 0) {
+            nameForDb = book.getId() + "." + FilenameUtils.getExtension(part.getSubmittedFileName());
+            book.setCoverPath(nameForDb);
+        }
+        return nameForDb;
+    }
 
 }
