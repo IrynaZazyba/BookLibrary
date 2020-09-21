@@ -40,7 +40,7 @@ public class DefaultReaderService implements ReaderService {
     public boolean addBorrowStatus(BorrowRecordDto[] records) {
         List<BorrowRecord> borrowRecords = new ArrayList<>();
         Arrays.stream(records).forEach(record ->
-                borrowRecords.add(record.toModel()));
+                borrowRecords.add(record.toEditModel()));
         LocalDateTime current = LocalDateTime.now();
         borrowRecords.forEach(r -> {
             r.setReturnDate(current);
@@ -53,7 +53,7 @@ public class DefaultReaderService implements ReaderService {
     public boolean addBorrowRecords(BorrowRecordDto[] records) {
         List<BorrowRecord> borrowRecords = new ArrayList<>();
         Arrays.stream(records).forEach(record ->
-                borrowRecords.add(record.toModel()));
+                borrowRecords.add(record.toAddModel()));
         LocalDateTime current = LocalDateTime.now();
         borrowRecords.forEach(r -> {
             r.setBorrowDate(current);
@@ -67,7 +67,7 @@ public class DefaultReaderService implements ReaderService {
     public boolean changeBorrowStatus(BorrowRecordDto[] records) {
         List<BorrowRecord> borrowRecords = new ArrayList<>();
         Arrays.stream(records).forEach(record ->
-                borrowRecords.add(record.toModel()));
+                borrowRecords.add(record.toEditModel()));
         return readerDao.updateStatusBorrowRecords(borrowRecords);
     }
 

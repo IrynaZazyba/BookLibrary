@@ -14,6 +14,8 @@ public class GetFileCommand implements Command {
 
     private static final String REQUEST_FILE_NAME_PARAMETER = "name";
     private static final String SERVLET_CONTEXT_UPLOAD_PATH_PARAMETER = "fileUploadPath";
+    private static final String DEFAULT_UPLOAD_DIRECTORY = "/resources/img";
+    private static final String DEFAULT_BOOK_COVER = "book.png";
 
     public GetFileCommand() {
     }
@@ -22,14 +24,29 @@ public class GetFileCommand implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String fileName = request.getParameter(REQUEST_FILE_NAME_PARAMETER);
         String uploadDirectory = request.getServletContext().getInitParameter(SERVLET_CONTEXT_UPLOAD_PATH_PARAMETER);
+        String appPath=request.getServletContext().getRealPath("");
+        String uploadPath = appPath  + File.separator + uploadDirectory + File.separator + fileName;
+
+        File file = new File(uploadPath);
+        if (!file.exists()) {
+            uploadDirectory = DEFAULT_UPLOAD_DIRECTORY;
+            fileName = DEFAULT_BOOK_COVER;
+        }
+        displayFile(request, response, uploadDirectory, fileName);
+    }
+
+    private void displayFile(HttpServletRequest request, HttpServletResponse response,
+                                String uploadDirectory, String fileName) throws IOException {
         try (InputStream in = request.getServletContext()
                 .getResourceAsStream(uploadDirectory + File.separator + fileName);
              OutputStream out = response.getOutputStream()) {
-            byte[] buffer = in.readAllBytes();
-            response.setContentLength(buffer.length);
-            response.setContentType(request.getServletContext().getMimeType(fileName));
-            out.write(buffer);
-            out.flush();
+            if (in != null) {
+                byte[] buffer = in.readAllBytes();
+                response.setContentLength(buffer.length);
+                response.setContentType(request.getServletContext().getMimeType(fileName));
+                out.write(buffer);
+                out.flush();
+            }
         }
     }
 }

@@ -83,15 +83,16 @@ public class Book {
 
     public static Book buildFrom(BookDto bookDto) {
         int id = bookDto.getId();
-        String title = StringEscapeUtils.escapeHtml4(bookDto.getTitle());
+        String title = StringEscapeUtils.escapeHtml4(bookDto.getTitle().trim());
         LocalDate publishDate = LocalDate.parse(bookDto.getPublishDate());
         int pageCount = bookDto.getPageCount();
-        String isbn = StringEscapeUtils.escapeHtml4(bookDto.getIsbn());
-        String description = StringEscapeUtils.escapeHtml4(bookDto.getDescription());
+        String isbn = StringEscapeUtils.escapeHtml4(bookDto.getIsbn().trim());
+        String description = StringEscapeUtils.escapeHtml4(bookDto.getDescription().trim());
         int totalAmount = bookDto.getTotalAmount();
-        String publisherName = StringEscapeUtils.escapeHtml4(bookDto.getPublisher());
+        String publisherName = StringEscapeUtils.escapeHtml4(bookDto.getPublisher().trim());
         Set<Author> authors = Author.buildFrom(StringEscapeUtils.escapeHtml4(bookDto.getAuthor()));
         Set<Genre> genres = Genre.buildFrom(StringEscapeUtils.escapeHtml4(bookDto.getGenre()));
+        validateBook(pageCount, totalAmount);
         return Book.builder()
                 .id(id).title(title).publishDate(publishDate).pageCount(pageCount)
                 .ISBN(isbn).description(description).totalAmount(totalAmount)
@@ -108,5 +109,11 @@ public class Book {
                 .title(title)
                 .ISBN(isbn)
                 .build();
+    }
+
+    private static void validateBook(int pageCount, int totalAmount) {
+        if (pageCount <= 0 || totalAmount <= 0) {
+            throw new IllegalArgumentException("Illegal page count value");
+        }
     }
 }

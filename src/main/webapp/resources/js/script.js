@@ -92,8 +92,8 @@ function updateImageDisplay() {
 
     let curFiles = input.files;
     let image = document.createElement('img');
-    image.style.width = "200px";
-    image.style.height = "200px";
+    image.style.width = "240px";
+    image.style.height = "320px";
     if (curFiles[0] == null) {
         image.src = "img/book.png";
     } else {

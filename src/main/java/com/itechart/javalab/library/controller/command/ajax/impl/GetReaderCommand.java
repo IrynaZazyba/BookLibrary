@@ -17,7 +17,7 @@ import static com.itechart.javalab.library.controller.util.ResponseParameterName
 
 public class GetReaderCommand implements AjaxCommand {
 
-    private ReaderService readerService;
+    private final ReaderService readerService;
     private static final String READERS = "readers";
     private static final String REQUEST_PARAMETER_EMAIL = "email";
 

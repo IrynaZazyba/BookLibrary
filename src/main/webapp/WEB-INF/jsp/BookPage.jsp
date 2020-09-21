@@ -59,7 +59,6 @@
                             <label for="addBorrowTimePeriod" class="col-sm-5 col-form-label">Time period</label>
                             <div class="col">
                                 <select name="timePeriod" required class="form-control" id="addBorrowTimePeriod">
-                                    <option selected>Choose...</option>
                                     <option value="ONE">1</option>
                                     <option value="TWO">2</option>
                                     <option value="THREE">3</option>
@@ -188,12 +187,13 @@
                 </div>
                 <div class="preview">
                     <c:if test="${not empty requestScope.bookPageDto.book.coverPath}">
-                        <img style="width:250px;height: 250px"
+                        <img alt="cover" style="width:240px;height: 320px"
                              src="${pageContext.request.contextPath}/book/cover?name=${requestScope.bookPageDto.book.coverPath}">
                     </c:if>
                     <c:if test="${empty requestScope.bookPageDto.book.coverPath}">
-                        <img style="width:250px;height: 250px" src="/resources/img/book.png">
+                        <img alt="cover" style="width:240px;height: 320px" src="/resources/img/book.png">
                     </c:if>
+
                 </div>
             </form>
         </div>
@@ -202,7 +202,7 @@
                 <div class="form-group row">
                     <label for="title" class="col-sm-2 col-form-label"><b>title</b></label>
                     <div class="col-sm-10">
-                        <input type="text" name="title" class="form-control"
+                        <input type="text" name="title" class="form-control" required
                                value="${requestScope.bookPageDto.book.title}"
                                id="title">
                     </div>
@@ -212,7 +212,7 @@
                     <div class="col-sm-10">
                         <input type="text" name="author" class="form-control"
                                value="<vh:authors authors="${requestScope.bookPageDto.book.author}"/>"
-                               id="author"/>
+                               id="author" required/>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -220,17 +220,18 @@
                     <div class="col-sm-10">
                         <input type="text" name="publisher" class="form-control"
                                value="${requestScope.bookPageDto.book.publisher.publisherName}"
-                               id="publisher"/>
+                               id="publisher" required/>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="publishDate" class="col-sm-2 col-form-label"><b>publish date: </b></label>
                     <div class="col-sm-10">
-                        <input type="date" name="publishDate" class="form-control"
+                        <input type="date" required name="publishDate" class="form-control"
                                value="${requestScope.bookPageDto.book.publishDate}"
                                id="publishDate">
-
-
+                        <div class="invalid-feedback">
+                            Invalid date.
+                        </div>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -238,15 +239,18 @@
                     <div class="col-sm-10">
                         <input type="text" name="genre" class="form-control"
                                value="<vh:genres genres="${requestScope.bookPageDto.book.genres}"/>"
-                               id="genre"/>
+                               id="genre" required/>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="pageCount" class="col-sm-2 col-form-label"><b>page count: </b></label>
                     <div class="col-sm-10">
-                        <input type="text" name="pageCount" class="form-control"
+                        <input type="number" min="1" name="pageCount" class="form-control"
                                value="${requestScope.bookPageDto.book.pageCount}"
-                               id="pageCount"/>
+                               id="pageCount" required/>
+                        <div class="invalid-feedback">
+                            Invalid data.
+                        </div>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -254,15 +258,17 @@
                     <div class="col-sm-10">
                         <input data-bv-isbn="true" type="text" name="isbn" class="form-control"
                                value="${requestScope.bookPageDto.book.ISBN}"
-                               id="isbn"/>
+                               id="isbn" required/>
+                        <div class="invalid-feedback">
+                            Invalid data.
+                        </div>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="description" class="col-sm-2 col-form-label"><b>description: </b></label>
                     <div class="col-sm-10">
                         <textarea class="form-control" name="description"
-                                  id="description">${requestScope.bookPageDto.book.description}
-                        </textarea>
+                                  id="description">${requestScope.bookPageDto.book.description}</textarea>
                         <div class="invalid-feedback">
                             Length is too long.
                         </div>
@@ -271,7 +277,7 @@
                 <div class="form-group row">
                     <label for="totalAmount" class="col-sm-2 col-form-label"><b>total amount: </b></label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control"
+                        <input type="text" class="form-control" required
                                value="${requestScope.bookPageDto.book.totalAmount}" id="totalAmount"/>
                         <input type="hidden" name="totalAmount" class="form-control"
                                value="" id="newTotalAmount"/>
@@ -303,16 +309,16 @@
     <h5>Borrow records list</h5>
     <c:choose>
 
-    <c:when test="${requestScope.bookPageDto.book.inStock>0}">
-        <button id="addBorrowRecord" type="button" style="margin: 5px 0" class="btn btn-outline-info"
-                onclick="showModalAddBorrow(this)">Add
-        </button>
-    </c:when>
-    <c:otherwise>
-        <button id="addBorrowRecord" disabled type="button" style="margin: 5px 0" class="btn btn-outline-info"
-                onclick="showModalAddBorrow(this)">Add
-        </button>
-    </c:otherwise>
+        <c:when test="${requestScope.bookPageDto.book.inStock>0}">
+            <button id="addBorrowRecord" type="button" style="margin: 5px 0" class="btn btn-outline-info"
+                    onclick="showModalAddBorrow(this)">Add
+            </button>
+        </c:when>
+        <c:otherwise>
+            <button id="addBorrowRecord" disabled type="button" style="margin: 5px 0" class="btn btn-outline-info"
+                    onclick="showModalAddBorrow(this)">Add
+            </button>
+        </c:otherwise>
     </c:choose>
 
     <table id="borrowRecordsList" class="table table-bordered table-sm">
@@ -327,7 +333,7 @@
         </thead>
         <tbody>
         <c:forEach var="borrowRecord" items="${requestScope.bookPageDto.borrowRecords}">
-            <tr id="${borrowRecord.id}" data-status="${borrowRecord.status}">
+            <tr id="${borrowRecord.id}" data-status="${borrowRecord.status}" data-period="">
                 <td class="email"> ${borrowRecord.reader.email}</td>
                 <td class="name">
                     <button type="button" onclick="showModalEditBorrow(this)"
@@ -347,7 +353,7 @@
     </table>
 
     <button type="button" class="btn btn-info add-button" onclick="saveChangesBookPage()">Save</button>
-    <button type="button" class="btn  btn-outline-danger">Discard</button>
+    <a href="${pageContext.request.contextPath}/books"><button type="button" class="btn  btn-outline-danger">Discard</button></a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

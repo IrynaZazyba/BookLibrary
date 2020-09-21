@@ -17,7 +17,7 @@ import static com.itechart.javalab.library.controller.util.ResponseParameterName
 @Log4j2
 public class DeleteBookCommand implements AjaxCommand {
 
-    private BookService bookService;
+    private final BookService bookService;
     private static final String REQUEST_PARAMETER_DELETED_BOOKS_ID = "deletedBooks";
     private static final String RESPONSE_MESSAGE_OK = "ok";
     private static final String RESPONSE_MESSAGE_PARTLY_FAILED = "partlyFailed";

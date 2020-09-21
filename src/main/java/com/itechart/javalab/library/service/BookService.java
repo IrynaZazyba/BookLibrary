@@ -25,5 +25,5 @@ public interface BookService {
 
     boolean deleteBooks(int[] booksId);
 
-    void createBook(BookDto bookDto, Part part, String savePath);
+    int createBook(BookDto bookDto, Part part, String savePath);
 }

@@ -28,6 +28,7 @@ public class DefaultUploadFileService implements UploadFileService {
         return instance;
     }
 
+    @Override
     public void uploadFile(String savePath, Part part, String fileName) {
         FileFormatValidator fileFormatValidator = FileFormatValidator.getInstance();
         if (!fileFormatValidator.validate(part.getSubmittedFileName())) {

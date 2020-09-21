@@ -83,8 +83,11 @@ public class SqlBookDao implements BookDao {
     private static final String DELETE_BOOK = "DELETE FROM `book` WHERE id=? AND  total_amount=in_stock;";
 
     private static final String INSERT_BOOK = "INSERT INTO `book`( `title`, `publish_date`, `page_count`, `ISBN`, " +
-            "`description`, `total_amount`, `cover`, `in_stock`, `publisher_id`) " +
-            "VALUES (?,?,?,?,?,?,?,?,?)";
+            "`description`, `total_amount`, `in_stock`, `publisher_id`) " +
+            "VALUES (?,?,?,?,?,?,?,?)";
+
+    private static final String UPDATE_BOOK_COVER = "UPDATE `book` SET `cover`=? WHERE id=?";
+
 
     private SqlBookDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -329,12 +332,13 @@ public class SqlBookDao implements BookDao {
     }
 
     @Override
-    public void createBook(Book book) {
+    public int createBook(Book book) {
+        int id;
         try (Connection connection = connectionPool.getConnection()) {
             try {
                 connection.setAutoCommit(false);
                 linkPublisherWithBook(connection, book);
-                int id = insertBook(connection, book);
+                id = insertBook(connection, book);
                 book.setId(id);
                 linkGenresWithBook(connection, book.getGenres(), book.getId());
                 linkAuthorsWithBook(connection, book.getAuthor(), book.getId());
@@ -350,8 +354,21 @@ public class SqlBookDao implements BookDao {
             log.error("SqlException in attempt to get Connection", e);
             throw new DaoRuntimeException("SqlException in SqlBookDao createBook() method", e);
         }
+        return id;
     }
 
+    @Override
+    public void updateBookCover(Book book) {
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(UPDATE_BOOK_COVER)) {
+            ps.setString(1, book.getCoverPath());
+            ps.setInt(2, book.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            log.error("SqlException in attempt to get Connection", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao createBook() method", e);
+        }
+    }
 
     private int insertBook(Connection connection, Book book) throws SQLException {
         int id = 0;
@@ -362,9 +379,8 @@ public class SqlBookDao implements BookDao {
             ps.setString(4, book.getISBN());
             ps.setString(5, book.getDescription());
             ps.setInt(6, book.getTotalAmount());
-            ps.setString(7, book.getCoverPath());
-            ps.setInt(8, book.getTotalAmount());
-            ps.setInt(9, book.getPublisher().getId());
+            ps.setInt(7, book.getTotalAmount());
+            ps.setInt(8, book.getPublisher().getId());
             ps.executeUpdate();
             ResultSet generatedKeys = ps.getGeneratedKeys();
             if (generatedKeys.next()) {

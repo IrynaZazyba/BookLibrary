@@ -91,8 +91,7 @@ function updateBookStatus() {
     let statusInput = document.getElementById("status");
 
     if (location.pathname === "/books/page") {
-
-
+        statusInput.value = `Available (${inStock} out of ${viewTotalAmount})`;
     } else if (inStock !== 0) {
         document.getElementById("addBorrowRecord").removeAttribute("disabled");
         statusInput.value = `Available (${inStock} out of ${viewTotalAmount})`;
@@ -179,7 +178,14 @@ function createNewBorrowRecord() {
     //get values from inputs
     let email = modalAddNewBorrowRecord.querySelector("#addBorrowEmail").value;
     let name = modalAddNewBorrowRecord.querySelector("#addBorrowName").value;
-    let timePeriod = modalAddNewBorrowRecord.querySelector("#addBorrowTimePeriod").value;
+    let timePeriodToPage = modalAddNewBorrowRecord.querySelector("#addBorrowTimePeriod").value;
+
+    let timePeriod = 1;
+    modalAddNewBorrowRecord.querySelectorAll("#addBorrowTimePeriod option").forEach(e => {
+        if (e.selected) {
+            timePeriod = e.innerHTML;
+        }
+    });
     let comment = modalAddNewBorrowRecord.querySelector("#addBorrowComment").value;
 
     if (validateEmail(email) && validateName(name)) {
@@ -191,7 +197,7 @@ function createNewBorrowRecord() {
         //add new row to the borrow records list table
         let tbodyPartOfThTable = document.querySelector("#borrowRecordsList tbody");
         tbodyPartOfThTable.insertAdjacentHTML("beforeend",
-            createRowToBorrowRecordsListTable(email, name, borrowDate, dueDate, comment, timePeriod));
+            createRowToBorrowRecordsListTable(email, name, borrowDate, dueDate, comment, timePeriodToPage));
         inStock--;
         insertedBorrowRecordId -= 1;
 
@@ -216,8 +222,7 @@ function createNewBorrowRecord() {
 let insertedBorrowRecordId = -1;
 
 function createRowToBorrowRecordsListTable(email, name, borrowDare, dueDate, comment, period) {
-    let html = "";
-    html = "<tr id='" + insertedBorrowRecordId + "' data-period='" + period + "'>"
+    return "<tr id='" + insertedBorrowRecordId + "' data-period='" + period + "'>"
         + "<td class='email'>" + email + "</td>"
         + "<td class='name'><button type='button' disabled onclick='showModalEditBorrow(this)' class='btn btn-link'>" + name + ""
         + "</button></td>"
@@ -226,8 +231,6 @@ function createRowToBorrowRecordsListTable(email, name, borrowDare, dueDate, com
         + "<td class='returnDate'></td>"
         + "<td style=\"display:none\" class='comment'>Comment</td>"
         + "</tr>";
-    return html;
-
 }
 
 
@@ -281,7 +284,6 @@ $('.basicAutoComplete').autoComplete({
 
 $('.basicAutoComplete').on('autocomplete.select', function (evt, item) {
     let name;
-
     Array.from(readersJson).forEach(elem => {
 
         if (elem.email === item) {
@@ -295,15 +297,33 @@ let navBar = document.querySelector("#result");
 
 function saveChangesBookPage() {
 
+    document.querySelectorAll("#bookInfo input").forEach(e => {
+        if (e.classList.contains("is-invalid")) {
+            e.classList.remove("is-invalid");
+        }
+    });
+
     navBar.innerHTML = "";
     document.getElementById("newTotalAmount").value = serverTotalAmount;
     let description = document.getElementById("description");
+    let publishDate = document.getElementById("publishDate");
+    let pageCount = document.getElementById("pageCount");
 
     if (description.classList.contains("is-invalid")) {
         description.classList.remove("is-invalid");
     }
+    console.log(publishDate);
+    let required = true;
+    document.querySelectorAll("#bookInfo input").forEach(e => {
+        if (e.value === "" && e.required) {
+            e.classList.add("is-invalid");
+            required = false;
+        }
+    });
 
-    if (validateTotalAmount() && validateDescriptionSize(description.value)) {
+    if (validateTotalAmount() && validateDescriptionSize(description.value) &&
+        validateBookPublishDate(publishDate.value) && validateBookCountPage(pageCount.value) &&
+        required) {
         let pathname = window.location.pathname;
         if (pathname === "/books/page") {
             createBook();
@@ -311,11 +331,22 @@ function saveChangesBookPage() {
             updateBookInfo();
         }
     } else {
-        if (!validateDescriptionSize(description)) {
+        if (!validateBookPublishDate(publishDate.value)) {
+            publishDate.classList.add("is-invalid");
+        }
+
+        if (!validateDescriptionSize(description.value)) {
             description.classList.add("is-invalid");
         }
-        let navBar = document.querySelector("result");
-        navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Invalid parameters"));
+
+        if (!validateBookCountPage(pageCount.value)) {
+            pageCount.classList.add("is-invalid");
+        }
+
+        if (!validateTotalAmount()) {
+            let navBar = document.querySelector("result");
+            navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Invalid parameters"));
+        }
     }
 
 }
@@ -349,7 +380,10 @@ async function createBook() {
     });
 
     if (response.ok) {
-        navBar.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was created successfully"));
+        let json = await response.json();
+        if (json.hasOwnProperty("id")) {
+            window.location.replace("/books/" + json.id);
+        }
     } else {
         navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't created. Please, try later."));
     }
@@ -572,10 +606,17 @@ function validateName(name) {
 
 function validateEmail(email) {
     let pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    // return email.length !== 0 && pattern.test(email);
-    return true;
+    return email.length !== 0 && pattern.test(email);
 }
 
 function validateDescriptionSize(description) {
-    return description.length < 350;
+    return description.length < 340;
+}
+
+function validateBookPublishDate(date) {
+    return /^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/.test(date);
+}
+
+function validateBookCountPage(countPage) {
+    return countPage > 0;
 }

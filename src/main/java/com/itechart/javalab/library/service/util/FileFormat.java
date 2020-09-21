@@ -5,5 +5,5 @@ package com.itechart.javalab.library.service.util;
  * available for download.
  */
 public enum FileFormat {
-    JPG, PNG;
+    JPG, PNG
 }
