@@ -22,13 +22,15 @@ public class AuthorsToStringTag extends TagSupport {
     public int doStartTag() throws JspException {
         JspWriter out = pageContext.getOut();
         List<String> authorNames = new ArrayList<>();
-        authors.forEach(author -> authorNames.add(author.getName()));
-        String authors = StringUtils.join(authorNames, ", ");
-        try {
-            out.write(authors);
-        } catch (IOException e) {
-            log.error("IOException in doStartTag() method AuthorsToStringTag class", e);
-            throw new JspException("Exception in attempt to write authors with help by tag", e);
+        if (authors != null) {
+            authors.forEach(author -> authorNames.add(author.getName()));
+            String authors = StringUtils.join(authorNames, ", ");
+            try {
+                out.write(authors);
+            } catch (IOException e) {
+                log.error("IOException in doStartTag() method AuthorsToStringTag class", e);
+                throw new JspException("Exception in attempt to write authors with help by tag", e);
+            }
         }
         return SKIP_BODY;
     }

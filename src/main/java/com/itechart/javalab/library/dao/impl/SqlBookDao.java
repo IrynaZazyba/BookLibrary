@@ -329,19 +329,15 @@ public class SqlBookDao implements BookDao {
     }
 
     @Override
-    public boolean createBook(Book book) {
-        boolean result = true;
+    public void createBook(Book book) {
         try (Connection connection = connectionPool.getConnection()) {
             try {
                 connection.setAutoCommit(false);
                 linkPublisherWithBook(connection, book);
-                if (insertBook(connection, book) > 0) {
-                    linkGenresWithBook(connection, book.getGenres(), book.getId());
-                    linkAuthorsWithBook(connection, book.getAuthor(), book.getId());
-                } else {
-                    connection.rollback();
-                    result = false;
-                }
+                int id = insertBook(connection, book);
+                book.setId(id);
+                linkGenresWithBook(connection, book.getGenres(), book.getId());
+                linkAuthorsWithBook(connection, book.getAuthor(), book.getId());
                 connection.commit();
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
@@ -354,12 +350,12 @@ public class SqlBookDao implements BookDao {
             log.error("SqlException in attempt to get Connection", e);
             throw new DaoRuntimeException("SqlException in SqlBookDao createBook() method", e);
         }
-        return result;
     }
 
 
     private int insertBook(Connection connection, Book book) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(INSERT_BOOK)) {
+        int id = 0;
+        try (PreparedStatement ps = connection.prepareStatement(INSERT_BOOK, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, book.getTitle());
             ps.setDate(2, Date.valueOf(book.getPublishDate()));
             ps.setInt(3, book.getPageCount());
@@ -367,9 +363,14 @@ public class SqlBookDao implements BookDao {
             ps.setString(5, book.getDescription());
             ps.setInt(6, book.getTotalAmount());
             ps.setString(7, book.getCoverPath());
-            ps.setInt(8, book.getInStock());
+            ps.setInt(8, book.getTotalAmount());
             ps.setInt(9, book.getPublisher().getId());
-            return ps.executeUpdate();
+            ps.executeUpdate();
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                id = generatedKeys.getInt(1);
+            }
+            return id;
         }
     }
 

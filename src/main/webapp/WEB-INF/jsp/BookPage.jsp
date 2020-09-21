@@ -261,7 +261,7 @@
                     <label for="description" class="col-sm-2 col-form-label"><b>description: </b></label>
                     <div class="col-sm-10">
                         <textarea class="form-control" name="description"
-                                  id="description">${requestScope.bookPageDto.book.description}"
+                                  id="description">${requestScope.bookPageDto.book.description}
                         </textarea>
                         <div class="invalid-feedback">
                             Length is too long.
@@ -301,16 +301,19 @@
 
 
     <h5>Borrow records list</h5>
-    <c:if test="${requestScope.bookPageDto.book.inStock>0}">
+    <c:choose>
+
+    <c:when test="${requestScope.bookPageDto.book.inStock>0}">
         <button id="addBorrowRecord" type="button" style="margin: 5px 0" class="btn btn-outline-info"
                 onclick="showModalAddBorrow(this)">Add
         </button>
-    </c:if>
-    <c:if test="${requestScope.bookPageDto.book.inStock==0}">
+    </c:when>
+    <c:otherwise>
         <button id="addBorrowRecord" disabled type="button" style="margin: 5px 0" class="btn btn-outline-info"
                 onclick="showModalAddBorrow(this)">Add
         </button>
-    </c:if>
+    </c:otherwise>
+    </c:choose>
 
     <table id="borrowRecordsList" class="table table-bordered table-sm">
         <thead>

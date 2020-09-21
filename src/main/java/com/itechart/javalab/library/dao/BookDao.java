@@ -32,5 +32,5 @@ public interface BookDao {
 
     boolean deleteBooks(int[] bookId);
 
-    boolean createBook(Book book);
+    void createBook(Book book);
 }

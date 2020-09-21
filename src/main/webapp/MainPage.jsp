@@ -17,7 +17,8 @@
 
     <div class="row">
         <div class="col-8">
-            <button type="button" class="btn  btn-info add-button">Add</button>
+            <a href="${pageContext.request.contextPath}/books/page">
+                <button type="button" class="btn  btn-info add-button">Add</button></a>
             <button type="button" onclick="deleteBooks()"  class="btn  btn-outline-danger">Remove</button>
         </div>
         <div class="col-auto">

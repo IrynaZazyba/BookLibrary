@@ -94,16 +94,15 @@ public class DefaultBookService implements BookService {
     }
 
     @Override
-    public boolean createBook(BookDto bookDto, Part part, String savePath) {
+    public void createBook(BookDto bookDto, Part part, String savePath) {
         Book book = Book.buildFrom(bookDto);
         String nameForDb = defineFileName(part, book);
-        boolean createdResult = bookDao.createBook(book);
-        if (part!=null&&part.getSize() != 0 && createdResult) {
+        bookDao.createBook(book);
+        if (part!=null&&part.getSize() != 0 ) {
             if (part.getSize() != 0) {
                 uploadFileService.uploadFile(savePath, part, nameForDb);
             }
         }
-        return createdResult;
     }
 
     private String defineFileName(Part part, Book book) {

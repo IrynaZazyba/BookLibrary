@@ -90,7 +90,10 @@ function updateBookStatus() {
 
     let statusInput = document.getElementById("status");
 
-    if (inStock !== 0) {
+    if (location.pathname === "/books/page") {
+
+
+    } else if (inStock !== 0) {
         document.getElementById("addBorrowRecord").removeAttribute("disabled");
         statusInput.value = `Available (${inStock} out of ${viewTotalAmount})`;
     } else {
@@ -292,20 +295,24 @@ let navBar = document.querySelector("#result");
 
 function saveChangesBookPage() {
 
-    navBar.innerHTML="";
+    navBar.innerHTML = "";
     document.getElementById("newTotalAmount").value = serverTotalAmount;
-    let description=document.getElementById("description");
+    let description = document.getElementById("description");
 
-    if(description.classList.contains("is-invalid")){
+    if (description.classList.contains("is-invalid")) {
         description.classList.remove("is-invalid");
     }
 
-    if (validateTotalAmount()&&validateDescriptionSize(description.value)) {
-        updateBookInfo();
+    if (validateTotalAmount() && validateDescriptionSize(description.value)) {
+        let pathname = window.location.pathname;
+        if (pathname === "/books/page") {
+            createBook();
+        } else {
+            updateBookInfo();
+        }
     } else {
-
-        if(!validateDescriptionSize(description)){
-           description.classList.add("is-invalid");
+        if (!validateDescriptionSize(description)) {
+            description.classList.add("is-invalid");
         }
         let navBar = document.querySelector("result");
         navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Invalid parameters"));
@@ -313,11 +320,8 @@ function saveChangesBookPage() {
 
 }
 
-async function updateBookInfo() {
-
-    let bookInfoForm = document.getElementById("bookInfo");
-
-    let bookDto = {
+function parseBook(bookInfoForm) {
+    return {
         id: bookInfoForm.bookId.value.trim(),
         title: bookInfoForm.title.value.trim(),
         publisher: bookInfoForm.publisher.value.trim(),
@@ -329,8 +333,33 @@ async function updateBookInfo() {
         description: bookInfoForm.description.value.trim(),
         totalAmount: serverTotalAmount,
     };
+}
 
-    let imageForm=document.getElementById("cover");
+async function createBook() {
+    let bookInfoForm = document.getElementById("bookInfo");
+    let bookDto = parseBook(bookInfoForm);
+
+    let imageForm = document.getElementById("cover");
+    let requestBody = new FormData(imageForm);
+    requestBody.append("bookDto", JSON.stringify(bookDto));
+
+    let response = await fetch("/ajax/books", {
+        method: 'POST',
+        body: requestBody,
+    });
+
+    if (response.ok) {
+        navBar.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was created successfully"));
+    } else {
+        navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't created. Please, try later."));
+    }
+}
+
+async function updateBookInfo() {
+    let bookInfoForm = document.getElementById("bookInfo");
+    let bookDto = parseBook(bookInfoForm);
+
+    let imageForm = document.getElementById("cover");
     let requestBody = new FormData(imageForm);
     requestBody.append("bookDto", JSON.stringify(bookDto));
 
@@ -543,10 +572,10 @@ function validateName(name) {
 
 function validateEmail(email) {
     let pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-   // return email.length !== 0 && pattern.test(email);
+    // return email.length !== 0 && pattern.test(email);
     return true;
 }
 
-function validateDescriptionSize (description) {
-    return description.length<350;
+function validateDescriptionSize(description) {
+    return description.length < 350;
 }

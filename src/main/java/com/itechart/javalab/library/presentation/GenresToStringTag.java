@@ -23,14 +23,15 @@ public class GenresToStringTag extends TagSupport {
     public int doStartTag() throws JspException {
         JspWriter out = pageContext.getOut();
         List<String> genreNames = new ArrayList<>();
-        genres.forEach(genre -> genreNames.add(genre.getGenre()));
-        String genresToString = StringUtils.join(genreNames, ", ");
-
-        try {
-            out.write(genresToString);
-        } catch (IOException e) {
-            log.error("IOException in doStartTag() method GenresToStringTag class", e);
-            throw new JspException("Exception in attempt to write genres with help by tag", e);
+        if(genres!=null) {
+            genres.forEach(genre -> genreNames.add(genre.getGenre()));
+            String genresToString = StringUtils.join(genreNames, ", ");
+            try {
+                out.write(genresToString);
+            } catch (IOException e) {
+                log.error("IOException in doStartTag() method GenresToStringTag class", e);
+                throw new JspException("Exception in attempt to write genres with help by tag", e);
+            }
         }
         return SKIP_BODY;
     }

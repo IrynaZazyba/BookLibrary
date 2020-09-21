@@ -8,18 +8,22 @@ import com.itechart.javalab.library.model.Book;
 import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
 import com.itechart.javalab.library.service.impl.DefaultBookService;
+import com.itechart.javalab.library.service.impl.DefaultUploadFileService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import javax.servlet.http.Part;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public class DefaultBookServiceTest {
 
@@ -28,6 +32,7 @@ public class DefaultBookServiceTest {
     @Mock
     private BookDao mockBookDao = mock(SqlBookDao.class);
     private final BookService bookService = DefaultBookService.getInstance();
+    private  UploadFileService uploadFileService = mock(DefaultUploadFileService.class);
 
 
     @Test
@@ -200,40 +205,49 @@ public class DefaultBookServiceTest {
 
     @Test
     public void updateBookInfoPositive() {
-//        BookDto bookDto = BookDto.builder()
-//                .id(5)
-//                .title("Алые паруса")
-//                .publishDate("2019-03-01")
-//                .author("Александр Грин")
-//                .genre("Классика, проза")
-//                .pageCount(255)
-//                .totalAmount(5)
-//                .publisher("АСТ")
-//                .isbn("1547852145")
-//                .description("")
-//                .build();
-//        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-//        Mockito.when(mockBookDao.updateBookInfo(Book.buildFrom(bookDto))).thenReturn(Optional.of(true));
-//        Assert.assertEquals(bookService.updateBookInfo(bookDto), Optional.of(true));
+        BookDto bookDto = BookDto.builder()
+                .id(5)
+                .title("Алые паруса")
+                .publishDate("2019-03-01")
+                .author("Александр Грин")
+                .genre("Классика, проза")
+                .pageCount(255)
+                .totalAmount(5)
+                .publisher("АСТ")
+                .isbn("1547852145")
+                .description("")
+                .build();
+        String anyPath = "/book";
+        String fileName = "5.png";
+        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
+        Mockito.when(mockBookDao.updateBookInfo(Book.buildFrom(bookDto))).thenReturn(Optional.of(true));
+        doNothing().when(uploadFileService)
+                .uploadFile(eq(anyPath), Mockito.any(Part.class), eq(fileName));
+        Assert.assertEquals(bookService.updateBookInfo(bookDto, Mockito.any(Part.class), fileName),
+                Optional.of(true));
     }
 
     @Test
     public void updateBookInfoNegative() {
-//        BookDto bookDto = BookDto.builder()
-//                .id(5)
-//                .title("Алые паруса")
-//                .publishDate("2019-03-01")
-//                .author("Александр Грин")
-//                .genre("Классика, проза")
-//                .pageCount(255)
-//                .totalAmount(5)
-//                .publisher("АСТ")
-//                .isbn("1547852145")
-//                .description("")
-//                .build();
-//        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-//        Mockito.when(mockBookDao.updateBookInfo(Book.buildFrom(bookDto))).thenReturn(Optional.empty());
-//        Assert.assertEquals(Optional.empty(), bookService.updateBookInfo(bookDto));
+        BookDto bookDto = BookDto.builder()
+                .id(5)
+                .title("Алые паруса")
+                .publishDate("2019-03-01")
+                .author("Александр Грин")
+                .genre("Классика, проза")
+                .pageCount(255)
+                .totalAmount(5)
+                .publisher("АСТ")
+                .isbn("1547852145")
+                .description("")
+                .build();
+        String anyPath = "/book";
+        String fileName = "5.png";
+        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
+        Mockito.when(mockBookDao.updateBookInfo(Book.buildFrom(bookDto))).thenReturn(Optional.empty());
+        doNothing().when(uploadFileService)
+                .uploadFile(eq(anyPath), Mockito.any(Part.class), eq(fileName));
+        Assert.assertEquals(Optional.empty(), bookService.updateBookInfo(bookDto,Mockito.any(Part.class),fileName));
     }
 
 }
