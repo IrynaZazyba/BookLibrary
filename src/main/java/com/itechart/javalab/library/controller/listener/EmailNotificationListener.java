@@ -26,23 +26,12 @@ public class EmailNotificationListener implements ServletContextListener {
             JobDataMap jobDataMap = new JobDataMap();
             jobDataMap.put("path", sce.getServletContext().getRealPath("resources/template"));
 
-            JobDetail returnNotification = newJob(ReturnRemainder.class)
-                    .usingJobData(jobDataMap)
-                    .withIdentity("return-notification")
-                    .build();
-            SimpleTrigger returnTrigger = newTrigger().withIdentity("return-trigger")
-                    .startNow()
-                    .withSchedule(simpleSchedule().withIntervalInHours(24).repeatForever())
-                    .build();
+            JobDetail returnNotification = getJobDetail(jobDataMap, ReturnRemainder.class, "return-notification");
+            SimpleTrigger returnTrigger = getSimpleTrigger("return-trigger");
 
-            JobDetail delayNotification = newJob(DelayRemainder.class)
-                    .usingJobData(jobDataMap)
-                    .withIdentity("delay-notification")
-                    .build();
-            SimpleTrigger delayTrigger = newTrigger().withIdentity("delay-trigger")
-                    .startNow()
-                    .withSchedule(simpleSchedule().withIntervalInHours(24).repeatForever())
-                    .build();
+            JobDetail delayNotification = getJobDetail(jobDataMap, DelayRemainder.class, "delay-notification");
+            SimpleTrigger delayTrigger = getSimpleTrigger("delay-trigger");
+
             scheduler.scheduleJob(returnNotification, returnTrigger);
             scheduler.scheduleJob(delayNotification, delayTrigger);
         } catch (SchedulerException e) {
@@ -61,4 +50,19 @@ public class EmailNotificationListener implements ServletContextListener {
         }
     }
 
+    private SimpleTrigger getSimpleTrigger(String triggerName) {
+        return newTrigger().withIdentity(triggerName)
+                .startNow()
+                .withSchedule(simpleSchedule().withIntervalInHours(24).repeatForever())
+                .build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private JobDetail getJobDetail(JobDataMap jobDataMap, Class<?> jobClass, String identity) {
+        return newJob((Class<? extends Job>) jobClass)
+                .usingJobData(jobDataMap)
+                .withIdentity(identity)
+                .build();
+
+    }
 }

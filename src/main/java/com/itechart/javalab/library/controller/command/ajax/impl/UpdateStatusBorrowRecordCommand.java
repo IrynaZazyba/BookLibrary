@@ -3,6 +3,8 @@ package com.itechart.javalab.library.controller.command.ajax.impl;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
+import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
+import com.itechart.javalab.library.controller.util.json.JsonBuilder;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.service.ReaderService;
 import com.itechart.javalab.library.service.impl.DefaultReaderService;
@@ -19,12 +21,14 @@ import static com.itechart.javalab.library.controller.util.ResponseParameterName
 public class UpdateStatusBorrowRecordCommand implements AjaxCommand {
 
     private final ReaderService readerService;
+    private final JsonBuilder jsonBuilder;
     private static final String REQUEST_PARAMETER_UPDATED_STATUS = "updatedStatus";
     private static final String RESPONSE_MESSAGE_PARTLY_FAILED = "partlyFailed";
     private static final String RESPONSE_MESSAGE_OK = "ok";
 
     public UpdateStatusBorrowRecordCommand() {
         this.readerService = DefaultReaderService.getInstance();
+        this.jsonBuilder = JacksonJsonBuilder.getInstance();
     }
 
     @Override
@@ -37,15 +41,15 @@ public class UpdateStatusBorrowRecordCommand implements AjaxCommand {
             boolean result = readerService.changeBorrowStatus(records);
             if (result) {
                 response.setStatus(HttpServletResponse.SC_OK);
-                responseBody = addResponseBodyParameter(RESPONSE_PARAMETER_SUCCESS, RESPONSE_MESSAGE_OK);
+                responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_SUCCESS, RESPONSE_MESSAGE_OK);
             } else {
                 response.setStatus(HttpServletResponse.SC_OK);
-                responseBody = addResponseBodyParameter(RESPONSE_PARAMETER_MESSAGE, RESPONSE_MESSAGE_PARTLY_FAILED);
+                responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_MESSAGE, RESPONSE_MESSAGE_PARTLY_FAILED);
             }
         } catch (JsonParseException | JsonMappingException | IllegalArgumentException e) {
             log.error("Json transformation exception", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            responseBody = addResponseBodyParameter(RESPONSE_PARAMETER_ERROR, "Invalid parameters");
+            responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_ERROR, "Invalid parameters");
         }
         return responseBody;
     }

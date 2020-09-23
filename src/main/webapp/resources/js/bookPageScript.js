@@ -166,7 +166,6 @@ function createNewBorrowRecord() {
 
     let modalAddNewBorrowRecord = document.getElementById("addNewBorrowRecord");
 
-
     if (modalAddNewBorrowRecord.querySelector("#addBorrowEmail").classList.contains("is-invalid")) {
         modalAddNewBorrowRecord.querySelector("#addBorrowEmail").classList.remove("is-invalid")
     }
@@ -236,11 +235,9 @@ function createRowToBorrowRecordsListTable(email, name, borrowDare, dueDate, com
 
 function calculateEarliestDueDate() {
     let earliestReturnDate;
-
     let borrowRecords = document.querySelectorAll("tbody tr");
     borrowRecords.forEach(elem => {
         let returnDate = elem.querySelector(".returnDate").innerHTML.trim();
-
         if (!returnDate) {
             let dueDate = Date.parse(elem.querySelector(".dueDate").innerHTML);
             if (!earliestReturnDate) {
@@ -297,6 +294,8 @@ let navBar = document.querySelector("#result");
 
 function saveChangesBookPage() {
 
+    let cover = document.querySelector("#cover input");
+    let coverSize = cover.files[0].size;
     document.querySelectorAll("#bookInfo input").forEach(e => {
         if (e.classList.contains("is-invalid")) {
             e.classList.remove("is-invalid");
@@ -312,7 +311,11 @@ function saveChangesBookPage() {
     if (description.classList.contains("is-invalid")) {
         description.classList.remove("is-invalid");
     }
-    console.log(publishDate);
+
+    if (cover.classList.contains("is-invalid")) {
+        cover.classList.remove("is-invalid");
+    }
+
     let required = true;
     document.querySelectorAll("#bookInfo input").forEach(e => {
         if (e.value === "" && e.required) {
@@ -323,7 +326,7 @@ function saveChangesBookPage() {
 
     if (validateTotalAmount() && validateDescriptionSize(description.value) &&
         validateBookPublishDate(publishDate.value) && validateBookCountPage(pageCount.value) &&
-        required) {
+        validateBookCoverSize(coverSize) && required) {
         let pathname = window.location.pathname;
         if (pathname === "/books/page") {
             createBook();
@@ -343,6 +346,9 @@ function saveChangesBookPage() {
             pageCount.classList.add("is-invalid");
         }
 
+        if (!validateBookCoverSize(coverSize)) {
+            cover.classList.add("is-invalid");
+        }
         if (!validateTotalAmount()) {
             let navBar = document.querySelector("result");
             navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Invalid parameters"));
@@ -619,4 +625,38 @@ function validateBookPublishDate(date) {
 
 function validateBookCountPage(countPage) {
     return countPage > 0;
+}
+
+function validateBookCoverSize(size) {
+    return size < 1024 * 1024 * 2;
+}
+
+
+let input = document.getElementById('image_uploads');
+let preview = document.querySelector('.preview');
+input.style.display = "none";
+input.addEventListener('change', updateImageDisplay);
+
+function updateImageDisplay() {
+    while (preview.firstChild) {
+        preview.removeChild(preview.firstChild);
+    }
+
+    let curFiles = input.files;
+    let image = document.createElement('img');
+    image.style.width = "240px";
+    image.style.height = "320px";
+    if (curFiles[0] == null) {
+        image.src = "img/book.png";
+    } else {
+        if (!validateBookCoverSize(curFiles[0].size)) {
+            preview.insertAdjacentHTML("beforeend", addDangerNotification("Invalid cover size. Required 2MB."))
+        } else {
+            if (image.querySelector("div.alert") != null) {
+                image.querySelector("div.alert").remove();
+            }
+        }
+        image.src = window.URL.createObjectURL(curFiles[0]);
+    }
+    preview.appendChild(image);
 }

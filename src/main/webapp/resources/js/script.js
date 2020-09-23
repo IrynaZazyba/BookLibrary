@@ -74,45 +74,22 @@ async function hidePreviousResult() {
     document.querySelector("nav >ul.pagination").style.display = 'none';
 }
 
-async  function getCountRecordsSearchPage(obj){
+async function getCountRecordsSearchPage(obj) {
     document.getElementById("recordsPerPage").value = obj.value;
     document.querySelector("#searchForm button[type='submit']").click();
 }
 
 
-let input = document.getElementById('image_uploads');
-let preview = document.querySelector('.preview');
-input.style.display = "none";
-input.addEventListener('change', updateImageDisplay);
-
-function updateImageDisplay() {
-    while (preview.firstChild) {
-        preview.removeChild(preview.firstChild);
-    }
-
-    let curFiles = input.files;
-    let image = document.createElement('img');
-    image.style.width = "240px";
-    image.style.height = "320px";
-    if (curFiles[0] == null) {
-        image.src = "img/book.png";
-    } else {
-        image.src = window.URL.createObjectURL(curFiles[0]);
-    }
-    preview.appendChild(image);
-}
-
-
 async function deleteBooks() {
-    let deletedBookIds=[];
+    let deletedBookIds = [];
     const deleteInputs = document.querySelectorAll(".mainPageTable tbody th input[id^='delete']");
-    deleteInputs.forEach(input=>{
-        if(input.checked){
+    deleteInputs.forEach(input => {
+        if (input.checked) {
             deletedBookIds.push(input.value);
         }
     });
 
-    let formData=new FormData;
+    let formData = new FormData;
     formData.append("deletedBooks", JSON.stringify(deletedBookIds));
 
     let response = await fetch("/ajax/books", {

@@ -98,7 +98,6 @@
             <ul class="pagination pagination-sm pagination_center">
                 <c:forEach var="i" begin="1" end="${requestScope.mainPageDto.countPages}">
                     <c:if test="${i==requestScope.mainPageDto.currentPage}">
-
                         <li class="page-item page-item-change active" aria-current="page">
                                                 <span class="page-link">${i}
                                                             <span class="sr-only">(current)</span>
