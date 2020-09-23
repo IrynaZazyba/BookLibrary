@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookDao {
+public interface DefaultBookDao {
 
     Optional<List<Book>> getBooks(Paginator paginator, boolean isAvailableOnly);
 
@@ -22,17 +22,4 @@ public interface BookDao {
 
     Optional<LocalDateTime> getEarliestDueDate(int bookId);
 
-    Optional<Boolean> updateBookInfo(Book book);
-
-    Optional<Integer> getAuthorByName(String name);
-
-    Optional<Integer> getGenreByName(String genre);
-
-    Optional<Integer> getPublisherByName(String name);
-
-    boolean deleteBooks(int[] bookId);
-
-    int createBook(Book book);
-
-    void updateBookCover(Book book);
 }

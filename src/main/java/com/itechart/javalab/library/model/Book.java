@@ -11,9 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
@@ -109,6 +107,21 @@ public class Book {
                 .title(title)
                 .ISBN(isbn)
                 .build();
+    }
+
+    public static List<Book> parseBooks(ResultSet resultSet) throws SQLException {
+        Map<Integer, Book> tempBooks = new HashMap<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("book.id");
+            if (tempBooks.containsKey(id)) {
+                Book existsBook = tempBooks.get(id);
+                existsBook.getAuthor().add(Author.buildFrom(resultSet));
+            } else {
+                Book book = Book.extractForMainPage(resultSet);
+                tempBooks.put(id, book);
+            }
+        }
+        return new ArrayList<>((tempBooks.values()));
     }
 
     private static void validateBook(int pageCount, int totalAmount) {

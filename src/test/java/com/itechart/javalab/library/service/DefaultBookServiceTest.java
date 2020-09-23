@@ -1,6 +1,6 @@
 package com.itechart.javalab.library.service;
 
-import com.itechart.javalab.library.dao.BookDao;
+import com.itechart.javalab.library.dao.CrudBookDao;
 import com.itechart.javalab.library.dao.impl.SqlBookDao;
 import com.itechart.javalab.library.dto.BookDto;
 import com.itechart.javalab.library.model.Author;
@@ -28,7 +28,7 @@ public class DefaultBookServiceTest {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Mock
-    private BookDao mockBookDao = mock(SqlBookDao.class);
+    private CrudBookDao mockBookDao = mock(SqlBookDao.class);
     private final BookService bookService = DefaultBookService.getInstance();
     private final UploadFileService uploadFileService = mock(DefaultUploadFileService.class);
 
