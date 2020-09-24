@@ -1,9 +1,9 @@
 package com.itechart.javalab.library.service.impl;
 
-import com.itechart.javalab.library.dao.CrudBookDao;
-import com.itechart.javalab.library.dao.DefaultBookDao;
-import com.itechart.javalab.library.dao.impl.SqlCrudBookDao;
-import com.itechart.javalab.library.dao.impl.SqlDefaultBookDao;
+import com.itechart.javalab.library.dao.AlterBookDao;
+import com.itechart.javalab.library.dao.ReceiveBookDao;
+import com.itechart.javalab.library.dao.impl.SqlAlterBookDao;
+import com.itechart.javalab.library.dao.impl.SqlReceiveBookDao;
 import com.itechart.javalab.library.dto.BookDto;
 import com.itechart.javalab.library.model.Book;
 import com.itechart.javalab.library.model.BookFilter;
@@ -18,15 +18,15 @@ import java.util.Optional;
 
 public class DefaultBookService implements BookService {
 
-    private final CrudBookDao crudBookDao;
-    private final DefaultBookDao defaultBookDao;
+    private final AlterBookDao alterBookDao;
+    private final ReceiveBookDao receiveBookDao;
 
     private final UploadFileService uploadFileService;
     private static volatile BookService instance;
 
-    private DefaultBookService(CrudBookDao crudBookDao, DefaultBookDao defaultBookDao, UploadFileService fileService) {
-        this.crudBookDao = crudBookDao;
-        this.defaultBookDao = defaultBookDao;
+    private DefaultBookService(AlterBookDao alterBookDao, ReceiveBookDao defaultBookDao, UploadFileService fileService) {
+        this.alterBookDao = alterBookDao;
+        this.receiveBookDao = defaultBookDao;
         this.uploadFileService = fileService;
     }
 
@@ -34,8 +34,8 @@ public class DefaultBookService implements BookService {
         if (instance == null) {
             synchronized (BookService.class) {
                 if (instance == null) {
-                    instance = new DefaultBookService(SqlCrudBookDao.getInstance(),
-                            SqlDefaultBookDao.getInstance(),
+                    instance = new DefaultBookService(SqlAlterBookDao.getInstance(),
+                            SqlReceiveBookDao.getInstance(),
                             DefaultUploadFileService.getInstance());
                 }
             }
@@ -45,27 +45,27 @@ public class DefaultBookService implements BookService {
 
     @Override
     public Optional<List<Book>> getBooks(Paginator paginator, boolean isAvailableOnly) {
-        return defaultBookDao.getBooks(paginator, isAvailableOnly);
+        return receiveBookDao.getBooks(paginator, isAvailableOnly);
     }
 
     @Override
     public Optional<Integer> getNumberBooksRecords(boolean isAvailableOnly) {
-        return defaultBookDao.getNumberBooksRecords(isAvailableOnly);
+        return receiveBookDao.getNumberBooksRecords(isAvailableOnly);
     }
 
     @Override
     public Optional<List<Book>> findBooksByParameters(Paginator paginator, BookFilter bookFilter) {
-        return defaultBookDao.findBooksByParameters(paginator, bookFilter);
+        return receiveBookDao.findBooksByParameters(paginator, bookFilter);
     }
 
     @Override
     public Optional<Integer> getNumberFoundBooksRecords(BookFilter bookFilter) {
-        return defaultBookDao.getNumberFoundBooksRecords(bookFilter);
+        return receiveBookDao.getNumberFoundBooksRecords(bookFilter);
     }
 
     @Override
     public Optional<Book> getBookById(int bookId) {
-        Optional<Book> bookById = defaultBookDao.getBookById(bookId);
+        Optional<Book> bookById = receiveBookDao.getBookById(bookId);
         if (bookById.isPresent()) {
             Book book = bookById.get();
             calculateBookStatus(book);
@@ -79,7 +79,7 @@ public class DefaultBookService implements BookService {
     public Optional<Boolean> updateBookInfo(BookDto bookDto, Part part, String savePath) {
         Book book = Book.buildFrom(bookDto);
         String nameForDb = defineFileName(part, book);
-        Optional<Boolean> updateResult = crudBookDao.updateBookInfo(book);
+        Optional<Boolean> updateResult = alterBookDao.updateBookInfo(book);
         if (part != null && updateResult.isPresent()) {
             if (part.getSize() != 0) {
                 uploadFileService.uploadFile(savePath, part, nameForDb);
@@ -90,26 +90,26 @@ public class DefaultBookService implements BookService {
 
     @Override
     public boolean deleteBooks(int[] booksId) {
-        return crudBookDao.deleteBooks(booksId);
+        return alterBookDao.deleteBooks(booksId);
     }
 
     private void calculateBookStatus(Book book) {
         if (book.getInStock() > 0) {
             book.setAvailableStatus();
         } else {
-            defaultBookDao.getEarliestDueDate(book.getId()).ifPresent(book::setUnavailableStatus);
+            receiveBookDao.getEarliestDueDate(book.getId()).ifPresent(book::setUnavailableStatus);
         }
     }
 
     @Override
     public int createBook(BookDto bookDto, Part part, String savePath) {
         Book book = Book.buildFrom(bookDto);
-        int id = crudBookDao.createBook(book);
+        int id = alterBookDao.createBook(book);
         book.setId(id);
         String cover = defineFileName(part, book);
         book.setCoverPath(cover);
         if (part != null && part.getSize() != 0) {
-            crudBookDao.updateBookCover(book);
+            alterBookDao.updateBookCover(book);
             uploadFileService.uploadFile(savePath, part, cover);
         }
         return id;

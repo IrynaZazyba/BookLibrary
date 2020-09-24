@@ -1,6 +1,6 @@
 package com.itechart.javalab.library.dao.impl;
 
-import com.itechart.javalab.library.dao.CrudBookDao;
+import com.itechart.javalab.library.dao.AlterBookDao;
 import com.itechart.javalab.library.dao.conn.ConnectionPool;
 import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
 import com.itechart.javalab.library.model.Author;
@@ -14,12 +14,12 @@ import java.util.Optional;
 import java.util.Set;
 
 @Log4j2
-public class SqlCrudBookDao implements CrudBookDao {
+public class SqlAlterBookDao implements AlterBookDao {
 
     private final ConnectionPool connectionPool;
-    private static volatile SqlCrudBookDao instance;
+    private static volatile SqlAlterBookDao instance;
 
-    private SqlCrudBookDao(ConnectionPool connectionPool) {
+    private SqlAlterBookDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
@@ -54,11 +54,11 @@ public class SqlCrudBookDao implements CrudBookDao {
 
     private static final String UPDATE_BOOK_COVER = "UPDATE `book` SET `cover`=? WHERE id=?";
 
-    public static CrudBookDao getInstance() {
+    public static AlterBookDao getInstance() {
         if (instance == null) {
-            synchronized (SqlCrudBookDao.class) {
+            synchronized (SqlAlterBookDao.class) {
                 if (instance == null) {
-                    instance = new SqlCrudBookDao(ConnectionPool.getInstance());
+                    instance = new SqlAlterBookDao(ConnectionPool.getInstance());
                 }
             }
         }

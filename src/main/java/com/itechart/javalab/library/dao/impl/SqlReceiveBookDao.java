@@ -1,6 +1,6 @@
 package com.itechart.javalab.library.dao.impl;
 
-import com.itechart.javalab.library.dao.DefaultBookDao;
+import com.itechart.javalab.library.dao.ReceiveBookDao;
 import com.itechart.javalab.library.dao.conn.ConnectionPool;
 import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
 import com.itechart.javalab.library.model.*;
@@ -14,12 +14,12 @@ import java.util.Optional;
 import java.util.Set;
 
 @Log4j2
-public class SqlDefaultBookDao implements DefaultBookDao {
+public class SqlReceiveBookDao implements ReceiveBookDao {
 
-    private static volatile SqlDefaultBookDao instance;
+    private static volatile SqlReceiveBookDao instance;
     private final ConnectionPool connectionPool;
 
-    private SqlDefaultBookDao(ConnectionPool connectionPool) {
+    private SqlReceiveBookDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
@@ -63,11 +63,11 @@ public class SqlDefaultBookDao implements DefaultBookDao {
             "INNER JOIN publisher ON publisher.id=book.publisher_id " +
             "WHERE book.id=?";
 
-    public static DefaultBookDao getInstance() {
+    public static ReceiveBookDao getInstance() {
         if (instance == null) {
-            synchronized (SqlDefaultBookDao.class) {
+            synchronized (SqlReceiveBookDao.class) {
                 if (instance == null) {
-                    instance = new SqlDefaultBookDao(ConnectionPool.getInstance());
+                    instance = new SqlReceiveBookDao(ConnectionPool.getInstance());
                 }
             }
         }
