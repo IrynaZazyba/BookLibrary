@@ -18,7 +18,7 @@ public class SqlReaderDao implements ReaderDao {
     private static volatile ReaderDao instance;
 
     private static final String GET_BOOK_READERS = "SELECT borrow_list.id, borrow_date, due_date, return_date, " +
-            "reader.id, reader.name, reader.email, status  FROM borrow_list " +
+            "reader.id, reader.name, reader.email, status,comment  FROM borrow_list " +
             "INNER JOIN reader on reader.id=borrow_list.reader_id " +
             "LEFT JOIN status on status.id=borrow_list.status_id " +
             "WHERE borrow_list.book_id=?";
@@ -42,7 +42,7 @@ public class SqlReaderDao implements ReaderDao {
             "LEFT JOIN status on borrow_list.status_id=status.id WHERE borrow_list.id=?";
 
     private static final String UPDATE_BORROW_RECORD_STATUS = "UPDATE `borrow_list` SET " +
-            "`status_id`=(SELECT id FROM status WHERE status=?) WHERE id=?";
+            "`status_id`=(SELECT id FROM status WHERE status=?), comment=? WHERE id=?";
 
     private static final String UPDATE_BOOK_STOCK_TOTAL = "UPDATE `book` SET total_amount=total_amount+?, " +
             "in_stock=in_stock+? WHERE id=?";
@@ -292,7 +292,8 @@ public class SqlReaderDao implements ReaderDao {
     private void updateBorrowRecordStatus(Connection connection, BorrowRecord record) throws SQLException {
         try (PreparedStatement psUpdateStatus = connection.prepareStatement(UPDATE_BORROW_RECORD_STATUS)) {
             psUpdateStatus.setString(1, record.getStatus().toString());
-            psUpdateStatus.setInt(2, record.getId());
+            psUpdateStatus.setString(2, record.getComment());
+            psUpdateStatus.setInt(3, record.getId());
             psUpdateStatus.executeUpdate();
         }
     }

@@ -27,31 +27,25 @@ public class SqlAlterBookDao implements AlterBookDao {
     private static final String INSERT_AUTHOR = "INSERT INTO `author`(name) VALUES (?)";
     private static final String ADD_AUTHOR_TO_BOOK = "INSERT INTO `book_has_author`(`book_id`, `author_id`) " +
             "VALUES (?,?)";
-
     private static final String GET_GENRE = "SELECT `id` FROM `genre` WHERE genre=?";
     private static final String INSERT_GENRE = "INSERT INTO `genre`(`genre`) VALUES (?)";
     private static final String ADD_GENRE_TO_BOOK = "INSERT INTO `genre_has_book`(`genre_id`, `book_id`) " +
             "VALUES (?,?)";
-
     private static final String GET_PUBLISHER = "SELECT `id` FROM `publisher` WHERE publisher=?";
     private static final String ADD_PUBLISHER = "INSERT INTO `publisher`(`publisher`) VALUES (?)";
-
     private final static String UPDATE_BOOK_INFO = "UPDATE `book` SET title=?, publish_date=?, page_count=?, " +
             "ISBN=?, description=?, total_amount=?,cover=?,in_stock=(?-(SELECT count(id) FROM `borrow_list` " +
             "WHERE book_id=? and return_date is NULL)) WHERE id=? AND ?>=total_amount-in_stock";
-
     private final static String UPDATE_BOOK_PUBLISHER = "UPDATE `book` SET " +
             "publisher_id=(SELECT id FROM publisher WHERE publisher=?) WHERE id=?";
-
     private final static String DELETE_BOOK_AUTHORS = "DELETE FROM `book_has_author` WHERE book_id=?";
     private final static String DELETE_BOOK_GENRE = "DELETE FROM `genre_has_book` WHERE book_id=?";
-
-    private static final String DELETE_BOOK = "DELETE FROM `book` WHERE id=? AND  total_amount=in_stock;";
+    private static final String DELETE_BOOK = "DELETE FROM `book` WHERE id=? AND  total_amount=in_stock";
+    private static final String DELETE_BORROW_RECORDS = "DELETE FROM `borrow_list` WHERE book_id=?";
 
     private static final String INSERT_BOOK = "INSERT INTO `book`( `title`, `publish_date`, `page_count`, `ISBN`, " +
             "`description`, `total_amount`, `in_stock`, `publisher_id`) " +
             "VALUES (?,?,?,?,?,?,?,?)";
-
     private static final String UPDATE_BOOK_COVER = "UPDATE `book` SET `cover`=? WHERE id=?";
 
     public static AlterBookDao getInstance() {
@@ -103,20 +97,21 @@ public class SqlAlterBookDao implements AlterBookDao {
     @Override
     public boolean deleteBooks(int[] bookId) {
         try (Connection connection = connectionPool.getConnection()) {
-            return executeDeleteBuTransaction(connection, bookId);
+            return executeDeleteByTransaction(connection, bookId);
         } catch (SQLException e) {
             log.error("SqlException in attempt to get Connection", e);
             throw new DaoRuntimeException("SqlException in SqlBookDao deleteBooks() method", e);
         }
     }
 
-    private boolean executeDeleteBuTransaction(Connection connection, int[] bookId) throws SQLException {
+    private boolean executeDeleteByTransaction(Connection connection, int[] bookId) throws SQLException {
         boolean result = true;
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BOOK)) {
             connection.setAutoCommit(false);
             for (int id : bookId) {
                 deleteBookGenre(connection, id);
                 deleteBookAuthors(connection, id);
+                deleteBorrowRecords(connection, id);
                 preparedStatement.setInt(1, id);
                 if (preparedStatement.executeUpdate() == 0) {
                     result = false;
@@ -214,6 +209,13 @@ public class SqlAlterBookDao implements AlterBookDao {
 
     private void deleteBookGenre(Connection connection, int bookId) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BOOK_GENRE)) {
+            preparedStatement.setInt(1, bookId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    private void deleteBorrowRecords(Connection connection, int bookId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BORROW_RECORDS)) {
             preparedStatement.setInt(1, bookId);
             preparedStatement.executeUpdate();
         }

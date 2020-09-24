@@ -1,7 +1,18 @@
 "use strict";
 
-async function doFilter(obj) {
+document.addEventListener("DOMContentLoaded", menuLinkHelper);
+function menuLinkHelper() {
+    let urlParams = window.location.protocol+"//"+window.location.host+window.location.pathname;
+    let navbar = document.querySelectorAll(".navbar li a");
+    navbar.forEach(elem => {
+        if (elem.href == urlParams) {
+            document.querySelector(".navbar li .active").classList.remove('active');
+            elem.classList.add('active');
+        }
+    });
+}
 
+async function doFilter(obj) {
     if (history.pushState) {
         let baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
         let newUrl;
@@ -33,15 +44,11 @@ async function getCountRecords(obj) {
     window.location.reload();
 }
 
-
 async function searchBookWithAvailableFilter(obj) {
-
     document.getElementById("isAvailableOnly").value = obj.checked;
     document.getElementById("currentPage").value = 1;
     document.querySelector("#searchForm button[type='submit']").click();
-
 }
-
 
 async function checkParameter() {
     let count = 0;
@@ -59,7 +66,6 @@ async function checkParameter() {
             navMenu.style.display = 'block';
         }
         document.getElementById("deleteBookButton").setAttribute("disabled", "disabled");
-
     } else {
         document.getElementById("searchForm").submit();
     }
@@ -79,8 +85,12 @@ async function getCountRecordsSearchPage(obj) {
     document.querySelector("#searchForm button[type='submit']").click();
 }
 
+function showDeleteAlert() {
+    $('#confirm-delete').modal('show');
+}
 
 async function deleteBooks() {
+    $('#confirm-delete').modal('hide');
     let deletedBookIds = [];
     const deleteInputs = document.querySelectorAll(".mainPageTable tbody th input[id^='delete']");
     deleteInputs.forEach(input => {
@@ -97,12 +107,18 @@ async function deleteBooks() {
         body: formData,
     });
 
-    const navBar = document.querySelector("nav");
+    const result = document.querySelector("#deleteNotification .modal-body");
     if (response.ok) {
-        navBar.insertAdjacentHTML('afterend', addSuccessNotification("Books was successfully deleted"));
+        result.insertAdjacentHTML('afterend', addSuccessNotification("Books was successfully deleted"));
     } else {
-        navBar.insertAdjacentHTML('afterend', addDangerNotification("Books  weren't delete. Please, check borrow list."));
+        result.insertAdjacentHTML('afterend', addDangerNotification("Please, check borrow list. Not all books weren't delete. "));
     }
+
+    $('#deleteNotification').modal('show');
+}
+
+function reloadBookPage() {
+    document.location.reload();
 }
 
 function addDangerNotification(message) {

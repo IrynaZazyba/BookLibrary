@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class JacksonJsonBuilder implements JsonBuilder {
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
     private final Map<String, Object> parameterMap = new HashMap<>();
     private static volatile JacksonJsonBuilder instance;
 

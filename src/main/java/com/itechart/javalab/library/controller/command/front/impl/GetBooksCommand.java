@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class GetBooksCommand implements Command {
 
-    private static final String REQUEST_SEARCH_PAGE_DTO = "mainPageDto";
+    private static final String REQUEST_SEARCH_PAGE_DTO = "dto";
     private static final String REQUEST_IS_AVAILABLE_VALUE = "isAvailableOnly";
     private static final String REQUEST_RECORDS_PER_PAGE = "recordsPerPage";
     private static final String REQUEST_CURRENT_PAGE = "currentPage";

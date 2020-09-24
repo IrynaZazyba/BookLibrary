@@ -22,7 +22,7 @@ public class SearchBooksCommand implements Command {
 
     private final BookService bookService;
 
-    private static final String REQUEST_SEARCH_PAGE_DTO = "searchPageDto";
+    private static final String REQUEST_SEARCH_PAGE_DTO = "dto";
     private static final String REQUEST_IS_AVAILABLE_VALUE = "isAvailableOnly";
     private static final String REQUEST_BOOK_TITLE_SEARCH_PARAMETER = "bookTitle";
     private static final String REQUEST_BOOK_AUTHOR_SEARCH_PARAMETER = "bookAuthor";

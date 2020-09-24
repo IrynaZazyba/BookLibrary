@@ -26,6 +26,10 @@ let changedStatusBorrowRecordIds = [];
 
 
 function editBorrowStatus() {
+    let statusSelect = document.querySelector("div[id='editBorrowRecord'] form select[name=status]");
+    let comment = document.querySelector("#editBorrowRecord #editBorrowComment").value;
+
+
     let invalidStatusValue = document.querySelector(
         "div[id='editBorrowRecord'] form select[name='status']  + div[class='invalid-feedback']");
 
@@ -44,29 +48,32 @@ function editBorrowStatus() {
     if (status !== "") {
         let editableLineId = document.querySelector("input[name='editableLineId']").value;
         let returnDateTd = document.querySelector("tr[id='" + editableLineId + "'] td[class='returnDate']");
-
-        if (editableLineId > 0 && !existedBorrowRecords.includes(editableLineId)) {
-            //add id of edited borrow records to array
-            editedBorrowingRecordsIds.push(editableLineId);
-        } else {
-            //add id borrow records to array where changed status
-            changedStatusBorrowRecordIds.push(editableLineId);
-        }
-
         let exStatus = document.querySelector("tbody tr[id='" + editableLineId + "']").getAttribute("data-status");
-        bookCountResolver(exStatus, status.toUpperCase());
-        updateBookStatus();
-        returnDateTd.innerHTML = dateFormatEn(new Date());
-        let tr = document.querySelector("tr[id='" + editableLineId + "']");
-        tr.setAttribute("data-status", status.toUpperCase());
-        $('#editBorrowRecord').modal('hide')
 
+        if (inStock == 0 && exStatus === "RETURNED" && status !== "RETURNED") {
+            statusSelect.classList.add('is-invalid');
+        } else {
+            if (editableLineId > 0 && !existedBorrowRecords.includes(editableLineId)) {
+                //add id of edited borrow records to array
+                editedBorrowingRecordsIds.push(editableLineId);
+            } else {
+                //add id borrow records to array where changed status
+                changedStatusBorrowRecordIds.push(editableLineId);
+            }
+
+            bookCountResolver(exStatus, status.toUpperCase());
+            returnDateTd.innerHTML = dateFormatEn(new Date());
+            let tr = document.querySelector("tr[id='" + editableLineId + "']");
+            tr.setAttribute("data-status", status.toUpperCase());
+            tr.querySelector(".comment").innerHTML = comment;
+            updateBookStatus();
+            $('#editBorrowRecord').modal('hide')
+        }
     }
 }
 
 
 function bookCountResolver(exStatus, newStatus) {
-
     if (exStatus !== "" && exStatus !== newStatus) {
 
         if (exStatus === "RETURNED" && newStatus !== "RETURNED") {
@@ -78,7 +85,9 @@ function bookCountResolver(exStatus, newStatus) {
             viewTotalAmount++;
         }
     } else {
-        if (newStatus !== "RETURNED") {
+        if (newStatus == exStatus) {
+
+        } else if (newStatus !== "RETURNED") {
             viewTotalAmount--;
         } else {
             inStock++;
@@ -86,13 +95,13 @@ function bookCountResolver(exStatus, newStatus) {
     }
 }
 
+
 function updateBookStatus() {
 
     let statusInput = document.getElementById("status");
-
     if (location.pathname === "/books/page") {
         statusInput.value = `Available (${inStock} out of ${viewTotalAmount})`;
-    } else if (inStock !== 0) {
+    } else if (inStock != 0) {
         document.getElementById("addBorrowRecord").removeAttribute("disabled");
         statusInput.value = `Available (${inStock} out of ${viewTotalAmount})`;
     } else {
@@ -108,6 +117,11 @@ function updateBookStatus() {
 
 function showModalEditBorrow(obj) {
     $('#editBorrowRecord').modal('show');
+    let statusSelect = document.querySelector("div[id='editBorrowRecord'] form select[name=status]");
+
+    if (statusSelect.classList.contains("is-invalid")) {
+        statusSelect.classList.remove("is-invalid");
+    }
 
     document.getElementById("editBorrowStatus").options[0].selected = true;
 
@@ -228,7 +242,7 @@ function createRowToBorrowRecordsListTable(email, name, borrowDare, dueDate, com
         + "<td class='borrowDate'>" + dateFormatEn(borrowDare) + "</td>"
         + "<td class='dueDate'>" + dateFormatEn(dueDate) + "</td>"
         + "<td class='returnDate'></td>"
-        + "<td style=\"display:none\" class='comment'>Comment</td>"
+        + "<td style=\"display:none\" class='comment'>" + comment + "</td>"
         + "</tr>";
 }
 
@@ -243,7 +257,6 @@ function calculateEarliestDueDate() {
             if (!earliestReturnDate) {
                 earliestReturnDate = dueDate;
             }
-
             if (dueDate < earliestReturnDate) {
                 earliestReturnDate = dueDate;
             }
@@ -290,19 +303,18 @@ $('.basicAutoComplete').on('autocomplete.select', function (evt, item) {
     document.getElementById("addBorrowName").value = name;
 
 });
-let navBar = document.querySelector("#result");
+let resultChanges = document.querySelector("#result");
 
 function saveChangesBookPage() {
 
     let cover = document.querySelector("#cover input");
-    let coverSize = cover.files[0].size;
     document.querySelectorAll("#bookInfo input").forEach(e => {
         if (e.classList.contains("is-invalid")) {
             e.classList.remove("is-invalid");
         }
     });
 
-    navBar.innerHTML = "";
+    resultChanges.innerHTML = "";
     document.getElementById("newTotalAmount").value = serverTotalAmount;
     let description = document.getElementById("description");
     let publishDate = document.getElementById("publishDate");
@@ -326,7 +338,7 @@ function saveChangesBookPage() {
 
     if (validateTotalAmount() && validateDescriptionSize(description.value) &&
         validateBookPublishDate(publishDate.value) && validateBookCountPage(pageCount.value) &&
-        validateBookCoverSize(coverSize) && required) {
+        validateBookCoverSize(cover) && required) {
         let pathname = window.location.pathname;
         if (pathname === "/books/page") {
             createBook();
@@ -346,15 +358,14 @@ function saveChangesBookPage() {
             pageCount.classList.add("is-invalid");
         }
 
-        if (!validateBookCoverSize(coverSize)) {
+        if (!validateBookCoverSize(cover)) {
             cover.classList.add("is-invalid");
         }
         if (!validateTotalAmount()) {
-            let navBar = document.querySelector("result");
-            navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Invalid parameters"));
+            let totalAmountInput = document.getElementById("totalAmount");
+            totalAmountInput.classList.add("is-invalid");
         }
     }
-
 }
 
 function parseBook(bookInfoForm) {
@@ -391,9 +402,12 @@ async function createBook() {
             window.location.replace("/books/" + json.id);
         }
     } else {
-        navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't created. Please, try later."));
+        resultChanges.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't created. Please, try later."));
     }
 }
+
+
+const updateBookPageResult = document.querySelector("#resultNotification .modal-body");
 
 async function updateBookInfo() {
     let bookInfoForm = document.getElementById("bookInfo");
@@ -409,98 +423,57 @@ async function updateBookInfo() {
     });
 
     if (response.ok) {
-        navBar.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was updated successfully"));
+        updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was updated successfully"));
     } else {
-        navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't updated. Please, try later."));
+        updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't updated. Please, try later."));
     }
 
     if (response.status != null) {
         returnBookToLibrary();
     }
-
 }
 
 async function returnBookToLibrary() {
-
     let formData = new FormData();
     let editedRecords = [];
 
     let borrowRecordsForm = document.querySelectorAll("#borrowRecordsList tbody tr");
     borrowRecordsForm.forEach(elem => {
-
         let id = elem.getAttribute("id");
-
         if (editedBorrowingRecordsIds.includes(id)) {
             let editedBorrowRecord = createEditBorrowRecord(elem, id);
             editedRecords.push(editedBorrowRecord);
         }
     });
 
-    formData.append("editedRecords", JSON.stringify(editedRecords));
+    if (editedRecords.length !== 0) {
+        formData.append("editedRecords", JSON.stringify(editedRecords));
 
-    let response = await fetch("/ajax/newStatus", {
-        method: 'PUT',
-        body: formData,
-    });
+        let response = await fetch("/ajax/newStatus", {
+            method: 'PUT',
+            body: formData,
+        });
 
-    editedBorrowingRecordsIds = [];
+        if (response.ok) {
+            editedBorrowingRecordsIds = [];
 
-    if (response.ok) {
-        let json = await response.json();
-        if (json !== null && json.hasOwnProperty("message")) {
-            navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Not all book was returned. Please, reload page to check."));
+            let json = await response.json();
+            if (json !== null && json.hasOwnProperty("message")) {
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all book was returned. Please, reload page to check."));
+            } else {
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was successfully returned"));
+            }
         } else {
-            navBar.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was successfully returned"));
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't return. Please, try later."));
+        }
+        if (response.status != null) {
+            changeBorrowRecordStatus();
         }
     } else {
-        navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't return. Please, try later."));
-    }
-
-    if (response.status != null) {
-        addNewBorrowRecord();
-    }
-}
-
-async function addNewBorrowRecord() {
-
-    let formData = new FormData();
-    let addedRecords = [];
-
-
-    let borrowRecordsForm = document.querySelectorAll("#borrowRecordsList tbody tr");
-    borrowRecordsForm.forEach(elem => {
-
-        let id = elem.getAttribute("id");
-        if (id < 0) {
-            let addedBorrowRecord = createAddBorrowRecord(elem);
-            addedRecords.push(addedBorrowRecord);
-        }
-    });
-
-    formData.append("addedRecords", JSON.stringify(addedRecords));
-
-    let response = await fetch("/ajax/record", {
-        method: 'POST',
-        body: formData,
-    });
-
-    if (response.ok) {
-        let json = await response.json();
-        if (json !== null && json.hasOwnProperty("message")) {
-            navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Not all borrow record was added. Please, reload page to check."));
-        } else {
-            navBar.insertAdjacentHTML('afterbegin', addSuccessNotification("New borrow record was successfully added"));
-        }
-    } else {
-        navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Borrow record wasn't add. Please, try later."));
-    }
-
-    if (response.status != null) {
         changeBorrowRecordStatus();
     }
 
 }
-
 
 async function changeBorrowRecordStatus() {
     let formData = new FormData();
@@ -515,26 +488,72 @@ async function changeBorrowRecordStatus() {
             updatedRecords.push(addedBorrowRecord);
         }
     });
+    if (updatedRecords.length !== 0) {
+        formData.append("updatedStatus", JSON.stringify(updatedRecords));
+        let response = await fetch("/ajax/oldStatus", {
+            method: 'PUT',
+            body: formData,
+        });
 
-    formData.append("updatedStatus", JSON.stringify(updatedRecords));
-    let response = await fetch("/ajax/oldStatus", {
-        method: 'PUT',
-        body: formData,
-    });
-
-    if (response.ok) {
-        let json = await response.json();
-        if (json !== null && json.hasOwnProperty("message")) {
-            navBar.insertAdjacentHTML('afterbegin', addDangerNotification("Not all statuses was updated. Please, reload page to check."));
+        if (response.ok) {
+            let json = await response.json();
+            if (json !== null && json.hasOwnProperty("message")) {
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all statuses was updated. Please, reload page to check."));
+            } else {
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Borrow record status was successfully changed"));
+            }
         } else {
-            navBar.insertAdjacentHTML('afterbegin', addSuccessNotification("Borrow record status was successfully changed"));
+            updateBookPageResult.insertAdjacentHTML('afterbegin',
+                addDangerNotification("Borrow record status was successfully changed. Please, try later."));
+        }
+
+        if (response.status != null) {
+            addNewBorrowRecord();
         }
     } else {
-        navBar.insertAdjacentHTML('afterbegin',
-            addDangerNotification("Borrow record status was successfully changed. Please, try later."));
+        addNewBorrowRecord();
     }
 }
 
+async function addNewBorrowRecord() {
+
+    let formData = new FormData();
+    let addedRecords = [];
+
+    let borrowRecordsForm = document.querySelectorAll("#borrowRecordsList tbody tr");
+    borrowRecordsForm.forEach(elem => {
+        let id = elem.getAttribute("id");
+        if (id < 0) {
+            let addedBorrowRecord = createAddBorrowRecord(elem);
+            addedRecords.push(addedBorrowRecord);
+        }
+    });
+    if (addedRecords.length !== 0) {
+        formData.append("addedRecords", JSON.stringify(addedRecords));
+
+        let response = await fetch("/ajax/record", {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (response.ok) {
+            let json = await response.json();
+            if (json !== null && json.hasOwnProperty("message")) {
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all borrow record was added. Please, reload page to check."));
+            } else {
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("New borrow record was successfully added"));
+            }
+        } else {
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Borrow record wasn't add. Please, try later."));
+        }
+    }
+    $('#resultNotification').modal('show');
+}
+
+
+function reloadBookPage() {
+    document.location.reload();
+}
 
 function addDangerNotification(message) {
     return "<div class='alert alert-danger' role='alert'>" + message + "</div>";
@@ -593,7 +612,6 @@ document.getElementById("totalAmount").addEventListener("change", (event) => {
         serverTotalAmount = newTotalAmount;
         viewTotalAmount = newTotalAmount;
         inStock = newTotalAmount - temp;
-
         updateBookStatus();
     }
 });
@@ -611,7 +629,7 @@ function validateName(name) {
 }
 
 function validateEmail(email) {
-    let pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    let pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return email.length !== 0 && pattern.test(email);
 }
 
@@ -627,8 +645,12 @@ function validateBookCountPage(countPage) {
     return countPage > 0;
 }
 
-function validateBookCoverSize(size) {
-    return size < 1024 * 1024 * 2;
+function validateBookCoverSize(cover) {
+    if (cover.files.length !== 0) {
+        return cover.files[0].size < 1024 * 1024 * 2;
+    } else {
+        return true;
+    }
 }
 
 
@@ -641,7 +663,6 @@ function updateImageDisplay() {
     while (preview.firstChild) {
         preview.removeChild(preview.firstChild);
     }
-
     let curFiles = input.files;
     let image = document.createElement('img');
     image.style.width = "240px";
@@ -649,7 +670,7 @@ function updateImageDisplay() {
     if (curFiles[0] == null) {
         image.src = "img/book.png";
     } else {
-        if (!validateBookCoverSize(curFiles[0].size)) {
+        if (!validateBookCoverSize(input)) {
             preview.insertAdjacentHTML("beforeend", addDangerNotification("Invalid cover size. Required 2MB."))
         } else {
             if (image.querySelector("div.alert") != null) {
@@ -660,3 +681,18 @@ function updateImageDisplay() {
     }
     preview.appendChild(image);
 }
+
+
+let today = new Date();
+let dd = today.getDate();
+let mm = today.getMonth() + 1; //January is 0!
+let yyyy = today.getFullYear();
+if (dd < 10) {
+    dd = '0' + dd
+}
+if (mm < 10) {
+    mm = '0' + mm
+}
+
+today = yyyy + '-' + mm + '-' + dd;
+document.getElementById("publishDate").setAttribute("max", today);

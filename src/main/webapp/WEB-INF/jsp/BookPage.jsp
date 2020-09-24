@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; UTF-8" pageEncoding="UTF-8" %>
 <html lang="en">
 <head>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -172,6 +173,26 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="resultNotification" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Notification</h5>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="reloadBookPage()" class="btn btn-primary">Back to page</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="container">
 
     <jsp:include page="parts/NavigationBar.jsp"/>
@@ -299,12 +320,8 @@
                 <input type="hidden" class="form-control" name="bookId"
                        value="${requestScope.bookPageDto.book.id}" id="bookId"/>
             </form>
-
-
         </div>
-
     </div>
-
 
     <h5>Borrow records list</h5>
     <c:choose>
@@ -345,30 +362,19 @@
                     <vh:local-date-time date="${borrowRecord.returnDate}"/>
                 </c:if>
                 </td>
-                <td style="display: none" class="comment">Comment
-                </td>
+                <td style="display: none" class="comment">${borrowRecord.comment}</td>
             </tr>
         </c:forEach>
         </tbody>
     </table>
-
     <button type="button" class="btn btn-info add-button" onclick="saveChangesBookPage()">Save</button>
-    <a href="${pageContext.request.contextPath}/books"><button type="button" class="btn  btn-outline-danger">Discard</button></a>
+    <a href="${pageContext.request.contextPath}/books">
+        <button type="button" class="btn  btn-outline-danger">Discard</button>
+    </a>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-        crossorigin="anonymous"></script>
+<jsp:include page="parts/BootstrapScript.jsp"/>
 <script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
-
 <script src="/resources/js/script.js"></script>
 <script src="/resources/js/bookPageScript.js"></script>
-
 </body>
 </html>
