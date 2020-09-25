@@ -1,6 +1,7 @@
 package com.itechart.javalab.library.service;
 
 import com.itechart.javalab.library.dto.BorrowRecordDto;
+import com.itechart.javalab.library.dto.ReaderDto;
 import com.itechart.javalab.library.model.BorrowRecord;
 import com.itechart.javalab.library.model.Paginator;
 import com.itechart.javalab.library.model.Reader;
@@ -24,4 +25,8 @@ public interface ReaderService {
     Optional<Set<Reader>> getReaders(Paginator paginator);
 
     Optional<Integer> getNumberReadersRecords();
+
+    boolean addReader(ReaderDto readerDto);
+
+    void editReader(ReaderDto readerDto);
 }

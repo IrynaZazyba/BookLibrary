@@ -34,6 +34,8 @@ public class CommandProvider {
         ajaxCommandRepository.put(new CommandKey("GET", "/ajax/reader"), new GetReaderCommand());
         ajaxCommandRepository.put(new CommandKey("DELETE", "/ajax/books"), new DeleteBookCommand());
         ajaxCommandRepository.put(new CommandKey("POST", "/ajax/books"), new AddBookCommand());
+        ajaxCommandRepository.put(new CommandKey("POST", "/ajax/readers"), new AddReaderCommand());
+        ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/readers"), new EditReaderCommand());
 
     }
 

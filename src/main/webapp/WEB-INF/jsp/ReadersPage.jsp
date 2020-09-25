@@ -27,7 +27,7 @@
                         <div class="form-row">
                             <label for="firstName" class="col-sm-5 col-form-label">First name</label>
                             <div class="col">
-                                <input type="text" id="firstName" class="form-control"/>
+                                <input type="text" id="firstName" required class="form-control"/>
                             </div>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                         <div class="form-row">
                             <label for="lastName" class="col-sm-5 col-form-label">Last name</label>
                             <div class="col">
-                                <input type="text" id="lastName" class="form-control"/>
+                                <input type="text" required id="lastName" class="form-control"/>
                             </div>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                         <div class="form-row">
                             <label for="email" class="col-sm-5 col-form-label">Email address</label>
                             <div class="col">
-                                <input type="email" id="email" class="form-control"/>
+                                <input type="email" required id="email" class="form-control"/>
                             </div>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <label for="email" class="col-sm-5 col-form-label">Gender</label>
+                        <label class="col-sm-5 col-form-label">Gender</label>
                         <div class="col">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="exampleRadios" id="male"
@@ -80,7 +80,7 @@
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" name="readerId" value="">
+                    <input type="hidden" class="form-control" name="readerId" value="">
                 </form>
             </div>
             <div class="modal-footer">
@@ -97,7 +97,7 @@
 
     <div class="row">
         <div class="col-8">
-            <button type="button" class="btn  btn-info add-button">Add</button>
+            <button type="button" onclick="showModalAddRecord(this)" class="btn  btn-info add-button">Add</button>
         </div>
         <div class="col-1">
             <div class="form_toggle">
@@ -123,7 +123,6 @@
                         <label for="count-20">20</label>
                     </div>
                 </c:if>
-
             </div>
         </div>
     </div>
@@ -139,7 +138,6 @@
         </thead>
         <tbody>
         <c:forEach var="reader" items="${requestScope.dto.readers}">
-            <button type="button" class="btn btn-link">
                 <tr onclick="showModalEditRecord(this)" id="${reader.id}">
                     <td style="display: none" class="firstName">${reader.name}</td>
                     <td style="display: none" class="lastName">${reader.lastName}</td>
@@ -149,7 +147,6 @@
                     <td class="phone">${reader.phone}</td>
                     <td style="display: none" class="gender">${reader.gender}</td>
                 </tr>
-            </button>
         </c:forEach>
         </tbody>
     </table>

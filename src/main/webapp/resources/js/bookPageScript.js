@@ -130,6 +130,8 @@ function showModalEditBorrow(obj) {
 
     //add hidden input with editableLineId value to modal window
     let editableLineId = rowWithData.id;
+
+    //todo delete unused
     document.querySelector("#editBorrowRecord form").insertAdjacentHTML("afterbegin",
         "<input type='hidden' name='editableLineId' value='" + editableLineId + "'/>");
 
