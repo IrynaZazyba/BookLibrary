@@ -2,6 +2,7 @@ package com.itechart.javalab.library.service;
 
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.model.BorrowRecord;
+import com.itechart.javalab.library.model.Paginator;
 import com.itechart.javalab.library.model.Reader;
 
 import java.util.List;
@@ -19,4 +20,8 @@ public interface ReaderService {
     boolean changeBorrowStatus(BorrowRecordDto[] records);
 
     Optional<Set<Reader>> getReadersByEmail(String email);
+
+    Optional<Set<Reader>> getReaders(Paginator paginator);
+
+    Optional<Integer> getNumberReadersRecords();
 }

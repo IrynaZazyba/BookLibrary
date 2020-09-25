@@ -4,6 +4,7 @@ import com.itechart.javalab.library.dao.ReaderDao;
 import com.itechart.javalab.library.dao.impl.SqlReaderDao;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.model.BorrowRecord;
+import com.itechart.javalab.library.model.Paginator;
 import com.itechart.javalab.library.model.Reader;
 import com.itechart.javalab.library.service.BookService;
 import com.itechart.javalab.library.service.ReaderService;
@@ -74,5 +75,15 @@ public class DefaultReaderService implements ReaderService {
     @Override
     public Optional<Set<Reader>> getReadersByEmail(String email) {
         return readerDao.getReadersByEmail(email);
+    }
+
+    @Override
+    public Optional<Set<Reader>> getReaders(Paginator paginator) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Integer> getNumberReadersRecords() {
+        return Optional.empty();
     }
 }

@@ -63,3 +63,13 @@ Branch - add-functionality
 - add sending notification
 - add delete books option
 - add option to add book
+
+---
+##### Task#10 - Readers page
+Branch - add-reader-page
+- add ReadersPage.jsp
+- add beans
+- add ReaderController
+- add dto objects
+- add GetReadersCommand
+- add DAO and Service methods

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -16,7 +17,11 @@ public class Reader {
 
     private int id;
     private String name;
+    private String lastName;
     private String email;
+    private String phone;
+    private Gender gender;
+    private LocalDate registrationDate;
 
     public static Reader buildFrom(ResultSet resultSet) throws SQLException {
         int readerId = resultSet.getInt("reader.id");
@@ -24,4 +29,5 @@ public class Reader {
         String readerEmail = resultSet.getString("reader.email");
         return Reader.builder().id(readerId).name(readerName).email(readerEmail).build();
     }
+
 }
