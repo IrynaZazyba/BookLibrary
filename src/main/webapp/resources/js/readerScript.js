@@ -3,14 +3,21 @@
 const mailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const namePattern = /^([a-zA-Z- ]){2,15}$/;
 
+const alertMessage = document.querySelector("#addRecord .modal-body div[class='alert']");
 
 function showModalAddRecord(obj) {
+    if (alertMessage) {
+        alertMessage.remove();
+    }
     $('#addRecord').modal('show');
 }
 
 const modalForm = document.querySelector("#addRecord form");
 
 function showModalEditRecord(obj) {
+    if (alertMessage) {
+        alertMessage.remove();
+    }
     let readerId = obj.getAttribute("id");
     let firstName = obj.querySelector(".firstName").innerHTML;
     let lastName = obj.querySelector(".lastName").innerHTML;
@@ -88,7 +95,11 @@ function createReader(form) {
     };
 }
 
+
 function saveReaderChanges() {
+    if (alertMessage) {
+        alertMessage.remove();
+    }
     let id = modalForm.querySelector("input[name='readerId']").value;
     if (id) {
         editReader();
@@ -106,7 +117,7 @@ $('#addRecord').on('hide.bs.modal', function (e) {
     modalForm.querySelectorAll("input.form-control").forEach(e => e.value = "");
     modalForm.querySelectorAll("input.form-check-input").forEach(e => {
         if (e.checked) {
-            e.checked=false;
+            e.checked = false;
         }
     });
 });

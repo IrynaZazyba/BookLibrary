@@ -6,8 +6,8 @@ import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
 import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
 import com.itechart.javalab.library.controller.util.json.JsonBuilder;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
-import com.itechart.javalab.library.service.ReaderService;
-import com.itechart.javalab.library.service.impl.DefaultReaderService;
+import com.itechart.javalab.library.service.BorrowRecordService;
+import com.itechart.javalab.library.service.impl.DefaultBorrowRecordService;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -20,14 +20,14 @@ import static com.itechart.javalab.library.controller.util.ResponseParameterName
 @Log4j2
 public class UpdateStatusBorrowRecordCommand implements AjaxCommand {
 
-    private final ReaderService readerService;
+    private final BorrowRecordService readerService;
     private final JsonBuilder jsonBuilder;
     private static final String REQUEST_PARAMETER_UPDATED_STATUS = "updatedStatus";
     private static final String RESPONSE_MESSAGE_PARTLY_FAILED = "partlyFailed";
     private static final String RESPONSE_MESSAGE_OK = "ok";
 
     public UpdateStatusBorrowRecordCommand() {
-        this.readerService = DefaultReaderService.getInstance();
+        this.readerService = DefaultBorrowRecordService.getInstance();
         this.jsonBuilder = JacksonJsonBuilder.getInstance();
     }
 

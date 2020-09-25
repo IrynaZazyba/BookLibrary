@@ -1,12 +1,12 @@
 package com.itechart.javalab.library.service;
 
-import com.itechart.javalab.library.dao.ReaderDao;
-import com.itechart.javalab.library.dao.impl.SqlReaderDao;
+import com.itechart.javalab.library.dao.BorrowRecordDao;
+import com.itechart.javalab.library.dao.impl.SqlBorrowRecordDao;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.dto.ReaderDto;
 import com.itechart.javalab.library.model.BorrowRecord;
 import com.itechart.javalab.library.model.TimePeriod;
-import com.itechart.javalab.library.service.impl.DefaultReaderService;
+import com.itechart.javalab.library.service.impl.DefaultBorrowRecordService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -18,8 +18,8 @@ import static org.mockito.Mockito.mock;
 public class DefaultReaderServiceTest {
 
     @Mock
-    private ReaderDao mockReaderDao = mock(SqlReaderDao.class);
-    private final ReaderService readerService = DefaultReaderService.getInstance();
+    private BorrowRecordDao mockReaderDao = mock(SqlBorrowRecordDao.class);
+    private final BorrowRecordService readerService = DefaultBorrowRecordService.getInstance();
 
 
     @Test

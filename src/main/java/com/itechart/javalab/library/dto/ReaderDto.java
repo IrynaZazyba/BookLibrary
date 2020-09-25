@@ -30,9 +30,9 @@ public class ReaderDto {
         return Reader.builder().name(name).email(email).build();
     }
 
-    Reader toExtendedModel() {
+    public Reader toExtendedModel() {
         validate();
-        return Reader.builder().name(name).lastName(lastName).email(email)
+        return Reader.builder().id(id).name(name).lastName(lastName).email(email)
                 .phone(phone).gender(gender).registrationDate(registrationDate).build();
     }
 
