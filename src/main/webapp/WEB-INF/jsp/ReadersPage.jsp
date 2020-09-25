@@ -60,20 +60,20 @@
                         <div class="col">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="exampleRadios" id="male"
-                                       value="male">
+                                       value="MALE">
                                 <label class="form-check-label" for="male">
                                     male </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="exampleRadios" id="female"
-                                       value="option1">
+                                       value="FEMALE">
                                 <label class="form-check-label" for="female">
                                     female
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="exampleRadios" id="other"
-                                       value="option1">
+                                       value="OTHER">
                                 <label class="form-check-label" for="other">
                                     other
                                 </label>
@@ -103,22 +103,22 @@
             <div class="form_toggle">
                 <c:if test="${requestScope.dto.recordsPerPage==10}">
                     <div class="form_toggle-item item-1">
-                        <input onclick="getCountRecords(this)" id="count-10" type="radio" name="radio" value="10"
+                        <input onclick="getCountReaderRecords(this)" id="count-10" type="radio" name="radio" value="10"
                                checked>
                         <label for="count-10">10</label>
                     </div>
                     <div class="form_toggle-item item-2">
-                        <input onclick="getCountRecords(this)" id="count-20" type="radio" name="radio" value="20">
+                        <input onclick="getCountReaderRecords(this)" id="count-20" type="radio" name="radio" value="20">
                         <label for="count-20">20</label>
                     </div>
                 </c:if>
                 <c:if test="${requestScope.dto.recordsPerPage==20}">
                     <div class="form_toggle-item item-1">
-                        <input onclick="getCountRecords(this)" id="count-10" type="radio" name="radio" value="10">
+                        <input onclick="getCountReaderRecords(this)" id="count-10" type="radio" name="radio" value="10">
                         <label for="count-10">10</label>
                     </div>
                     <div class="form_toggle-item item-2">
-                        <input onclick="getCountRecords(this)" id="count-20" type="radio" name="radio" value="20"
+                        <input onclick="getCountReaderRecords(this)" id="count-20" type="radio" name="radio" value="20"
                                checked>
                         <label for="count-20">20</label>
                     </div>
@@ -146,8 +146,8 @@
                     <td class="name">${reader.name} ${reader.lastName}</td>
                     <td class="email">${reader.email}</td>
                     <td class="regDate">${reader.registrationDate}</td>
-                    <td class="phone">${reader.phoneNumber}</td>
-                    <td style="display: none" class="gender">male</td>
+                    <td class="phone">${reader.phone}</td>
+                    <td style="display: none" class="gender">${reader.gender}</td>
                 </tr>
             </button>
         </c:forEach>

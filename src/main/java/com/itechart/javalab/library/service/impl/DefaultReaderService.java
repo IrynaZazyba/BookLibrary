@@ -1,7 +1,9 @@
 package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.dao.ReaderDao;
+import com.itechart.javalab.library.dao.ReceiveReaderDao;
 import com.itechart.javalab.library.dao.impl.SqlReaderDao;
+import com.itechart.javalab.library.dao.impl.SqlReceiveReaderDao;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.model.BorrowRecord;
 import com.itechart.javalab.library.model.Paginator;
@@ -16,17 +18,19 @@ import java.util.*;
 public class DefaultReaderService implements ReaderService {
 
     private final ReaderDao readerDao;
+    private final ReceiveReaderDao receiveReaderDao;
     private static volatile ReaderService instance;
 
-    private DefaultReaderService(ReaderDao readerDao) {
+    private DefaultReaderService(ReaderDao readerDao, ReceiveReaderDao receiveReaderDao) {
         this.readerDao = readerDao;
+        this.receiveReaderDao = receiveReaderDao;
     }
 
     public static ReaderService getInstance() {
         if (instance == null) {
             synchronized (BookService.class) {
                 if (instance == null) {
-                    instance = new DefaultReaderService(SqlReaderDao.getInstance());
+                    instance = new DefaultReaderService(SqlReaderDao.getInstance(), SqlReceiveReaderDao.getInstance());
                 }
             }
         }
@@ -79,11 +83,11 @@ public class DefaultReaderService implements ReaderService {
 
     @Override
     public Optional<Set<Reader>> getReaders(Paginator paginator) {
-        return Optional.empty();
+        return receiveReaderDao.getReaders(paginator);
     }
 
     @Override
     public Optional<Integer> getNumberReadersRecords() {
-        return Optional.empty();
+        return receiveReaderDao.getNumberReadersRecords();
     }
 }

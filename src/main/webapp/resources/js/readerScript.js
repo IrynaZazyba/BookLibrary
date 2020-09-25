@@ -27,4 +27,16 @@ function showModalEditRecord(obj) {
     $('#addRecord').modal('show');
 }
 
+async function getCountReaderRecords(obj) {
+    if (history.pushState) {
+        let baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        let newUrl;
+        newUrl = baseUrl + '?recordsPerPage=' + obj.value;
+        history.pushState(null, null, newUrl);
+    } else {
+        console.warn('History API не поддерживается');
+    }
+    window.location.reload();
+}
+
 

@@ -18,7 +18,7 @@ import java.util.Set;
 public class GetReadersCommand implements Command {
 
     private final ReaderService readerService;
-    private static final String REQUEST_SEARCH_PAGE_DTO = "readers";
+    private static final String REQUEST_SEARCH_PAGE_DTO = "dto";
     private static final String REQUEST_RECORDS_PER_PAGE = "recordsPerPage";
     private static final String REQUEST_CURRENT_PAGE = "currentPage";
 
