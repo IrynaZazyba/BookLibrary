@@ -13,9 +13,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @WebServlet(urlPatterns = {"/ajax/*"}, name = "AjaxReaderController")
-@MultipartConfig
+@MultipartConfig(maxFileSize=1024*1024*2)
 public class AjaxController extends HttpServlet {
-
 
     private static final long serialVersionUID = -6704867576406749056L;
 

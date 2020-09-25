@@ -55,3 +55,11 @@ Branch - book-page-action
 - add dto objects
 - add commands
 - add actions to BookPage.jsp
+
+##### Task#9 - Add functionality
+Branch - add-functionality
+- add email autocomplete to modal window of book page
+- add uploading book cover
+- add sending notification
+- add delete books option
+- add option to add book

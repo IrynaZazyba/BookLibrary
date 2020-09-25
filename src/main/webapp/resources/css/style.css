@@ -10,10 +10,6 @@
     margin-right: 5px;
 }
 
-.page-nav {
-    margin-left: 15px;
-}
-
 
 /* Toggle button */
 .form_toggle {
@@ -32,7 +28,7 @@
 
 .form_toggle-item label {
     display: inline-block;
-    padding: 0px 5px;
+    padding: 0 5px;
     line-height: 25px;
     border: 1px solid #999;
     border-right: none;

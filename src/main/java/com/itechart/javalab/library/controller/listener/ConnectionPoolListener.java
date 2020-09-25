@@ -5,14 +5,12 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Properties;
 
 @Log4j2
-@WebListener
 public class ConnectionPoolListener implements ServletContextListener {
 
     private final static String DB_PROPERTIES_FILE_NAME = "db";

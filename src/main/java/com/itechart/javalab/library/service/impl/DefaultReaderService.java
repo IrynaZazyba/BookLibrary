@@ -4,15 +4,13 @@ import com.itechart.javalab.library.dao.ReaderDao;
 import com.itechart.javalab.library.dao.impl.SqlReaderDao;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.model.BorrowRecord;
+import com.itechart.javalab.library.model.Reader;
 import com.itechart.javalab.library.service.BookService;
 import com.itechart.javalab.library.service.ReaderService;
 import org.apache.commons.text.StringEscapeUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class DefaultReaderService implements ReaderService {
 
@@ -42,7 +40,7 @@ public class DefaultReaderService implements ReaderService {
     public boolean addBorrowStatus(BorrowRecordDto[] records) {
         List<BorrowRecord> borrowRecords = new ArrayList<>();
         Arrays.stream(records).forEach(record ->
-                borrowRecords.add(record.toModel()));
+                borrowRecords.add(record.toBookEditRecordModel()));
         LocalDateTime current = LocalDateTime.now();
         borrowRecords.forEach(r -> {
             r.setReturnDate(current);
@@ -55,7 +53,7 @@ public class DefaultReaderService implements ReaderService {
     public boolean addBorrowRecords(BorrowRecordDto[] records) {
         List<BorrowRecord> borrowRecords = new ArrayList<>();
         Arrays.stream(records).forEach(record ->
-                borrowRecords.add(record.toModel()));
+                borrowRecords.add(record.toBookAddRecordModel()));
         LocalDateTime current = LocalDateTime.now();
         borrowRecords.forEach(r -> {
             r.setBorrowDate(current);
@@ -69,7 +67,12 @@ public class DefaultReaderService implements ReaderService {
     public boolean changeBorrowStatus(BorrowRecordDto[] records) {
         List<BorrowRecord> borrowRecords = new ArrayList<>();
         Arrays.stream(records).forEach(record ->
-                borrowRecords.add(record.toModel()));
+                borrowRecords.add(record.toBookEditRecordModel()));
         return readerDao.updateStatusBorrowRecords(borrowRecords);
+    }
+
+    @Override
+    public Optional<Set<Reader>> getReadersByEmail(String email) {
+        return readerDao.getReadersByEmail(email);
     }
 }

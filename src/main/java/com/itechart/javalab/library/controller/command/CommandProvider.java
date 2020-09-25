@@ -21,14 +21,19 @@ public class CommandProvider {
     private CommandProvider() {
         commandRepository.put(new CommandKey("GET", "/"), new GetBooksCommand());
         commandRepository.put(new CommandKey("GET", "/books"), new GetBooksCommand());
-        commandRepository.put(new CommandKey("PUT", "/books"), new AddBookCommand());
-        commandRepository.put(new CommandKey("POST", "/books"), new EditBookCommand());
         commandRepository.put(new CommandKey("GET", "/books/search"), new SearchBooksCommand());
         commandRepository.put(new CommandKey("GET", "/books/"), new GetBookCommand());
+        commandRepository.put(new CommandKey("GET", "/book/cover"), new GetFileCommand());
+        commandRepository.put(new CommandKey("GET", "/books/page"), new GetBookPageCommand());
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/book"), new UpdateBookCommand());
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/newStatus"), new ReturnBookCommand());
         ajaxCommandRepository.put(new CommandKey("POST", "/ajax/record"), new LendBookCommand());
-        ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/oldStatus"), new UpdateStatusBorrowRecordCommand());
+        ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/oldStatus"),
+                new UpdateStatusBorrowRecordCommand());
+        ajaxCommandRepository.put(new CommandKey("GET", "/ajax/reader"), new GetReaderCommand());
+        ajaxCommandRepository.put(new CommandKey("DELETE", "/ajax/books"), new DeleteBookCommand());
+        ajaxCommandRepository.put(new CommandKey("POST", "/ajax/books"), new AddBookCommand());
+
     }
 
     public static CommandProvider getInstance() {

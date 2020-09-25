@@ -28,6 +28,7 @@ public class BorrowRecord {
 
     public static BorrowRecord extractForBookPage(ResultSet resultSet, int bookId) throws SQLException {
         int borrowId = resultSet.getInt("borrow_list.id");
+        String comment = resultSet.getString("borrow_list.comment");
         LocalDateTime borrowDate = resultSet.getTimestamp("borrow_list.borrow_date").toLocalDateTime();
         LocalDateTime dueDate = resultSet.getTimestamp("borrow_list.due_date").toLocalDateTime();
         Timestamp timestampReturnDate = resultSet.getTimestamp("borrow_list.return_date");
@@ -39,7 +40,16 @@ public class BorrowRecord {
         }
         Reader reader = Reader.buildFrom(resultSet);
         Book book = Book.builder().id(bookId).build();
-        return BorrowRecord.builder().id(borrowId).borrowDate(borrowDate)
-                .dueDate(dueDate).returnDate(returnDate).book(book).reader(reader).status(status).build();
+        return BorrowRecord.builder().id(borrowId).borrowDate(borrowDate).dueDate(dueDate)
+                .returnDate(returnDate).book(book).reader(reader).status(status).comment(comment).build();
     }
+
+    public static BorrowRecord extractForNotification(ResultSet resultSet) throws SQLException {
+        int borrowId = resultSet.getInt("borrow_list.id");
+        LocalDateTime dueDate = resultSet.getTimestamp("borrow_list.due_date").toLocalDateTime();
+        Reader reader = Reader.buildFrom(resultSet);
+        Book book = Book.extractForNotification(resultSet);
+        return BorrowRecord.builder().id(borrowId).dueDate(dueDate).book(book).reader(reader).build();
+    }
+
 }

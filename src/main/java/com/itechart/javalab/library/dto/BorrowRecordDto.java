@@ -24,13 +24,19 @@ public class BorrowRecordDto {
     private ReaderDto reader;
     private TimePeriod timePeriod;
 
-    public BorrowRecord toModel() {
+    public BorrowRecord toBookAddRecordModel() {
         return BorrowRecord.builder().id(id).status(status).comment(comment)
                 .timePeriod(timePeriod)
                 .reader(reader.toModel())
                 .book(Book.builder().id(bookId).build())
                 .build();
+    }
 
+    public BorrowRecord toBookEditRecordModel() {
+        return BorrowRecord.builder().id(id).status(status).comment(comment)
+                .timePeriod(timePeriod)
+                .book(Book.builder().id(bookId).build())
+                .build();
     }
 
     public static BorrowRecordDto[] parseBorrowRecords(String jsonRecords) throws JsonProcessingException {

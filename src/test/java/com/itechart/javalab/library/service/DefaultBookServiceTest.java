@@ -1,41 +1,47 @@
 package com.itechart.javalab.library.service;
 
-import com.itechart.javalab.library.dao.BookDao;
-import com.itechart.javalab.library.dao.impl.SqlBookDao;
+import com.itechart.javalab.library.dao.AlterBookDao;
+import com.itechart.javalab.library.dao.ReceiveBookDao;
 import com.itechart.javalab.library.dto.BookDto;
 import com.itechart.javalab.library.model.Author;
 import com.itechart.javalab.library.model.Book;
 import com.itechart.javalab.library.model.BookFilter;
 import com.itechart.javalab.library.model.Paginator;
 import com.itechart.javalab.library.service.impl.DefaultBookService;
+import com.itechart.javalab.library.service.impl.DefaultUploadFileService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import javax.servlet.http.Part;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public class DefaultBookServiceTest {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Mock
-    private BookDao mockBookDao = mock(SqlBookDao.class);
+    private AlterBookDao alterBookDao = mock(AlterBookDao.class);
+    @Mock
+    private ReceiveBookDao receiveBookDao = mock(ReceiveBookDao.class);
     private final BookService bookService = DefaultBookService.getInstance();
+    @Mock
+    private final UploadFileService uploadFileService = mock(DefaultUploadFileService.class);
 
 
     @Test
     public void testGetAllBooksNegative() {
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
+        Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
         boolean isAvailableOnly = true;
         Paginator paginator = new Paginator("10", "1");
-        Mockito.when(mockBookDao.getBooks(paginator, isAvailableOnly)).thenReturn(Optional.empty());
+        Mockito.when(receiveBookDao.getBooks(paginator, isAvailableOnly)).thenReturn(Optional.empty());
         Assert.assertEquals(bookService.getBooks(paginator, isAvailableOnly), Optional.empty());
     }
 
@@ -44,7 +50,7 @@ public class DefaultBookServiceTest {
         boolean isAvailableOnly = true;
         Paginator paginator = new Paginator("2", "1");
 
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
+        Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
 
         List<Book> books = new ArrayList<>();
         Set<Author> javaBookAuthors = new HashSet<>();
@@ -84,15 +90,15 @@ public class DefaultBookServiceTest {
         books.add(javaBook);
         books.add(christmasBook);
 
-        Mockito.when(mockBookDao.getBooks(paginator, isAvailableOnly)).thenReturn(Optional.of(books));
+        Mockito.when(receiveBookDao.getBooks(paginator, isAvailableOnly)).thenReturn(Optional.of(books));
         Assert.assertEquals(bookService.getBooks(paginator, isAvailableOnly), Optional.of(books));
     }
 
     @Test
     public void testGetNumberOfBooksRecordsPositive() {
         boolean isAvailableOnly = true;
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(mockBookDao.getNumberBooksRecords(isAvailableOnly)).thenReturn(Optional.of(2));
+        Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
+        Mockito.when(receiveBookDao.getNumberBooksRecords(isAvailableOnly)).thenReturn(Optional.of(2));
 
         Assert.assertEquals(bookService.getNumberBooksRecords(isAvailableOnly), Optional.of(2));
     }
@@ -100,8 +106,8 @@ public class DefaultBookServiceTest {
     @Test
     public void testGetNumberOfBooksRecordsNegative() {
         boolean isAvailableOnly = true;
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(mockBookDao.getNumberBooksRecords(isAvailableOnly)).thenReturn(Optional.empty());
+        Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
+        Mockito.when(receiveBookDao.getNumberBooksRecords(isAvailableOnly)).thenReturn(Optional.empty());
 
         Assert.assertEquals(bookService.getNumberBooksRecords(isAvailableOnly), Optional.empty());
     }
@@ -139,10 +145,8 @@ public class DefaultBookServiceTest {
                 .build();
 
         Paginator paginator = new Paginator("2", "2");
-
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-
-        Mockito.when(mockBookDao.
+        Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
+        Mockito.when(receiveBookDao.
                 findBooksByParameters(paginator, bookFilter))
                 .thenReturn(Optional.of(foundBooks));
 
@@ -162,8 +166,8 @@ public class DefaultBookServiceTest {
 
         Paginator paginator = new Paginator("2", "2");
 
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(mockBookDao.
+        Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
+        Mockito.when(receiveBookDao.
                 findBooksByParameters(paginator, bookFilter))
                 .thenReturn(Optional.empty());
 
@@ -173,8 +177,8 @@ public class DefaultBookServiceTest {
     @Test
     public void getNumberFoundBooksRecordsPositive() {
         BookFilter bookFilter = new BookFilter();
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(mockBookDao.getNumberFoundBooksRecords(bookFilter)).thenReturn(Optional.of(5));
+        Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
+        Mockito.when(receiveBookDao.getNumberFoundBooksRecords(bookFilter)).thenReturn(Optional.of(5));
         Assert.assertEquals(bookService.getNumberFoundBooksRecords(bookFilter), Optional.of(5));
     }
 
@@ -182,9 +186,9 @@ public class DefaultBookServiceTest {
     public void getBookByIdPositive() {
         int bookId = 5;
         Book book = Book.builder().id(5).build();
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(mockBookDao.getBookById(bookId)).thenReturn(Optional.of(book));
-        Mockito.when(mockBookDao.getEarliestDueDate(bookId)).thenReturn(Optional.of(LocalDateTime.now()));
+        Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
+        Mockito.when(receiveBookDao.getBookById(bookId)).thenReturn(Optional.of(book));
+        Mockito.when(receiveBookDao.getEarliestDueDate(bookId)).thenReturn(Optional.of(LocalDateTime.now()));
         Assert.assertEquals(bookService.getBookById(bookId), Optional.of(book));
     }
 
@@ -192,9 +196,9 @@ public class DefaultBookServiceTest {
     public void getBookByIdNegative() {
         int bookId = 5;
         Book book = null;
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(mockBookDao.getBookById(bookId)).thenReturn(Optional.ofNullable(book));
-        Mockito.when(mockBookDao.getEarliestDueDate(bookId)).thenReturn(Optional.of(LocalDateTime.now()));
+        Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
+        Mockito.when(receiveBookDao.getBookById(bookId)).thenReturn(Optional.ofNullable(book));
+        Mockito.when(receiveBookDao.getEarliestDueDate(bookId)).thenReturn(Optional.of(LocalDateTime.now()));
         Assert.assertEquals(bookService.getBookById(bookId), Optional.ofNullable(book));
     }
 
@@ -212,9 +216,14 @@ public class DefaultBookServiceTest {
                 .isbn("1547852145")
                 .description("")
                 .build();
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(mockBookDao.updateBookInfo(Book.buildFrom(bookDto))).thenReturn(Optional.of(true));
-        Assert.assertEquals(bookService.updateBookInfo(bookDto), Optional.of(true));
+        String anyPath = "/book";
+        String fileName = "5.png";
+        Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
+        Mockito.when(alterBookDao.updateBookInfo(Book.buildFrom(bookDto))).thenReturn(Optional.of(true));
+        doNothing().when(uploadFileService)
+                .uploadFile(eq(anyPath), Mockito.any(Part.class), eq(fileName));
+        Assert.assertEquals(bookService.updateBookInfo(bookDto, Mockito.any(Part.class), fileName),
+                Optional.of(true));
     }
 
     @Test
@@ -231,9 +240,51 @@ public class DefaultBookServiceTest {
                 .isbn("1547852145")
                 .description("")
                 .build();
-        Whitebox.setInternalState(bookService, "bookDao", mockBookDao);
-        Mockito.when(mockBookDao.updateBookInfo(Book.buildFrom(bookDto))).thenReturn(Optional.empty());
-        Assert.assertEquals(Optional.empty(), bookService.updateBookInfo(bookDto));
+        String anyPath = "/book";
+        String fileName = "5.png";
+        Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
+        Mockito.when(alterBookDao.updateBookInfo(Book.buildFrom(bookDto))).thenReturn(Optional.empty());
+        doNothing().when(uploadFileService)
+                .uploadFile(eq(anyPath), Mockito.any(Part.class), eq(fileName));
+        Assert.assertEquals(Optional.empty(), bookService.updateBookInfo(bookDto, Mockito.any(Part.class), fileName));
+    }
+
+    @Test
+    public void deleteBooksPositive() {
+        int[] ids = {1, 5, 7};
+        Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
+        Mockito.when(alterBookDao.deleteBooks(ids)).thenReturn(true);
+        Assert.assertTrue(bookService.deleteBooks(ids));
+    }
+
+    @Test
+    public void deleteBooksNegative() {
+        int[] ids = {1, 5, 7};
+        Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
+        Mockito.when(alterBookDao.deleteBooks(ids)).thenReturn(false);
+        Assert.assertFalse(bookService.deleteBooks(ids));
+    }
+
+    @Test
+    public void createBook() {
+        BookDto bookDto = BookDto.builder()
+                .title("Алые паруса")
+                .publishDate("2019-03-01")
+                .author("Александр Грин")
+                .genre("Классика, проза")
+                .pageCount(255)
+                .totalAmount(5)
+                .publisher("АСТ")
+                .isbn("1547852145")
+                .description("")
+                .build();
+        String anyPath = "/book";
+        String fileName = "5.png";
+        Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
+        Mockito.when(alterBookDao.createBook(Book.buildFrom(bookDto))).thenReturn(5);
+        doNothing().when(uploadFileService)
+                .uploadFile(eq(anyPath), Mockito.any(Part.class), eq(fileName));
+        Assert.assertEquals(bookService.createBook(bookDto, Mockito.any(Part.class), anyPath), 5);
     }
 
 }
