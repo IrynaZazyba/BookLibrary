@@ -51,11 +51,16 @@ public class DefaultReaderService implements ReaderService {
     public boolean addReader(ReaderDto readerDto) {
         Reader reader = readerDto.toExtendedModel();
         reader.setRegistrationDate(LocalDate.now());
-        return false;
+        if (readerDao.getReadersByEmail(reader.getEmail()).isPresent()) {
+            return false;
+        }
+        readerDao.createReader(reader);
+        return true;
     }
 
     @Override
     public void editReader(ReaderDto readerDto) {
         Reader reader = readerDto.toExtendedModel();
+        readerDao.updateReader(reader);
     }
 }

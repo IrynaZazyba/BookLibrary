@@ -51,7 +51,7 @@
                         <div class="form-row">
                             <label for="phoneNumber" class="col-sm-5 col-form-label">Phone</label>
                             <div class="col">
-                                <input type="tel" pattern="" id="phoneNumber" class="form-control">
+                                <input type="tel"  id="phoneNumber" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -59,20 +59,20 @@
                         <label class="col-sm-5 col-form-label">Gender</label>
                         <div class="col">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="exampleRadios" id="male"
+                                <input class="form-check-input" type="radio" name="gender" id="male"
                                        value="MALE">
                                 <label class="form-check-label" for="male">
                                     male </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="exampleRadios" id="female"
+                                <input class="form-check-input" type="radio" name="gender" id="female"
                                        value="FEMALE">
                                 <label class="form-check-label" for="female">
                                     female
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="exampleRadios" id="other"
+                                <input class="form-check-input"  checked type="radio" name="gender" id="other"
                                        value="OTHER">
                                 <label class="form-check-label" for="other">
                                     other
@@ -138,15 +138,15 @@
         </thead>
         <tbody>
         <c:forEach var="reader" items="${requestScope.dto.readers}">
-                <tr onclick="showModalEditRecord(this)" id="${reader.id}">
-                    <td style="display: none" class="firstName">${reader.name}</td>
-                    <td style="display: none" class="lastName">${reader.lastName}</td>
-                    <td class="name">${reader.name} ${reader.lastName}</td>
-                    <td class="email">${reader.email}</td>
-                    <td class="regDate">${reader.registrationDate}</td>
-                    <td class="phone">${reader.phone}</td>
-                    <td style="display: none" class="gender">${reader.gender}</td>
-                </tr>
+            <tr onclick="showModalEditRecord(this)" id="${reader.id}">
+                <td style="display: none" class="firstName">${reader.name}</td>
+                <td style="display: none" class="lastName">${reader.lastName}</td>
+                <td class="name">${reader.name} ${reader.lastName}</td>
+                <td class="email">${reader.email}</td>
+                <td class="regDate">${reader.registrationDate}</td>
+                <td class="phone">${reader.phone}</td>
+                <td style="display: none" class="gender">${reader.gender}</td>
+            </tr>
         </c:forEach>
         </tbody>
     </table>
@@ -178,6 +178,5 @@
 <jsp:include page="parts/BootstrapScript.jsp"/>
 <script src="resources/js/script.js"></script>
 <script src="resources/js/readerScript.js"></script>
-
 </body>
 </html>

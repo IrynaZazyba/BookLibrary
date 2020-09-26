@@ -1,9 +1,7 @@
 package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.dao.BorrowRecordDao;
-import com.itechart.javalab.library.dao.ReaderDao;
 import com.itechart.javalab.library.dao.impl.SqlBorrowRecordDao;
-import com.itechart.javalab.library.dao.impl.SqlReaderDao;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.model.BorrowRecord;
 import com.itechart.javalab.library.service.BookService;
@@ -19,19 +17,17 @@ import java.util.Optional;
 public class DefaultBorrowRecordService implements BorrowRecordService {
 
     private final BorrowRecordDao readerDao;
-    private final ReaderDao receiveReaderDao;
     private static volatile BorrowRecordService instance;
 
-    private DefaultBorrowRecordService(BorrowRecordDao readerDao, ReaderDao receiveReaderDao) {
+    private DefaultBorrowRecordService(BorrowRecordDao readerDao) {
         this.readerDao = readerDao;
-        this.receiveReaderDao = receiveReaderDao;
     }
 
     public static BorrowRecordService getInstance() {
         if (instance == null) {
             synchronized (BookService.class) {
                 if (instance == null) {
-                    instance = new DefaultBorrowRecordService(SqlBorrowRecordDao.getInstance(), SqlReaderDao.getInstance());
+                    instance = new DefaultBorrowRecordService(SqlBorrowRecordDao.getInstance());
                 }
             }
         }

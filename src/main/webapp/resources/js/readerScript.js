@@ -1,11 +1,12 @@
 "use strict";
 
-const mailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const namePattern = /^([a-zA-Z- ]){2,15}$/;
-
-const alertMessage = document.querySelector("#addRecord .modal-body div[class='alert']");
+const phonePattern = /^[8][0-9]{10}$|^[+][3][7][5][0-9]{9}$/;
 
 function showModalAddRecord(obj) {
+    deleteInvalidNotification();
+    let alertMessage = document.querySelector("#addRecord .modal-body div.alert");
     if (alertMessage) {
         alertMessage.remove();
     }
@@ -15,7 +16,9 @@ function showModalAddRecord(obj) {
 const modalForm = document.querySelector("#addRecord form");
 
 function showModalEditRecord(obj) {
-    if (alertMessage) {
+    deleteInvalidNotification();
+    let alertMessage = document.querySelector("#addRecord .modal-body div.alert");
+    if (alertMessage != null) {
         alertMessage.remove();
     }
     let readerId = obj.getAttribute("id");
@@ -29,6 +32,13 @@ function showModalEditRecord(obj) {
     modalForm.querySelector("#lastName").value = lastName;
     modalForm.querySelector("#email").value = email;
     modalForm.querySelector("#phoneNumber").value = phone;
+
+    modalForm.querySelectorAll("input.form-check-input").forEach(e => {
+        if (e.checked) {
+            e.checked = false;
+        }
+    });
+
     modalForm.querySelector("#" + gender).setAttribute("checked", "checked");
     modalForm.querySelector("input[name='readerId']").value = readerId;
     $('#addRecord').modal('show');
@@ -48,7 +58,6 @@ async function getCountReaderRecords(obj) {
 
 async function addNewReader() {
 
-    //validate
     let requestBody = new FormData();
     let reader = createReader(modalForm);
     requestBody.append("dto", JSON.stringify(reader));
@@ -60,14 +69,19 @@ async function addNewReader() {
 
     if (response.ok) {
         $('#addRecord').modal('hide');
+        location.reload();
     } else {
-        modalForm.insertAdjacentHTML('beforebegin', addDangerNotification("Reader wasn't create. Please, try later."));
+        if (response.status === 400) {
+            modalForm.insertAdjacentHTML('beforebegin', addDangerNotification("Please, check reader information."));
+        }
+        if (response.status === 409) {
+            modalForm.insertAdjacentHTML('beforebegin', addDangerNotification("Reader with such email already exists."));
+        }
     }
 }
 
 async function editReader() {
 
-    //validate
     let requestBody = new FormData();
     let reader = createReader(modalForm);
     requestBody.append("dto", JSON.stringify(reader));
@@ -79,6 +93,7 @@ async function editReader() {
 
     if (response.ok) {
         $('#addRecord').modal('hide');
+        location.reload();
     } else {
         modalForm.insertAdjacentHTML('beforebegin', addDangerNotification("Reader wasn't update. Please, try later."));
     }
@@ -97,14 +112,19 @@ function createReader(form) {
 
 
 function saveReaderChanges() {
-    if (alertMessage) {
+    deleteInvalidNotification();
+    let alertMessage = document.querySelector("#addRecord .modal-body div.alert");
+    if (alertMessage != null) {
         alertMessage.remove();
     }
-    let id = modalForm.querySelector("input[name='readerId']").value;
-    if (id) {
-        editReader();
-    } else {
-        addNewReader();
+
+    if (checkRequiredAttribute() && validateReader()) {
+        let id = modalForm.querySelector("input[name='readerId']").value;
+        if (id) {
+            editReader();
+        } else {
+            addNewReader();
+        }
     }
 }
 
@@ -112,12 +132,59 @@ function addDangerNotification(message) {
     return "<div class='alert alert-danger' role='alert'>" + message + "</div>";
 }
 
-
 $('#addRecord').on('hide.bs.modal', function (e) {
     modalForm.querySelectorAll("input.form-control").forEach(e => e.value = "");
-    modalForm.querySelectorAll("input.form-check-input").forEach(e => {
-        if (e.checked) {
-            e.checked = false;
+});
+
+function validateReader() {
+    let result = true;
+    let firstName = modalForm.querySelector("#firstName");
+    let lastName = modalForm.querySelector("#lastName");
+    let email = modalForm.querySelector("#email");
+    let phone = modalForm.querySelector("#phoneNumber");
+
+    if (!namePattern.test(firstName.value)) {
+        firstName.classList.add("is-invalid");
+        result = false;
+    }
+
+    if (!namePattern.test(lastName.value)) {
+        lastName.classList.add("is-invalid");
+        result = false;
+    }
+
+    if (!emailPattern.test(email.value)) {
+        email.classList.add("is-invalid");
+        result = false;
+    }
+
+    if (phone.value !== "" && !phonePattern.test(phone.value)) {
+        phone.classList.add("is-invalid");
+        result = false;
+    }
+
+
+    return result;
+}
+
+function checkRequiredAttribute() {
+    let result = true;
+    modalForm.querySelectorAll("input.form-control").forEach(e => {
+        if (e.required && e.value === "") {
+            e.classList.add("is-invalid");
+            result = false;
         }
     });
-});
+    if (modalForm.querySelectorAll("input.form-check-input:checked") == null) {
+        result = false;
+    }
+    return result;
+}
+
+function deleteInvalidNotification() {
+    modalForm.querySelectorAll("input.form-control").forEach(e => {
+        if (e.classList.contains("is-invalid")) {
+            e.classList.remove("is-invalid");
+        }
+    });
+}

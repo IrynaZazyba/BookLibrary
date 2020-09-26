@@ -13,4 +13,8 @@ public interface ReaderDao {
     Optional<Integer> getNumberReadersRecords();
 
     Optional<Set<Reader>> getReadersByEmail(String email);
+
+    void updateReader(Reader reader);
+
+    void createReader(Reader reader);
 }

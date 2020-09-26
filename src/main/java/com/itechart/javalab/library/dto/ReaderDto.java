@@ -17,6 +17,7 @@ public class ReaderDto {
     private static final String EMAIL_PATTERN =
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
                     "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private static final String PHONE_PATTERN = "(^[+][3][7][5][0-9]{9}$)|(^[8][0-9]{10}$)";
     private int id;
     private String name;
     private String lastName;
@@ -31,14 +32,21 @@ public class ReaderDto {
     }
 
     public Reader toExtendedModel() {
-        validate();
-        return Reader.builder().id(id).name(name).lastName(lastName).email(email)
-                .phone(phone).gender(gender).registrationDate(registrationDate).build();
+        validateExtendedModel();
+        return Reader.builder().id(id).name(name.trim()).lastName(lastName.trim()).email(email.trim())
+                .phone(phone).gender(gender).build();
     }
 
     private void validate() throws IllegalArgumentException {
         if (!this.email.matches(EMAIL_PATTERN) || !this.name.matches(NAME_PATTERN)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid reader data");
+        }
+    }
+
+    private void validateExtendedModel() throws IllegalArgumentException {
+        validate();
+        if (!this.lastName.matches(NAME_PATTERN)||!this.phone.matches(PHONE_PATTERN)) {
+            throw new IllegalArgumentException("Invalid reader data");
         }
     }
 
