@@ -3,6 +3,7 @@ package com.itechart.javalab.library.dto;
 import com.itechart.javalab.library.model.Gender;
 import com.itechart.javalab.library.model.Reader;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 
@@ -45,8 +46,14 @@ public class ReaderDto {
 
     private void validateExtendedModel() throws IllegalArgumentException {
         validate();
-        if (!this.lastName.matches(NAME_PATTERN)||!this.phone.matches(PHONE_PATTERN)) {
+        if (!this.lastName.matches(NAME_PATTERN)) {
             throw new IllegalArgumentException("Invalid reader data");
+        }
+
+        if (StringUtils.isNotEmpty(this.phone)) {
+            if (!this.phone.matches(PHONE_PATTERN)) {
+                throw new IllegalArgumentException("Invalid reader data");
+            }
         }
     }
 

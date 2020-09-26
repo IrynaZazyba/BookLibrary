@@ -16,11 +16,11 @@ import java.util.Optional;
 
 public class DefaultBorrowRecordService implements BorrowRecordService {
 
-    private final BorrowRecordDao readerDao;
+    private final BorrowRecordDao borrowRecordDao;
     private static volatile BorrowRecordService instance;
 
-    private DefaultBorrowRecordService(BorrowRecordDao readerDao) {
-        this.readerDao = readerDao;
+    private DefaultBorrowRecordService(BorrowRecordDao borrowRecordDao) {
+        this.borrowRecordDao = borrowRecordDao;
     }
 
     public static BorrowRecordService getInstance() {
@@ -35,7 +35,7 @@ public class DefaultBorrowRecordService implements BorrowRecordService {
     }
 
     public Optional<List<BorrowRecord>> getBorrowRecords(int bookId) {
-        return readerDao.getBorrowRecords(bookId);
+        return borrowRecordDao.getBorrowRecords(bookId);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class DefaultBorrowRecordService implements BorrowRecordService {
             r.setReturnDate(current);
             r.setComment(StringEscapeUtils.escapeHtml4(r.getComment()));
         });
-        return readerDao.setBorrowRecordStatus(borrowRecords);
+        return borrowRecordDao.setBorrowRecordStatus(borrowRecords);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class DefaultBorrowRecordService implements BorrowRecordService {
             r.setDueDate(current.plusMonths(r.getTimePeriod().getMonthPeriod()));
             r.setComment(StringEscapeUtils.escapeHtml4(r.getComment()));
         });
-        return readerDao.createBorrowRecord(borrowRecords);
+        return borrowRecordDao.createBorrowRecord(borrowRecords);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class DefaultBorrowRecordService implements BorrowRecordService {
         List<BorrowRecord> borrowRecords = new ArrayList<>();
         Arrays.stream(records).forEach(record ->
                 borrowRecords.add(record.toBookEditRecordModel()));
-        return readerDao.updateStatusBorrowRecords(borrowRecords);
+        return borrowRecordDao.updateStatusBorrowRecords(borrowRecords);
     }
 
 }

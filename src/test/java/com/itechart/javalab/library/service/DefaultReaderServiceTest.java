@@ -1,110 +1,97 @@
 package com.itechart.javalab.library.service;
 
-import com.itechart.javalab.library.dao.BorrowRecordDao;
-import com.itechart.javalab.library.dao.impl.SqlBorrowRecordDao;
-import com.itechart.javalab.library.dto.BorrowRecordDto;
+import com.itechart.javalab.library.dao.ReaderDao;
+import com.itechart.javalab.library.dao.impl.SqlReaderDao;
 import com.itechart.javalab.library.dto.ReaderDto;
-import com.itechart.javalab.library.model.BorrowRecord;
-import com.itechart.javalab.library.model.TimePeriod;
-import com.itechart.javalab.library.service.impl.DefaultBorrowRecordService;
+import com.itechart.javalab.library.model.Paginator;
+import com.itechart.javalab.library.model.Reader;
+import com.itechart.javalab.library.service.impl.DefaultReaderService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 
 public class DefaultReaderServiceTest {
 
     @Mock
-    private BorrowRecordDao mockReaderDao = mock(SqlBorrowRecordDao.class);
-    private final BorrowRecordService readerService = DefaultBorrowRecordService.getInstance();
-
+    private ReaderDao mockReaderDao = mock(SqlReaderDao.class);
+    private final ReaderService readerService = DefaultReaderService.getInstance();
 
     @Test
-    public void addBorrowStatusPositive() {
-        BorrowRecordDto[] borrowRecords = new BorrowRecordDto[1];
-        BorrowRecordDto borrowRecordDto = BorrowRecordDto.builder()
-                .reader(ReaderDto.builder().email("zazybo1.17@gmail.com").name("Ben Ben").build())
-                .bookId(5)
-                .timePeriod(TimePeriod.ONE)
-                .build();
-        borrowRecords[0] = borrowRecordDto;
+    public void getReadersByEmailPositive() {
+        Set<Reader> readers = Mockito.anySetOf(Reader.class);
+        String email = "zazybo1.17@gmail.com";
         Whitebox.setInternalState(readerService, "readerDao", mockReaderDao);
-        Mockito.when(mockReaderDao.setBorrowRecordStatus(Mockito.anyListOf(BorrowRecord.class))).thenReturn(true);
-        Assert.assertTrue(readerService.addBorrowStatus(borrowRecords));
+        Mockito.when(mockReaderDao.getReadersByEmail(email)).thenReturn(Optional.of(readers));
+        Assert.assertEquals(Optional.of(readers), readerService.getReadersByEmail(email));
     }
 
     @Test
-    public void addBorrowStatusNegative() {
-        BorrowRecordDto[] borrowRecords = new BorrowRecordDto[1];
-        BorrowRecordDto borrowRecordDto = BorrowRecordDto.builder()
-                .reader(ReaderDto.builder().email("zazybo1.17@gmail.com").name("Ben Ben").build())
-                .bookId(5)
-                .timePeriod(TimePeriod.ONE)
-                .build();
-        borrowRecords[0] = borrowRecordDto;
+    public void getReadersByEmailNegative() {
+        Set<Reader> readers = null;
+        String email = "zazybo1.17@gmail.com";
         Whitebox.setInternalState(readerService, "readerDao", mockReaderDao);
-        Mockito.when(mockReaderDao.setBorrowRecordStatus(Mockito.anyListOf(BorrowRecord.class))).thenReturn(false);
-        Assert.assertFalse(readerService.addBorrowStatus(borrowRecords));
+        Mockito.when(mockReaderDao.getReadersByEmail(email)).thenReturn(Optional.ofNullable(readers));
+        Assert.assertEquals(Optional.ofNullable(readers), readerService.getReadersByEmail(email));
     }
 
     @Test
-    public void addBorrowRecordsPositive() {
-        BorrowRecordDto[] borrowRecords = new BorrowRecordDto[1];
-        BorrowRecordDto borrowRecordDto = BorrowRecordDto.builder()
-                .reader(ReaderDto.builder().email("zazybo1.17@gmail.com").name("Ross").build())
-                .bookId(7)
-                .timePeriod(TimePeriod.TWO)
-                .build();
-        borrowRecords[0] = borrowRecordDto;
+    public void getReaders() {
+        Set<Reader> readers = Mockito.anySetOf(Reader.class);
+        Paginator paginator = new Paginator("2", "1");
         Whitebox.setInternalState(readerService, "readerDao", mockReaderDao);
-        Mockito.when(mockReaderDao.createBorrowRecord(Mockito.anyListOf(BorrowRecord.class))).thenReturn(true);
-        Assert.assertTrue(readerService.addBorrowRecords(borrowRecords));
+        Mockito.when(mockReaderDao.getReaders(paginator)).thenReturn(Optional.of(readers));
+        Assert.assertEquals(Optional.of(readers), readerService.getReaders(paginator));
     }
 
     @Test
-    public void addBorrowRecordsNegative() {
-        BorrowRecordDto[] borrowRecords = new BorrowRecordDto[1];
-        BorrowRecordDto borrowRecordDto = BorrowRecordDto.builder()
-                .reader(ReaderDto.builder().email("zazybo1.17@gmail.com").name("Ross").build())
-                .bookId(7)
-                .timePeriod(TimePeriod.TWO)
-                .build();
-        borrowRecords[0] = borrowRecordDto;
+    public void getNumberReadersRecords() {
         Whitebox.setInternalState(readerService, "readerDao", mockReaderDao);
-        Mockito.when(mockReaderDao.createBorrowRecord(Mockito.anyListOf(BorrowRecord.class))).thenReturn(false);
-        Assert.assertFalse(readerService.addBorrowRecords(borrowRecords));
+        Mockito.when(mockReaderDao.getNumberReadersRecords()).thenReturn(Optional.of(2));
+        Assert.assertEquals(Optional.of(2), readerService.getNumberReadersRecords());
     }
 
     @Test
-    public void changeBorrowStatusPositive() {
-        BorrowRecordDto[] borrowRecords = new BorrowRecordDto[1];
-        BorrowRecordDto borrowRecordDto = BorrowRecordDto.builder()
-                .reader(ReaderDto.builder().email("zazybo1.17@gmail.com").name("Ross").build())
-                .bookId(7)
-                .timePeriod(TimePeriod.TWO)
-                .build();
-        borrowRecords[0] = borrowRecordDto;
+    public void addReaderNegative() {
         Whitebox.setInternalState(readerService, "readerDao", mockReaderDao);
-        Mockito.when(mockReaderDao.updateStatusBorrowRecords(Mockito.anyListOf(BorrowRecord.class))).thenReturn(true);
-        Assert.assertTrue(readerService.changeBorrowStatus(borrowRecords));
+        ReaderDto readerDto = Mockito.mock(ReaderDto.class);
+        Reader reader = Mockito.mock(Reader.class);
+        Mockito.when(readerDto.toExtendedModel()).thenReturn(reader);
+        Set<Reader> readers = new HashSet<>();
+        readers.add(Reader.builder().id(5).build());
+        Mockito.when(mockReaderDao.getReadersByEmail(reader.getEmail())).thenReturn(Optional.of(readers));
+        doNothing().when(mockReaderDao).createReader(reader);
+        Assert.assertFalse(readerService.addReader(readerDto));
     }
 
     @Test
-    public void changeBorrowStatusNegative() {
-        BorrowRecordDto[] borrowRecords = new BorrowRecordDto[1];
-        BorrowRecordDto borrowRecordDto = BorrowRecordDto.builder()
-                .reader(ReaderDto.builder().email("zazybo1.17@gmail.com").name("Ross").build())
-                .bookId(7)
-                .timePeriod(TimePeriod.TWO)
-                .build();
-        borrowRecords[0] = borrowRecordDto;
+    public void addReaderPositive() {
         Whitebox.setInternalState(readerService, "readerDao", mockReaderDao);
-        Mockito.when(mockReaderDao.updateStatusBorrowRecords(Mockito.anyListOf(BorrowRecord.class))).thenReturn(false);
-        Assert.assertFalse(readerService.changeBorrowStatus(borrowRecords));
+        ReaderDto readerDto = Mockito.mock(ReaderDto.class);
+        Reader reader = Mockito.mock(Reader.class);
+        Mockito.when(readerDto.toExtendedModel()).thenReturn(reader);
+        Set<Reader> readers = null;
+        Mockito.when(mockReaderDao.getReadersByEmail(reader.getEmail())).thenReturn(Optional.ofNullable(readers));
+        doNothing().when(mockReaderDao).createReader(reader);
+        Assert.assertTrue(readerService.addReader(readerDto));
     }
 
-
+    @Test
+    public void editReader() {
+        Whitebox.setInternalState(readerService, "readerDao", mockReaderDao);
+        ReaderDto readerDto = Mockito.mock(ReaderDto.class);
+        Reader reader = Mockito.mock(Reader.class);
+        Mockito.when(readerDto.toExtendedModel()).thenReturn(reader);
+        doNothing().when(mockReaderDao).updateReader(reader);
+        readerService.editReader(readerDto);
+        Mockito.verify(mockReaderDao, Mockito.times(1)).updateReader(reader);
+    }
 }

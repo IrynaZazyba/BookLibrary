@@ -25,7 +25,6 @@
                 </button>
             </div>
             <div class="modal-body">
-
                 <form>
                     <div class="form-group">
                         <div class="form-row">

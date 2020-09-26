@@ -23,11 +23,15 @@
             <div class="modal-body">
 
                 <form>
+                    <input type="hidden" name="editableLineId" value="">
                     <div class="form-group">
                         <div class="form-row">
                             <label for="firstName" class="col-sm-5 col-form-label">First name</label>
                             <div class="col">
                                 <input type="text" id="firstName" required class="form-control"/>
+                                <div class="invalid-feedback">
+                                    Please provide valid first name.
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -36,6 +40,9 @@
                             <label for="lastName" class="col-sm-5 col-form-label">Last name</label>
                             <div class="col">
                                 <input type="text" required id="lastName" class="form-control"/>
+                                <div class="invalid-feedback">
+                                    Please provide valid last name.
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -44,6 +51,9 @@
                             <label for="email" class="col-sm-5 col-form-label">Email address</label>
                             <div class="col">
                                 <input type="email" required id="email" class="form-control"/>
+                                <div class="invalid-feedback">
+                                    Please provide valid email.
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -52,6 +62,9 @@
                             <label for="phoneNumber" class="col-sm-5 col-form-label">Phone</label>
                             <div class="col">
                                 <input type="tel"  id="phoneNumber" class="form-control">
+                                <div class="invalid-feedback">
+                                    Please provide valid phone.
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -96,10 +109,10 @@
     <jsp:include page="parts/NavigationBar.jsp"/>
 
     <div class="row">
-        <div class="col-8">
+        <div class="col-11">
             <button type="button" onclick="showModalAddRecord(this)" class="btn  btn-info add-button">Add</button>
         </div>
-        <div class="col-1">
+        <div class="col-auto">
             <div class="form_toggle">
                 <c:if test="${requestScope.dto.recordsPerPage==10}">
                     <div class="form_toggle-item item-1">
