@@ -60,6 +60,7 @@ public class SqlReaderDao implements ReaderDao {
             "INNER JOIN reader on reader.id=borrow_list.reader_id " +
             "INNER JOIN book on book.id=borrow_list.book_id " +
             "WHERE DATEDIFF(due_date, NOW())<0 and return_date is NULL";
+    private static final String UPDATE_BORROW_RECORD_COMMENT="UPDATE `borrow_list` SET`comment`=? WHERE id=?";
 
     private SqlReaderDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -207,6 +208,7 @@ public class SqlReaderDao implements ReaderDao {
                         updateBorrowRecordStatus(connection, record);
 
                     }
+                    updateBorrowRecordComment(connection,record);
                     updateBookOnValue(connection, inStock, totalAmount, record.getBook().getId());
                     connection.commit();
                     connection.setAutoCommit(true);
@@ -294,6 +296,14 @@ public class SqlReaderDao implements ReaderDao {
             psUpdateStatus.setString(1, record.getStatus().toString());
             psUpdateStatus.setString(2, record.getComment());
             psUpdateStatus.setInt(3, record.getId());
+            psUpdateStatus.executeUpdate();
+        }
+    }
+
+    private void updateBorrowRecordComment(Connection connection, BorrowRecord record) throws SQLException {
+        try (PreparedStatement psUpdateStatus = connection.prepareStatement(UPDATE_BORROW_RECORD_COMMENT)) {
+            psUpdateStatus.setString(1, record.getComment());
+            psUpdateStatus.setInt(2, record.getId());
             psUpdateStatus.executeUpdate();
         }
     }
