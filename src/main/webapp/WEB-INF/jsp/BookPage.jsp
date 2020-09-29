@@ -99,6 +99,7 @@
             </div>
             <div class="modal-body">
                 <form>
+                    <input type="hidden" name="editableLineId" value=""/>
                     <div class="form-group">
                         <div class="form-row">
                             <label for="editBorrowEmail" class="col-sm-5 col-form-label">Reader email address</label>
