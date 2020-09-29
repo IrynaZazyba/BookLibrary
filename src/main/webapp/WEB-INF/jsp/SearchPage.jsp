@@ -13,6 +13,8 @@
 <body>
 <jsp:include page="parts/ModalDeleteNotification.jsp"/>
 <jsp:include page="parts/ModalDeleteAlert.jsp"/>
+<jsp:include page="parts/ModalConfirmPagination.jsp"/>
+
 <div class="container">
 
     <jsp:include page="parts/NavigationBar.jsp"/>
@@ -42,10 +44,8 @@
                    value="${requestScope.dto.isAvailableOnly}"/>
             <input id="recordsPerPage" type="hidden" name="recordsPerPage"
                    value="${requestScope.dto.recordsPerPage}"/>
-            <input id="currentPage" type="hidden" name="currentPage" value="${requestScope.dto.currentPage}"/>
-
             <div class="col">
-                <button type="submit" onclick="checkParameter(this)" class="btn btn-success">Search</button>
+                <button type="submit" onclick="checkParameter(this)" class="btn btn-info">Search</button>
             </div>
         </div>
     </form>
@@ -54,16 +54,10 @@
             <a href="${pageContext.request.contextPath}/books/page">
                 <button type="button" class="btn  btn-info add-button">Add</button>
             </a>
-            <c:if test="${empty requestScope.dto.books}">
-                <button type="button" id="deleteBookButton" onclick="showDeleteAlert()" disabled
-                        class="btn  btn-outline-danger">Remove
-                </button>
-            </c:if>
-            <c:if test="${not empty requestScope.dto.books}">
-                <button type="button" id="deleteBookButton" onclick="showDeleteAlert()"
-                        class="btn  btn-outline-danger">Remove
-                </button>
-            </c:if>
+            <button type="button" id="deleteBookButton" onclick="showDeleteAlert()" disabled
+                    class="btn danger-button-theme btn-outline-danger">Remove
+            </button>
+
         </div>
         <div class="col-auto">
             <div class="form-group form-check">

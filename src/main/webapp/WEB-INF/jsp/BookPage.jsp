@@ -80,7 +80,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Discard</button>
-                <button type="button" onclick="createNewBorrowRecord()" class="btn btn-primary">Save</button>
+                <button type="button" onclick="createNewBorrowRecord()" class="btn btn-info">Save</button>
             </div>
         </div>
     </div>
@@ -167,7 +167,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Discard</button>
-                <button type="button" onclick="editBorrowStatus()" class="btn btn-primary">Save</button>
+                <button type="button" onclick="editBorrowStatus()" class="btn btn-info">Save</button>
             </div>
 
         </div>
@@ -182,11 +182,9 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Notification</h5>
             </div>
-            <div class="modal-body">
-
-            </div>
+            <div class="modal-body"></div>
             <div class="modal-footer">
-                <button type="button" onclick="reloadBookPage()" class="btn btn-primary">Back to page</button>
+                <button type="button" onclick="reloadBookPage()" class="btn btn-info">Back to page</button>
             </div>
         </div>
     </div>
@@ -234,6 +232,9 @@
                         <input type="text" name="author" class="form-control"
                                value="<vh:authors authors="${requestScope.bookPageDto.book.author}"/>"
                                id="author" required/>
+                        <small id="authorsHelpBlock" class="form-text text-muted">
+                            Use a comma for multiple authors: Alexander Pushkin, Dan Brown
+                        </small>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -261,6 +262,9 @@
                         <input type="text" name="genre" class="form-control"
                                value="<vh:genres genres="${requestScope.bookPageDto.book.genres}"/>"
                                id="genre" required/>
+                        <small id="genresHelpBlock" class="form-text text-muted">
+                            Use a comma for multiple genres: History, Self-help
+                        </small>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -369,7 +373,7 @@
     </table>
     <button type="button" class="btn btn-info add-button" onclick="saveChangesBookPage()">Save</button>
     <a href="${pageContext.request.contextPath}/books">
-        <button type="button" class="btn  btn-outline-danger">Discard</button>
+        <button type="button" class="btn  btn-outline-danger danger-button-theme">Discard</button>
     </a>
 </div>
 <jsp:include page="parts/BootstrapScript.jsp"/>

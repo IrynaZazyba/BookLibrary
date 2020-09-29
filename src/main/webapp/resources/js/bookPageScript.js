@@ -48,7 +48,8 @@ function editBorrowStatus() {
     if (status !== "") {
         let editableLineId = document.querySelector("input[name='editableLineId']").value;
         let returnDateTd = document.querySelector("tr[id='" + editableLineId + "'] td[class='returnDate']");
-        let exStatus = document.querySelector("tbody tr[id='" + editableLineId + "']").getAttribute("data-status");
+        let exStatus = document
+            .querySelector("tbody tr[id='" + editableLineId + "']").getAttribute("data-status");
 
         if (inStock == 0 && exStatus === "RETURNED" && status !== "RETURNED") {
             statusSelect.classList.add('is-invalid');
@@ -130,7 +131,7 @@ function showModalEditBorrow(obj) {
 
     //add hidden input with editableLineId value to modal window
     let editableLineId = rowWithData.id;
-    document.querySelector("#editBorrowRecord form input[name='editableLineId']").value=editableLineId;
+    document.querySelector("#editBorrowRecord form input[name='editableLineId']").value = editableLineId;
 
     //get data from line
     let email = rowWithData.querySelector(".email").innerHTML;
@@ -236,7 +237,8 @@ let insertedBorrowRecordId = -1;
 function createRowToBorrowRecordsListTable(email, name, borrowDare, dueDate, comment, period) {
     return "<tr id='" + insertedBorrowRecordId + "' data-period='" + period + "'>"
         + "<td class='email'>" + email + "</td>"
-        + "<td class='name'><button type='button' disabled onclick='showModalEditBorrow(this)' class='btn btn-link'>" + name + ""
+        + "<td class='name'>"
+        + "<button type='button' disabled onclick='showModalEditBorrow(this)' class='btn btn-link'>" + name + ""
         + "</button></td>"
         + "<td class='borrowDate'>" + dateFormatEn(borrowDare) + "</td>"
         + "<td class='dueDate'>" + dateFormatEn(dueDate) + "</td>"
@@ -401,7 +403,8 @@ async function createBook() {
             window.location.replace("/books/" + json.id);
         }
     } else {
-        resultChanges.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't created. Please, try later."));
+        resultChanges.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't created. Please, " +
+            "check info and try later."));
     }
 }
 
@@ -422,9 +425,11 @@ async function updateBookInfo() {
     });
 
     if (response.ok) {
-        updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was updated successfully"));
+        updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was updated " +
+            "successfully"));
     } else {
-        updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't updated. Please, try later."));
+        updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't updated. " +
+            "Please, check info and try later."));
     }
 
     if (response.status != null) {
@@ -458,12 +463,15 @@ async function returnBookToLibrary() {
 
             let json = await response.json();
             if (json !== null && json.hasOwnProperty("message")) {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all book was returned. Please, reload page to check."));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all book was " +
+                    "returned. Please, reload page to check."));
             } else {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was successfully returned"));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was " +
+                    "successfully returned"));
             }
         } else {
-            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't return. Please, try later."));
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't return. " +
+                "Please, check info and try later."));
         }
         if (response.status != null) {
             changeBorrowRecordStatus();
@@ -497,9 +505,11 @@ async function changeBorrowRecordStatus() {
         if (response.ok) {
             let json = await response.json();
             if (json !== null && json.hasOwnProperty("message")) {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all statuses was updated. Please, reload page to check."));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all statuses " +
+                    "was updated. Please, reload page to check."));
             } else {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Borrow record status was successfully changed"));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Borrow record " +
+                    "status was successfully changed"));
             }
         } else {
             updateBookPageResult.insertAdjacentHTML('afterbegin',
@@ -538,12 +548,15 @@ async function addNewBorrowRecord() {
         if (response.ok) {
             let json = await response.json();
             if (json !== null && json.hasOwnProperty("message")) {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all borrow record was added. Please, reload page to check."));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all borrow " +
+                    "record was added. Please, reload page to check."));
             } else {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("New borrow record was successfully added"));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("New borrow " +
+                    "record was successfully added"));
             }
         } else {
-            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Borrow record wasn't add. Please, try later."));
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Borrow record " +
+                "wasn't add. Please, try later."));
         }
     }
     $('#resultNotification').modal('show');

@@ -98,7 +98,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Discard</button>
-                <button type="button" onclick="saveReaderChanges()" class="btn btn-primary">Save</button>
+                <button type="button" onclick="saveReaderChanges()" class="btn btn-info">Save</button>
             </div>
         </div>
     </div>

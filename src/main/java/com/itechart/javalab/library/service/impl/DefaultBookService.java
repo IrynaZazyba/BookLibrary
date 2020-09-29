@@ -74,16 +74,14 @@ public class DefaultBookService implements BookService {
         return bookById;
     }
 
-
     @Override
     public Optional<Boolean> updateBookInfo(BookDto bookDto, Part part, String savePath) {
         Book book = Book.buildFrom(bookDto);
-        String nameForDb = defineFileName(part, book);
+        String fileName = defineFileName(part, book);
+        book.setCoverPath(fileName);
         Optional<Boolean> updateResult = alterBookDao.updateBookInfo(book);
-        if (part != null && updateResult.isPresent()) {
-            if (part.getSize() != 0) {
-                uploadFileService.uploadFile(savePath, part, nameForDb);
-            }
+        if (part.getSize() != 0 && updateResult.isPresent()) {
+            uploadFileService.uploadFile(savePath, part, fileName);
         }
         return updateResult;
     }
@@ -106,22 +104,26 @@ public class DefaultBookService implements BookService {
         Book book = Book.buildFrom(bookDto);
         int id = alterBookDao.createBook(book);
         book.setId(id);
-        String cover = defineFileName(part, book);
-        book.setCoverPath(cover);
-        if (part != null && part.getSize() != 0) {
-            alterBookDao.updateBookCover(book);
+        if (part.getSize() != 0) {
+            String cover = generateUniqueFileName(book.getId(), part.getSubmittedFileName());
+            book.setCoverPath(cover);
             uploadFileService.uploadFile(savePath, part, cover);
+            alterBookDao.updateBookCover(book);
         }
         return id;
     }
 
     private String defineFileName(Part part, Book book) {
-        String nameForDb = null;
-        if (part != null && part.getSize() != 0) {
-            nameForDb = book.getId() + "." + FilenameUtils.getExtension(part.getSubmittedFileName());
-            book.setCoverPath(nameForDb);
+        String fileName;
+        if (part.getSize() != 0) {
+            fileName = generateUniqueFileName(book.getId(), part.getSubmittedFileName());
+        } else {
+            fileName = receiveBookDao.getBookCover(book.getId());
         }
-        return nameForDb;
+        return fileName;
     }
 
+    private String generateUniqueFileName(int bookId, String realFileName) {
+        return bookId + "." + FilenameUtils.getExtension(realFileName);
+    }
 }

@@ -2,13 +2,13 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<div id="confirm-delete" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog"
+<div id="confirm-pagination" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog"
      aria-labelledby="staticBackdropLabel" aria-hidden="true" data-target="#staticBackdrop">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">
-                    Are you sure? All information about the book and the list of borrowings will be deleted!
+                    If you go to another page, the selected books will not be deleted. Continue the transition?
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -16,7 +16,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" onclick="deleteBooks()" class="btn danger-button-theme btn-ok">Delete</button>
+                <a>
+                    <button type="button" class="btn btn-info btn-ok">Continue</button>
+                </a>
             </div>
         </div>
     </div>
