@@ -13,6 +13,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="${pageContext.request.contextPath}/readers">Readers Page</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="${pageContext.request.contextPath}/library">Library Page</a>
+            </li>
         </ul>
     </div>
 </nav>

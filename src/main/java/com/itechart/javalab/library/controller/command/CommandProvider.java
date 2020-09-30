@@ -26,6 +26,8 @@ public class CommandProvider {
         commandRepository.put(new CommandKey("GET", "/book/cover"), new GetFileCommand());
         commandRepository.put(new CommandKey("GET", "/books/page"), new GetBookPageCommand());
         commandRepository.put(new CommandKey("GET", "/readers"), new GetReadersCommand());
+        commandRepository.put(new CommandKey("GET", "/library"), new GetLibraryInfoPageCommand());
+
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/book"), new UpdateBookCommand());
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/newStatus"), new ReturnBookCommand());
         ajaxCommandRepository.put(new CommandKey("POST", "/ajax/record"), new LendBookCommand());
@@ -36,7 +38,6 @@ public class CommandProvider {
         ajaxCommandRepository.put(new CommandKey("POST", "/ajax/books"), new AddBookCommand());
         ajaxCommandRepository.put(new CommandKey("POST", "/ajax/readers"), new AddReaderCommand());
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/readers"), new EditReaderCommand());
-
     }
 
     public static CommandProvider getInstance() {
