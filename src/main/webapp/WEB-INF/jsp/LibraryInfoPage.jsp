@@ -17,25 +17,28 @@
     <div class="card bg-light mb-3">
         <div class="card-header"><h5 class="card-title">Please, provide info to construct automatic emails to
             readers from the library.</h5></div>
-        <div class="card-body">
+        <div class="shadow-sm card-body">
             <p class="card-text">
             <form id="libInfo" class="form-horizontal" role="form" method="GET">
                 <div class="form-row">
-                    <div class="col">
-                        <input type="text" name="address" class="form-control" placeholder="address"
+                    <div class="col-4">
+                        <label for="address" class="col-sm-5 col-form-label">Address</label>
+                        <input type="text" name="address" id="address" class="form-control" placeholder="address"
                                value="${requestScope.emailInfo.address}"/>
                     </div>
-                    <div class="col">
-                        <input type="text" name="name" class="form-control" placeholder="name"
+                    <div class="col-4">
+                        <label for="name" class="col-sm-5 col-form-label">Name</label>
+                        <input type="text" name="name" class="form-control" id="name" placeholder="name"
                                value="${requestScope.emailInfo.name}"/>
                     </div>
-                    <div class="col">
-                        <input type="text" name="signature" class="form-control" placeholder="signature"
+                    <div class="col-4">
+                        <label for="signature" class="col-sm-5 col-form-label">Signature</label>
+                        <input type="text" name="signature" class="form-control" id="signature" placeholder="signature"
                                value="${requestScope.emailInfo.signature}"/>
                     </div>
-                    <div class="col">
-                        <button type="submit" class="btn btn-info">Save</button>
-                    </div>
+                </div>
+                <div class="form-row mt-3">
+                    <button type="submit" class="btn d-block mx-auto btn-info">Save</button>
                 </div>
             </form>
             </p>

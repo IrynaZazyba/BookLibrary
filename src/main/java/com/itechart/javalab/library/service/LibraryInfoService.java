@@ -1,11 +1,11 @@
 package com.itechart.javalab.library.service;
 
-import com.itechart.javalab.library.model.EmailInfo;
+import com.itechart.javalab.library.model.LibraryEmailInfo;
 
 import java.util.Optional;
 
 public interface LibraryInfoService {
 
-    Optional<EmailInfo> getLibraryInfo();
+    Optional<LibraryEmailInfo> getLibraryInfo();
 
 }

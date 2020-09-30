@@ -2,7 +2,7 @@ package com.itechart.javalab.library.controller.command.front.impl;
 
 import com.itechart.javalab.library.controller.command.front.Command;
 import com.itechart.javalab.library.controller.util.JspPageName;
-import com.itechart.javalab.library.model.EmailInfo;
+import com.itechart.javalab.library.model.LibraryEmailInfo;
 import com.itechart.javalab.library.service.LibraryInfoService;
 import com.itechart.javalab.library.service.impl.DefaultLibraryInfoService;
 
@@ -23,7 +23,7 @@ public class GetLibraryInfoPageCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Optional<EmailInfo> libraryInfo = libraryInfoService.getLibraryInfo();
+        Optional<LibraryEmailInfo> libraryInfo = libraryInfoService.getLibraryInfo();
         libraryInfo.ifPresent(emailInfo -> request.setAttribute(REQUEST_LIBRARY_TEMPLATE_INFO, emailInfo));
         forwardToPage(request, response, JspPageName.LIBRARY_INFO_PAGE);
     }
