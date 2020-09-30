@@ -21,6 +21,7 @@
     <div class='alert alert-info' style="display: none" id="alertNoSelectedOptions" role='alert'>Please select a search
         option
     </div>
+    <input id="currentPage" type="hidden" name="currentPage" value="${requestScope.dto.currentPage}"/>
     <form id="searchForm" action="${pageContext.request.contextPath}/books/search" class="form-horizontal"
           role="form" method="GET">
         <div class="form-row">

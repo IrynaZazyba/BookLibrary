@@ -125,7 +125,7 @@ public class Book {
     }
 
     private static void validateBook(int pageCount, int totalAmount) {
-        if (pageCount <= 0 || totalAmount <= 0) {
+        if (pageCount <= 0 || totalAmount < 0) {
             throw new IllegalArgumentException("Illegal page count value");
         }
     }

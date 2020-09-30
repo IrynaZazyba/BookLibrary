@@ -42,7 +42,6 @@
                         </div>
                     </div>
                     <div class="form-group">
-
                         <div class="form-row">
                             <label for="addBorrowName" class="col-sm-5 col-form-label">Reader name</label>
                             <div class="col">
@@ -54,9 +53,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-
                         <div class="form-row">
-                            <label for="addBorrowTimePeriod" class="col-sm-5 col-form-label">Time period</label>
+                            <label for="addBorrowTimePeriod" class="col-sm-5 col-form-label">Time period, month</label>
                             <div class="col">
                                 <select name="timePeriod" required class="form-control" id="addBorrowTimePeriod">
                                     <option value="ONE">1</option>

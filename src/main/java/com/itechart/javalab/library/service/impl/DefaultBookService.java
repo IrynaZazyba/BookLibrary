@@ -13,6 +13,7 @@ import com.itechart.javalab.library.service.UploadFileService;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.servlet.http.Part;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,7 +96,12 @@ public class DefaultBookService implements BookService {
         if (book.getInStock() > 0) {
             book.setAvailableStatus();
         } else {
-            receiveBookDao.getEarliestDueDate(book.getId()).ifPresent(book::setUnavailableStatus);
+            Optional<LocalDateTime> earliestDueDate = receiveBookDao.getEarliestDueDate(book.getId());
+            if (earliestDueDate.isPresent()) {
+                book.setUnavailableStatus(earliestDueDate.get());
+            } else {
+                book.setUnavailableStatus(LocalDateTime.now());
+            }
         }
     }
 

@@ -1,10 +1,10 @@
 "use strict";
 
-
 let serverTotalAmount;
 let viewTotalAmount;
 let inStock;
 let existedBorrowRecords = [];
+let readersJson;
 
 window.onload = function () {
     serverTotalAmount = document.getElementById("totalAmount").value;
@@ -20,15 +20,12 @@ window.onload = function () {
     });
 };
 
-
 let editedBorrowingRecordsIds = [];
 let changedStatusBorrowRecordIds = [];
-
 
 function editBorrowStatus() {
     let statusSelect = document.querySelector("div[id='editBorrowRecord'] form select[name=status]");
     let comment = document.querySelector("#editBorrowRecord #editBorrowComment").value;
-
 
     let invalidStatusValue = document.querySelector(
         "div[id='editBorrowRecord'] form select[name='status']  + div[class='invalid-feedback']");
@@ -150,11 +147,11 @@ function showModalEditBorrow(obj) {
     modalEditBorrow.querySelector("#editBorrowStatus").value = status;
 
     //calculate time period
-    let timePeriod = ((new Date(dueDate) - new Date(borrowDate)) / 86400000);
+    let timePeriod = (Math.round((new Date(dueDate) - new Date(borrowDate)) / (60000 * 43800)));
     let timePeriodOptions = document.getElementById("editBorrowTimePeriod").options;
     Array.from(timePeriodOptions).forEach(option => {
         let temp = option.value;
-        if (temp === timePeriod) {
+        if (temp == timePeriod) {
             option.selected = true;
         }
     });
@@ -177,7 +174,6 @@ function dateFormatEn(date) {
 }
 
 function createNewBorrowRecord() {
-
     let modalAddNewBorrowRecord = document.getElementById("addNewBorrowRecord");
 
     if (modalAddNewBorrowRecord.querySelector("#addBorrowEmail").classList.contains("is-invalid")) {
@@ -263,10 +259,13 @@ function calculateEarliestDueDate() {
             }
         }
     });
-    return new Date(earliestReturnDate);
-}
 
-let readersJson;
+    if (earliestReturnDate) {
+        return new Date(earliestReturnDate);
+    } else {
+        return new Date();
+    }
+}
 
 $('.basicAutoComplete').autoComplete({
         resolver: 'custom',
@@ -279,7 +278,6 @@ $('.basicAutoComplete').autoComplete({
 
                 if (response.ok) {
                     let emails = [];
-
                     let json = await response.json();
                     if (json.hasOwnProperty("readers")) {
                         readersJson = json.readers;
@@ -410,8 +408,11 @@ async function createBook() {
 
 
 const updateBookPageResult = document.querySelector("#resultNotification .modal-body");
+let bookUpdateResult = true;
+let count = 0;
 
 async function updateBookInfo() {
+    count++;
     let bookInfoForm = document.getElementById("bookInfo");
     let bookDto = parseBook(bookInfoForm);
 
@@ -423,16 +424,24 @@ async function updateBookInfo() {
         method: 'PUT',
         body: requestBody,
     });
-
-    if (response.ok) {
-        updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was updated " +
-            "successfully"));
+    if (bookUpdateResult) {
+        if (response.ok) {
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was updated " +
+                "successfully"));
+        } else {
+            bookUpdateResult = false;
+        }
     } else {
-        updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't updated. " +
-            "Please, check info and try later."));
+        bookUpdateResult = true;
+        if (response.ok) {
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was updated " +
+                "successfully"));
+        } else {
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't updated. " +
+                "Please, check info and try later."));
+        }
     }
-
-    if (response.status != null) {
+    if (response.status != null && count == 1) {
         returnBookToLibrary();
     }
 }
@@ -555,13 +564,20 @@ async function addNewBorrowRecord() {
                     "record was successfully added"));
             }
         } else {
-            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Borrow record " +
-                "wasn't add. Please, try later."));
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Borrow records " +
+                "weren't add. Please, try later."));
         }
+    }
+
+    if (!bookUpdateResult) {
+        updateBookInfo();
     }
     $('#resultNotification').modal('show');
 }
 
+$('#addNewBorrowRecord').on('hide.bs.modal', function (e) {
+    document.querySelectorAll("#addNewBorrowRecord input.form-control").forEach(e => e.value = "");
+});
 
 function reloadBookPage() {
     document.location.reload();
@@ -574,7 +590,6 @@ function addDangerNotification(message) {
 function addSuccessNotification(message) {
     return "<div class='alert alert-success' role='alert'>" + message + "</div>";
 }
-
 
 function createAddBorrowRecord(elem) {
     let email = elem.querySelector(".email").innerHTML;
@@ -593,7 +608,6 @@ function createAddBorrowRecord(elem) {
         comment: comment
     };
 }
-
 
 function createEditBorrowRecord(elem, id) {
     let status = elem.getAttribute("data-status");
@@ -632,7 +646,7 @@ document.getElementById("totalAmount").addEventListener("change", (event) => {
 function validateTotalAmount() {
     let totalAmountInput = document.getElementById("totalAmount");
     let newTotalAmount = totalAmountInput.value;
-    return newTotalAmount >= (viewTotalAmount - inStock) && newTotalAmount > 0;
+    return newTotalAmount >= (viewTotalAmount - inStock) && newTotalAmount >= 0;
 }
 
 function validateName(name) {
