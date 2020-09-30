@@ -1,15 +1,20 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", menuLinkHelper);
+
 function menuLinkHelper() {
-    let urlParams = window.location.protocol+"//"+window.location.host+window.location.pathname;
+    let urlParams = window.location.protocol + "//" + window.location.host + window.location.pathname;
     let navbar = document.querySelectorAll(".navbar li a");
+    document.querySelector(".navbar li .active").classList.remove('active');
     navbar.forEach(elem => {
         if (elem.href == urlParams) {
-            document.querySelector(".navbar li .active").classList.remove('active');
             elem.classList.add('active');
         }
     });
+
+    if (window.location.pathname === "/") {
+        document.querySelector(".navbar li a").classList.add('active');
+    }
 }
 
 async function doFilter(obj) {
@@ -111,7 +116,8 @@ async function deleteBooks() {
     if (response.ok) {
         result.insertAdjacentHTML('afterend', addSuccessNotification("Books was successfully deleted"));
     } else {
-        result.insertAdjacentHTML('afterend', addDangerNotification("Please, check borrow list. Not all books weren't delete. "));
+        result.insertAdjacentHTML('afterend', addDangerNotification("Please, check borrow list. Not all " +
+            "books weren't delete. "));
     }
 
     $('#deleteNotification').modal('show');
@@ -128,3 +134,48 @@ function addDangerNotification(message) {
 function addSuccessNotification(message) {
     return "<div class='alert alert-success' role='alert'>" + message + "</div>";
 }
+
+
+document.querySelectorAll("nav .page-link").forEach(elem => {
+    elem.addEventListener('click', checkIfNotDeleted)
+});
+
+function checkIfNotDeleted(event) {
+    let checkedBooks = document.querySelectorAll(".mainPageTable th input[type='checkbox']:checked");
+    if (checkedBooks.length !== 0) {
+        event.preventDefault();
+        document.querySelector("#confirm-pagination a").href = event.currentTarget.href;
+        $('#confirm-pagination').modal('show');
+    }
+}
+
+document.querySelectorAll(".mainPageTable th input[type='checkbox']").forEach(elem => {
+    elem.addEventListener('change', activateRemoveButton);
+});
+
+function activateRemoveButton(event) {
+    let button = document.getElementById("deleteBookButton");
+
+    if (event.currentTarget.checked) {
+        console.log(button.getAttribute("disabled"));
+        console.log(button.getAttribute("disabled"));
+
+        if (button.disabled) {
+            button.removeAttribute("disabled");
+        }
+    } else {
+        let isAllUnchecked = true;
+        document.querySelectorAll(".mainPageTable th input[type='checkbox']").forEach(elem => {
+            if (elem.checked) {
+                isAllUnchecked = false;
+            }
+        });
+
+        if (isAllUnchecked) {
+            button.setAttribute("disabled","disabled");
+        }
+    }
+}
+
+
+

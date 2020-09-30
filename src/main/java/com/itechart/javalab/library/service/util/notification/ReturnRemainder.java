@@ -1,7 +1,7 @@
 package com.itechart.javalab.library.service.util.notification;
 
-import com.itechart.javalab.library.dao.ReaderDao;
-import com.itechart.javalab.library.dao.impl.SqlReaderDao;
+import com.itechart.javalab.library.dao.BorrowRecordDao;
+import com.itechart.javalab.library.dao.impl.SqlBorrowRecordDao;
 import com.itechart.javalab.library.model.BorrowRecord;
 import com.itechart.javalab.library.service.util.MailSender;
 import org.quartz.Job;
@@ -28,7 +28,7 @@ public class ReturnRemainder implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         Object path = jobExecutionContext.getJobDetail().getJobDataMap().get(MAIL_TEMPLATE_PATH);
-        ReaderDao readerDao = SqlReaderDao.getInstance();
+        BorrowRecordDao readerDao = SqlBorrowRecordDao.getInstance();
         List<BorrowRecord> records = readerDao.getReturnNotificationInfo();
         records.forEach(record -> {
             STGroup g = new STGroupDir((String) path);

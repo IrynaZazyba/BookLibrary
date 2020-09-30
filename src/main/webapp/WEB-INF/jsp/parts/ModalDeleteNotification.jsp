@@ -13,7 +13,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" onclick="reloadBookPage()" class="btn btn-primary">Back to page</button>
+                <button type="button" onclick="reloadBookPage()" class="btn btn-info">Back to page</button>
             </div>
         </div>
     </div>

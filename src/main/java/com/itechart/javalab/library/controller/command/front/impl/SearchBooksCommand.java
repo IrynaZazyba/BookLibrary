@@ -77,6 +77,7 @@ public class SearchBooksCommand implements Command {
                 request.setAttribute(REQUEST_SEARCH_PAGE_DTO, searchPageDto);
                 request.getServletContext().getRequestDispatcher(JspPageName.SEARCH_PAGE).forward(request, response);
             } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }

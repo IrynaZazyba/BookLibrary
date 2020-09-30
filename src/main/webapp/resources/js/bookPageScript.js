@@ -1,10 +1,10 @@
 "use strict";
 
-
 let serverTotalAmount;
 let viewTotalAmount;
 let inStock;
 let existedBorrowRecords = [];
+let readersJson;
 
 window.onload = function () {
     serverTotalAmount = document.getElementById("totalAmount").value;
@@ -20,15 +20,12 @@ window.onload = function () {
     });
 };
 
-
 let editedBorrowingRecordsIds = [];
 let changedStatusBorrowRecordIds = [];
-
 
 function editBorrowStatus() {
     let statusSelect = document.querySelector("div[id='editBorrowRecord'] form select[name=status]");
     let comment = document.querySelector("#editBorrowRecord #editBorrowComment").value;
-
 
     let invalidStatusValue = document.querySelector(
         "div[id='editBorrowRecord'] form select[name='status']  + div[class='invalid-feedback']");
@@ -48,7 +45,8 @@ function editBorrowStatus() {
     if (status !== "") {
         let editableLineId = document.querySelector("input[name='editableLineId']").value;
         let returnDateTd = document.querySelector("tr[id='" + editableLineId + "'] td[class='returnDate']");
-        let exStatus = document.querySelector("tbody tr[id='" + editableLineId + "']").getAttribute("data-status");
+        let exStatus = document
+            .querySelector("tbody tr[id='" + editableLineId + "']").getAttribute("data-status");
 
         if (inStock == 0 && exStatus === "RETURNED" && status !== "RETURNED") {
             statusSelect.classList.add('is-invalid');
@@ -130,7 +128,7 @@ function showModalEditBorrow(obj) {
 
     //add hidden input with editableLineId value to modal window
     let editableLineId = rowWithData.id;
-    document.querySelector("#editBorrowRecord form input[name='editableLineId']").value=editableLineId;
+    document.querySelector("#editBorrowRecord form input[name='editableLineId']").value = editableLineId;
 
     //get data from line
     let email = rowWithData.querySelector(".email").innerHTML;
@@ -149,11 +147,11 @@ function showModalEditBorrow(obj) {
     modalEditBorrow.querySelector("#editBorrowStatus").value = status;
 
     //calculate time period
-    let timePeriod = ((new Date(dueDate) - new Date(borrowDate)) / 86400000);
+    let timePeriod = (Math.round((new Date(dueDate) - new Date(borrowDate)) / (60000 * 43800)));
     let timePeriodOptions = document.getElementById("editBorrowTimePeriod").options;
     Array.from(timePeriodOptions).forEach(option => {
         let temp = option.value;
-        if (temp === timePeriod) {
+        if (temp == timePeriod) {
             option.selected = true;
         }
     });
@@ -176,7 +174,6 @@ function dateFormatEn(date) {
 }
 
 function createNewBorrowRecord() {
-
     let modalAddNewBorrowRecord = document.getElementById("addNewBorrowRecord");
 
     if (modalAddNewBorrowRecord.querySelector("#addBorrowEmail").classList.contains("is-invalid")) {
@@ -236,7 +233,8 @@ let insertedBorrowRecordId = -1;
 function createRowToBorrowRecordsListTable(email, name, borrowDare, dueDate, comment, period) {
     return "<tr id='" + insertedBorrowRecordId + "' data-period='" + period + "'>"
         + "<td class='email'>" + email + "</td>"
-        + "<td class='name'><button type='button' disabled onclick='showModalEditBorrow(this)' class='btn btn-link'>" + name + ""
+        + "<td class='name'>"
+        + "<button type='button' disabled onclick='showModalEditBorrow(this)' class='btn btn-link'>" + name + ""
         + "</button></td>"
         + "<td class='borrowDate'>" + dateFormatEn(borrowDare) + "</td>"
         + "<td class='dueDate'>" + dateFormatEn(dueDate) + "</td>"
@@ -261,10 +259,13 @@ function calculateEarliestDueDate() {
             }
         }
     });
-    return new Date(earliestReturnDate);
-}
 
-let readersJson;
+    if (earliestReturnDate) {
+        return new Date(earliestReturnDate);
+    } else {
+        return new Date();
+    }
+}
 
 $('.basicAutoComplete').autoComplete({
         resolver: 'custom',
@@ -277,7 +278,6 @@ $('.basicAutoComplete').autoComplete({
 
                 if (response.ok) {
                     let emails = [];
-
                     let json = await response.json();
                     if (json.hasOwnProperty("readers")) {
                         readersJson = json.readers;
@@ -401,14 +401,18 @@ async function createBook() {
             window.location.replace("/books/" + json.id);
         }
     } else {
-        resultChanges.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't created. Please, try later."));
+        resultChanges.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't created. Please, " +
+            "check info and try later."));
     }
 }
 
 
 const updateBookPageResult = document.querySelector("#resultNotification .modal-body");
+let bookUpdateResult = true;
+let count = 0;
 
 async function updateBookInfo() {
+    count++;
     let bookInfoForm = document.getElementById("bookInfo");
     let bookDto = parseBook(bookInfoForm);
 
@@ -420,14 +424,24 @@ async function updateBookInfo() {
         method: 'PUT',
         body: requestBody,
     });
-
-    if (response.ok) {
-        updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was updated successfully"));
+    if (bookUpdateResult) {
+        if (response.ok) {
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was updated " +
+                "successfully"));
+        } else {
+            bookUpdateResult = false;
+        }
     } else {
-        updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't updated. Please, try later."));
+        bookUpdateResult = true;
+        if (response.ok) {
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was updated " +
+                "successfully"));
+        } else {
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't updated. " +
+                "Please, check info and try later."));
+        }
     }
-
-    if (response.status != null) {
+    if (response.status != null && count == 1) {
         returnBookToLibrary();
     }
 }
@@ -458,12 +472,15 @@ async function returnBookToLibrary() {
 
             let json = await response.json();
             if (json !== null && json.hasOwnProperty("message")) {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all book was returned. Please, reload page to check."));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all book was " +
+                    "returned. Please, reload page to check."));
             } else {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was successfully returned"));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Book was " +
+                    "successfully returned"));
             }
         } else {
-            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't return. Please, try later."));
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Book wasn't return. " +
+                "Please, check info and try later."));
         }
         if (response.status != null) {
             changeBorrowRecordStatus();
@@ -497,9 +514,11 @@ async function changeBorrowRecordStatus() {
         if (response.ok) {
             let json = await response.json();
             if (json !== null && json.hasOwnProperty("message")) {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all statuses was updated. Please, reload page to check."));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all statuses " +
+                    "was updated. Please, reload page to check."));
             } else {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Borrow record status was successfully changed"));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("Borrow record " +
+                    "status was successfully changed"));
             }
         } else {
             updateBookPageResult.insertAdjacentHTML('afterbegin',
@@ -538,17 +557,27 @@ async function addNewBorrowRecord() {
         if (response.ok) {
             let json = await response.json();
             if (json !== null && json.hasOwnProperty("message")) {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all borrow record was added. Please, reload page to check."));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Not all borrow " +
+                    "record was added. Please, reload page to check."));
             } else {
-                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("New borrow record was successfully added"));
+                updateBookPageResult.insertAdjacentHTML('afterbegin', addSuccessNotification("New borrow " +
+                    "record was successfully added"));
             }
         } else {
-            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Borrow record wasn't add. Please, try later."));
+            updateBookPageResult.insertAdjacentHTML('afterbegin', addDangerNotification("Borrow records " +
+                "weren't add. Please, try later."));
         }
+    }
+
+    if (!bookUpdateResult) {
+        updateBookInfo();
     }
     $('#resultNotification').modal('show');
 }
 
+$('#addNewBorrowRecord').on('hide.bs.modal', function (e) {
+    document.querySelectorAll("#addNewBorrowRecord input.form-control").forEach(e => e.value = "");
+});
 
 function reloadBookPage() {
     document.location.reload();
@@ -561,7 +590,6 @@ function addDangerNotification(message) {
 function addSuccessNotification(message) {
     return "<div class='alert alert-success' role='alert'>" + message + "</div>";
 }
-
 
 function createAddBorrowRecord(elem) {
     let email = elem.querySelector(".email").innerHTML;
@@ -580,7 +608,6 @@ function createAddBorrowRecord(elem) {
         comment: comment
     };
 }
-
 
 function createEditBorrowRecord(elem, id) {
     let status = elem.getAttribute("data-status");
@@ -619,7 +646,7 @@ document.getElementById("totalAmount").addEventListener("change", (event) => {
 function validateTotalAmount() {
     let totalAmountInput = document.getElementById("totalAmount");
     let newTotalAmount = totalAmountInput.value;
-    return newTotalAmount >= (viewTotalAmount - inStock) && newTotalAmount > 0;
+    return newTotalAmount >= (viewTotalAmount - inStock) && newTotalAmount >= 0;
 }
 
 function validateName(name) {

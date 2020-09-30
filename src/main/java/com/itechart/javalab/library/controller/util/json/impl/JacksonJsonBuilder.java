@@ -2,6 +2,7 @@ package com.itechart.javalab.library.controller.util.json.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.itechart.javalab.library.controller.util.json.JsonBuilder;
 
 import java.util.HashMap;
@@ -15,6 +16,7 @@ public class JacksonJsonBuilder implements JsonBuilder {
 
     private JacksonJsonBuilder() {
         this.objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
     public static JsonBuilder getInstance() {
@@ -26,6 +28,11 @@ public class JacksonJsonBuilder implements JsonBuilder {
             }
         }
         return instance;
+    }
+
+    @Override
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
     }
 
     @Override

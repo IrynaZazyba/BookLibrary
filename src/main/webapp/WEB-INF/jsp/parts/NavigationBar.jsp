@@ -10,6 +10,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="${pageContext.request.contextPath}/books/search">Search Page</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="${pageContext.request.contextPath}/readers">Readers Page</a>
+            </li>
         </ul>
     </div>
 </nav>

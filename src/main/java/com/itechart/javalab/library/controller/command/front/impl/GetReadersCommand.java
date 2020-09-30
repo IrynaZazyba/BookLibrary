@@ -2,53 +2,49 @@ package com.itechart.javalab.library.controller.command.front.impl;
 
 import com.itechart.javalab.library.controller.command.front.Command;
 import com.itechart.javalab.library.controller.util.JspPageName;
-import com.itechart.javalab.library.dto.MainPageDto;
-import com.itechart.javalab.library.model.Book;
+import com.itechart.javalab.library.dto.ReaderPageDto;
 import com.itechart.javalab.library.model.Paginator;
-import com.itechart.javalab.library.service.BookService;
-import com.itechart.javalab.library.service.impl.DefaultBookService;
+import com.itechart.javalab.library.model.Reader;
+import com.itechart.javalab.library.service.ReaderService;
+import com.itechart.javalab.library.service.impl.DefaultReaderService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-public class GetBooksCommand implements Command {
+public class GetReadersCommand implements Command {
 
-    private final BookService bookService;
-
+    private final ReaderService readerService;
     private static final String REQUEST_SEARCH_PAGE_DTO = "dto";
-    private static final String REQUEST_IS_AVAILABLE_VALUE = "isAvailableOnly";
     private static final String REQUEST_RECORDS_PER_PAGE = "recordsPerPage";
     private static final String REQUEST_CURRENT_PAGE = "currentPage";
 
-    public GetBooksCommand() {
-        this.bookService = DefaultBookService.getInstance();
+    public GetReadersCommand() {
+        this.readerService = DefaultReaderService.getInstance();
     }
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        boolean isAvailableOnly = Boolean.parseBoolean(request.getParameter(REQUEST_IS_AVAILABLE_VALUE));
         String recordsPerPage = request.getParameter(REQUEST_RECORDS_PER_PAGE);
         String currentPage = request.getParameter(REQUEST_CURRENT_PAGE);
-
         Paginator paginator = new Paginator(recordsPerPage, currentPage);
-        Optional<List<Book>> allBooks = bookService.getBooks(paginator, isAvailableOnly);
-        Optional<Integer> numberOfBooksRecords = bookService.getNumberBooksRecords(isAvailableOnly);
-        if (allBooks.isPresent() && numberOfBooksRecords.isPresent()) {
-            paginator.setCountPages(numberOfBooksRecords.get());
-            MainPageDto mainPageDto = MainPageDto.builder()
-                    .isAvailableOnly(isAvailableOnly)
-                    .books(allBooks.get())
+
+        Optional<Set<Reader>> readers = readerService.getReaders(paginator);
+        Optional<Integer> numberOfReadersRecords = readerService.getNumberReadersRecords();
+        if (readers.isPresent() && numberOfReadersRecords.isPresent()) {
+            paginator.setCountPages(numberOfReadersRecords.get());
+            ReaderPageDto readerPageDto = ReaderPageDto.builder()
+                    .readers(readers.get())
                     .countPages(paginator.getCountPages())
                     .currentPage(paginator.getCurrentPage())
                     .recordsPerPage(paginator.getRecordsPerPage())
                     .build();
-            request.setAttribute(REQUEST_SEARCH_PAGE_DTO, mainPageDto);
-            forwardToPage(request, response, JspPageName.MAIN_PAGE);
+            request.setAttribute(REQUEST_SEARCH_PAGE_DTO, readerPageDto);
+            forwardToPage(request, response, JspPageName.READERS_PAGE);
         } else {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

@@ -30,10 +30,6 @@ public class DefaultUploadFileService implements UploadFileService {
 
     @Override
     public void uploadFile(String savePath, Part part, String fileName) {
-        FileFormatValidator fileFormatValidator = FileFormatValidator.getInstance();
-        if (!fileFormatValidator.validate(part.getSubmittedFileName())) {
-            throw new UploadFileRuntimeException("Impossible file format");
-        }
         try {
             File dir = new File(savePath);
             if (!dir.exists()) {

@@ -1,4 +1,4 @@
-.mainPageTable {
+.mainPageTable, .readersTable {
     margin: 15px 0;
 }
 
@@ -71,4 +71,28 @@
 
 .container {
     margin-bottom: 30px;
+}
+
+/*Change the color of pagination buttons*/
+.page-item.active .page-link {
+    background-color: #17a2b8 !important;
+    border-color: #17a2b8 !important;
+}
+
+.danger-button-theme {
+    background-color: #b62a45 !important;
+    border-color: #b62a45 !important;
+    color: white !important;
+}
+
+.danger-button-theme:hover {
+    background-color: white !important;
+    border-color: #b62a45 !important;
+    color: #b62a45 !important;
+}
+
+.danger-button-theme.disabled, .danger-button-theme:disabled {
+    background-color: white !important;
+    border-color: #b62a45 !important;
+    color: #b62a45 !important;
 }

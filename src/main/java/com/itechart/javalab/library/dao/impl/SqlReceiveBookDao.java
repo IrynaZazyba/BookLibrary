@@ -27,12 +27,9 @@ public class SqlReceiveBookDao implements ReceiveBookDao {
             "FROM (SELECT * FROM book WHERE in_stock REGEXP ? LIMIT ?,?) as book " +
             "INNER JOIN book_has_author ON book_has_author.book_id=book.id " +
             "INNER JOIN author ON book_has_author.author_id=author.id";
-
     private final static String GET_EARLIEST_DUE_DATE_BY_BOOK_ID = "SELECT MIN(due_date) FROM borrow_list " +
             "WHERE book_id=? and return_date is null";
-
     private final static String GET_NUMBER_OF_BOOKS_RECORDS = "SELECT count(id) FROM book WHERE in_stock REGEXP ?";
-
     private final static String SEARCH_BOOKS = "SELECT book.id, title, publish_date, author.id, author.name,in_stock " +
             "FROM book INNER JOIN " +
             "(SELECT book.id as book_id FROM book " +
@@ -44,7 +41,6 @@ public class SqlReceiveBookDao implements ReceiveBookDao {
             "AND description LIKE ? GROUP BY book.id LIMIT ?,?) as temp on book.id=temp.book_id " +
             "INNER JOIN book_has_author on book_has_author.book_id=book.id " +
             "INNER JOIN author on author.id=book_has_author.author_id;";
-
     private final static String GET_NUMBER_OF_FOUND_RECORDS = "SELECT count (DISTINCT book.id) FROM book " +
             "INNER JOIN book_has_author ON book_has_author.book_id=book.id " +
             "INNER JOIN author ON book_has_author.author_id=author.id " +
@@ -52,7 +48,6 @@ public class SqlReceiveBookDao implements ReceiveBookDao {
             "INNER JOIN genre ON genre.id=genre_has_book.genre_id " +
             "WHERE in_stock REGEXP ? AND title LIKE ? AND author.name LIKE ? AND genre.genre LIKE ?" +
             " AND description LIKE ?";
-
     private final static String GET_BOOK_BY_ID = "SELECT book.id, title,author.id, author.name, " +
             "publisher.id,publisher.publisher, book.publish_date,book.page_count,book.ISBN,book.description, " +
             "book.total_amount, book.in_stock, genre.id, genre.genre,cover FROM book " +
@@ -62,6 +57,7 @@ public class SqlReceiveBookDao implements ReceiveBookDao {
             "INNER JOIN genre ON genre.id=genre_has_book.genre_id " +
             "INNER JOIN publisher ON publisher.id=book.publisher_id " +
             "WHERE book.id=?";
+    private static final String GET_BOOK_COVER = "SELECT cover FROM `book` WHERE id=?";
 
     public static ReceiveBookDao getInstance() {
         if (instance == null) {
@@ -142,7 +138,6 @@ public class SqlReceiveBookDao implements ReceiveBookDao {
         return Optional.of(countBooksRecords);
     }
 
-
     @Override
     public Optional<Book> getBookById(int bookId) {
         Book book = null;
@@ -189,6 +184,23 @@ public class SqlReceiveBookDao implements ReceiveBookDao {
             throw new DaoRuntimeException("SqlException in SqlBookDao getEarliestDueDate() method", e);
         }
         return Optional.ofNullable(earliestDueDate);
+    }
+
+    @Override
+    public String getBookCover(int bookId) {
+        String bookCover = null;
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_BOOK_COVER)) {
+            preparedStatement.setInt(1, bookId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                bookCover = resultSet.getString("cover");
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in getEarliestDueDate() method", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao getEarliestDueDate() method", e);
+        }
+        return bookCover;
     }
 
     private void setQueryParameterValue(PreparedStatement preparedStatement, BookFilter bookFilter)
