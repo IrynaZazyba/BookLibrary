@@ -22,4 +22,5 @@ public interface ReceiveBookDao {
 
     Optional<LocalDateTime> getEarliestDueDate(int bookId);
 
+    String getBookCover(int bookId);
 }

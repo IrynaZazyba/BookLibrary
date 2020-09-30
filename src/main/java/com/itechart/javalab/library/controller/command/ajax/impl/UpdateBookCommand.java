@@ -4,11 +4,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
 import com.itechart.javalab.library.controller.util.RequestBodyHelper;
-import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
 import com.itechart.javalab.library.controller.util.json.JsonBuilder;
+import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
 import com.itechart.javalab.library.dto.BookDto;
 import com.itechart.javalab.library.service.BookService;
 import com.itechart.javalab.library.service.impl.DefaultBookService;
+import com.itechart.javalab.library.service.util.FileFormatValidator;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletException;
@@ -25,25 +26,28 @@ public class UpdateBookCommand implements AjaxCommand {
 
     private final BookService bookService;
     private final JsonBuilder jsonBuilder;
+    private FileFormatValidator fileFormatValidator;
     private static final String REQUEST_BOOK_PARAMETER = "bookDto";
     private static final String RESPONSE_MESSAGE_OK = "ok";
     private static final String RESPONSE_MESSAGE_CONFLICT = "Impossible to update";
-    private static final String UPLOAD_FILE="image_uploads";
+    private static final String UPLOAD_FILE = "image_uploads";
 
     public UpdateBookCommand() {
         this.bookService = DefaultBookService.getInstance();
-        this.jsonBuilder= JacksonJsonBuilder.getInstance();
+        this.jsonBuilder = JacksonJsonBuilder.getInstance();
+        this.fileFormatValidator = FileFormatValidator.getInstance();
     }
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String savePath = defineUploadPath(request);
-        Part file = RequestBodyHelper.extractPartByName(request,UPLOAD_FILE);
+        Part file = RequestBodyHelper.extractPartByName(request, UPLOAD_FILE);
         String responseBody;
         try {
+            fileFormatValidator.validate(file.getSubmittedFileName());
             BookDto book = BookDto.fromJson(request.getParameter(REQUEST_BOOK_PARAMETER));
-            if (bookService.updateBookInfo(book,file,savePath).isPresent()) {
+            if (bookService.updateBookInfo(book, file, savePath).isPresent()) {
                 response.setStatus(HttpServletResponse.SC_OK);
                 responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_SUCCESS, RESPONSE_MESSAGE_OK);
             } else {
@@ -51,7 +55,7 @@ public class UpdateBookCommand implements AjaxCommand {
                 responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_ERROR, RESPONSE_MESSAGE_CONFLICT);
             }
         } catch (JsonParseException | JsonMappingException | IllegalArgumentException e) {
-            log.error("Json transformation exception", e);
+            log.error("Invalid parameters UpdateBookCommand", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_ERROR, "Invalid parameters");
         }

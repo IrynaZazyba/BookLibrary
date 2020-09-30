@@ -2,6 +2,7 @@ package com.itechart.javalab.library.service.util;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * The FileFormatValidator class
@@ -27,14 +28,10 @@ public class FileFormatValidator {
         return instance;
     }
 
-    public boolean validate(String fileName) {
-        String fileFormat = FilenameUtils.getExtension(fileName);
-        try {
+    public void validate(String fileName) {
+        if (StringUtils.isNotEmpty(fileName)) {
+            String fileFormat = FilenameUtils.getExtension(fileName);
             FileFormat.valueOf(fileFormat.toUpperCase());
-            return true;
-        } catch (IllegalArgumentException ex) {
-            log.error("Illegal argument exception in FileFormatValidatorImpl method validateExistsName", ex);
-            return false;
         }
     }
 

@@ -13,6 +13,7 @@
 
 <jsp:include page="WEB-INF/jsp/parts/ModalDeleteNotification.jsp"/>
 <jsp:include page="WEB-INF/jsp/parts/ModalDeleteAlert.jsp"/>
+<jsp:include page="WEB-INF/jsp/parts/ModalConfirmPagination.jsp"/>
 
 <div class="container">
 
@@ -21,9 +22,10 @@
     <div class="row">
         <div class="col-8">
             <a href="${pageContext.request.contextPath}/books/page">
-                <button type="button" class="btn  btn-info add-button">Add</button>
+                <button type="button" class="btn btn-info add-button">Add</button>
             </a>
-            <button type="button" onclick="showDeleteAlert()" class="btn  btn-outline-danger">Remove</button>
+            <button type="button" onclick="showDeleteAlert()" disabled
+                    class="btn danger-button-theme btn-outline-danger" id="deleteBookButton">Remove</button>
         </div>
         <div class="col-auto">
             <div class="form-group form-check">

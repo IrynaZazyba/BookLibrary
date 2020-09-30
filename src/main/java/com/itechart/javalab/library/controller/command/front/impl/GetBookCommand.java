@@ -35,11 +35,12 @@ public class GetBookCommand implements Command {
         Optional<Book> bookById = bookService.getBookById(bookId);
         Optional<List<BorrowRecord>> borrowRecords = readerService.getBorrowRecords(bookId);
         if (bookById.isPresent() && borrowRecords.isPresent()) {
-            BookPageDto bookPageDto = new BookPageDto(bookById.get(),borrowRecords.get());
+            BookPageDto bookPageDto = new BookPageDto(bookById.get(), borrowRecords.get());
             request.setAttribute(BOOK_PAGE_DTO, bookPageDto);
             forwardToPage(request, response, JspPageName.BOOK_PAGE);
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
