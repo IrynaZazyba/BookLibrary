@@ -1,7 +1,9 @@
 package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.dao.BorrowRecordDao;
+import com.itechart.javalab.library.dao.ReaderDao;
 import com.itechart.javalab.library.dao.impl.SqlBorrowRecordDao;
+import com.itechart.javalab.library.dao.impl.SqlReaderDao;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.model.BorrowRecord;
 import com.itechart.javalab.library.service.BookService;
@@ -17,17 +19,20 @@ import java.util.Optional;
 public class DefaultBorrowRecordService implements BorrowRecordService {
 
     private final BorrowRecordDao borrowRecordDao;
+    private final ReaderDao readerDao;
     private static volatile BorrowRecordService instance;
 
-    private DefaultBorrowRecordService(BorrowRecordDao borrowRecordDao) {
+    private DefaultBorrowRecordService(BorrowRecordDao borrowRecordDao, ReaderDao readerDao) {
         this.borrowRecordDao = borrowRecordDao;
+        this.readerDao = readerDao;
     }
 
     public static BorrowRecordService getInstance() {
         if (instance == null) {
             synchronized (BookService.class) {
                 if (instance == null) {
-                    instance = new DefaultBorrowRecordService(SqlBorrowRecordDao.getInstance());
+                    instance = new DefaultBorrowRecordService(
+                            SqlBorrowRecordDao.getInstance(), SqlReaderDao.getInstance());
                 }
             }
         }
@@ -56,13 +61,28 @@ public class DefaultBorrowRecordService implements BorrowRecordService {
         List<BorrowRecord> borrowRecords = new ArrayList<>();
         Arrays.stream(records).forEach(record ->
                 borrowRecords.add(record.toBookAddRecordModel()));
+        List<BorrowRecord> validRecord = validateExistedEmails(borrowRecords);
         LocalDateTime current = LocalDateTime.now();
         borrowRecords.forEach(r -> {
             r.setBorrowDate(current);
             r.setDueDate(current.plusMonths(r.getTimePeriod().getMonthPeriod()));
             r.setComment(StringEscapeUtils.escapeHtml4(r.getComment()));
         });
-        return borrowRecordDao.createBorrowRecord(borrowRecords);
+        if (borrowRecords.size() != validRecord.size()) {
+            return false;
+        } else {
+            return borrowRecordDao.createBorrowRecord(validRecord);
+        }
+    }
+
+    private List<BorrowRecord> validateExistedEmails(List<BorrowRecord> borrowRecords) {
+        List<BorrowRecord> validRecords = new ArrayList<>();
+        borrowRecords.forEach(e -> {
+            if (readerDao.getReadersByEmail(e.getReader().getEmail()).isPresent()) {
+                validRecords.add(e);
+            }
+        });
+        return validRecords;
     }
 
     @Override

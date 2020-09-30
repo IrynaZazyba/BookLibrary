@@ -157,9 +157,6 @@ function activateRemoveButton(event) {
     let button = document.getElementById("deleteBookButton");
 
     if (event.currentTarget.checked) {
-        console.log(button.getAttribute("disabled"));
-        console.log(button.getAttribute("disabled"));
-
         if (button.disabled) {
             button.removeAttribute("disabled");
         }

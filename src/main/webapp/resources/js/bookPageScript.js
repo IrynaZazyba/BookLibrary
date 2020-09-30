@@ -197,7 +197,8 @@ function createNewBorrowRecord() {
     });
     let comment = modalAddNewBorrowRecord.querySelector("#addBorrowComment").value;
 
-    if (validateEmail(email) && validateName(name)) {
+    let isEmailExist = checkIfEmailExist(email);
+    if (isEmailExist&&validateEmail(email) && validateName(name)) {
 
         let borrowDate = new Date();
         let dueDate = new Date();
@@ -219,13 +220,27 @@ function createNewBorrowRecord() {
         modalAddNewBorrowRecord.querySelector("#addBorrowTimePeriod").options[0].selected = true;
     } else {
 
-        if (!validateEmail(email)) {
+        if (!validateEmail(email)||!isEmailExist) {
             modalAddNewBorrowRecord.querySelector("#addBorrowEmail").classList.add("is-invalid");
         }
         if (!validateName(name)) {
             modalAddNewBorrowRecord.querySelector("#addBorrowName").classList.add("is-invalid");
         }
     }
+}
+
+function checkIfEmailExist(email) {
+    let isEmailExist = false;
+    if (!readersJson) {
+        isEmailExist = false;
+    } else {
+        readersJson.forEach(reader => {
+            if (reader.email == email) {
+                isEmailExist = true;
+            }
+        });
+    }
+    return isEmailExist;
 }
 
 let insertedBorrowRecordId = -1;
@@ -405,7 +420,6 @@ async function createBook() {
             "check info and try later."));
     }
 }
-
 
 const updateBookPageResult = document.querySelector("#resultNotification .modal-body");
 let bookUpdateResult = true;
