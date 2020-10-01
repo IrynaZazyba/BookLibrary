@@ -1,7 +1,5 @@
 package com.itechart.javalab.library.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itechart.javalab.library.model.Book;
 import com.itechart.javalab.library.model.BorrowRecord;
 import com.itechart.javalab.library.model.Status;
@@ -37,10 +35,5 @@ public class BorrowRecordDto {
                 .timePeriod(timePeriod)
                 .book(Book.builder().id(bookId).build())
                 .build();
-    }
-
-    public static BorrowRecordDto[] parseBorrowRecords(String jsonRecords) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonRecords, BorrowRecordDto[].class);
     }
 }

@@ -3,8 +3,8 @@ package com.itechart.javalab.library.controller.command.ajax.impl;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
-import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
 import com.itechart.javalab.library.controller.util.json.JsonBuilder;
+import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.service.BorrowRecordService;
 import com.itechart.javalab.library.service.impl.DefaultBorrowRecordService;
@@ -28,16 +28,16 @@ public class ReturnBookCommand implements AjaxCommand {
 
     public ReturnBookCommand() {
         this.readerService = DefaultBorrowRecordService.getInstance();
-        this.jsonBuilder= JacksonJsonBuilder.getInstance();
+        this.jsonBuilder = JacksonJsonBuilder.getInstance();
     }
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String editedRecords = request.getParameter(REQUEST_PARAMETER_EDITED_RECORDS);
         String responseBody;
         try {
-            BorrowRecordDto[] records = BorrowRecordDto.parseBorrowRecords(editedRecords);
+            String editedRecords = request.getParameter(REQUEST_PARAMETER_EDITED_RECORDS);
+            BorrowRecordDto[] records = jsonBuilder.getObjectMapper().readValue(editedRecords, BorrowRecordDto[].class);
             boolean result = readerService.addBorrowStatus(records);
             if (result) {
                 response.setStatus(HttpServletResponse.SC_OK);
@@ -47,7 +47,7 @@ public class ReturnBookCommand implements AjaxCommand {
                 responseBody = jsonBuilder.
                         getJsonFromKeyValue(RESPONSE_PARAMETER_MESSAGE, RESPONSE_MESSAGE_PARTLY_FAILED);
             }
-        } catch (JsonParseException | JsonMappingException |IllegalArgumentException e) {
+        } catch (JsonParseException | JsonMappingException | IllegalArgumentException e) {
             log.error("Json transformation exception", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_ERROR, "Invalid parameters");

@@ -664,7 +664,7 @@ function validateTotalAmount() {
 }
 
 function validateName(name) {
-    let pattern = /^([a-zA-Z- ]){2,25}$/;
+    let pattern = /^[a-zA-Z- ]{2,25}$/;
     return name.length !== 0 && pattern.test(name);
 }
 

@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface LibraryInfoDao {
 
-    public Optional<LibraryEmailInfo> getLibraryInfo();
+    Optional<LibraryEmailInfo> getLibraryInfo();
 
     void addLibraryInfo(LibraryEmailInfo info);
 

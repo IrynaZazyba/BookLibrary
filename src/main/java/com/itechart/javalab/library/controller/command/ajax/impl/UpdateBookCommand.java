@@ -26,7 +26,7 @@ public class UpdateBookCommand implements AjaxCommand {
 
     private final BookService bookService;
     private final JsonBuilder jsonBuilder;
-    private FileFormatValidator fileFormatValidator;
+    private final FileFormatValidator fileFormatValidator;
     private static final String REQUEST_BOOK_PARAMETER = "bookDto";
     private static final String RESPONSE_MESSAGE_OK = "ok";
     private static final String RESPONSE_MESSAGE_CONFLICT = "Impossible to update";

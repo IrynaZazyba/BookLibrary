@@ -2,7 +2,6 @@ package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.service.UploadFileService;
 import com.itechart.javalab.library.service.exception.UploadFileRuntimeException;
-import com.itechart.javalab.library.service.util.FileFormatValidator;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.http.Part;

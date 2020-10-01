@@ -47,12 +47,11 @@ public class SqlBorrowRecordDao implements BorrowRecordDao {
             "INNER JOIN reader on reader.id=borrow_list.reader_id " +
             "INNER JOIN book on book.id=borrow_list.book_id " +
             "WHERE DATEDIFF(due_date, NOW())=8";
-    //todo fix =-1
     private static final String GET_DELAY_NOTIFICATION_INFO = "SELECT borrow_list.id, due_date,reader.name, " +
             "reader.email, reader.id, book.title,isbn, borrow_date FROM `borrow_list` " +
             "INNER JOIN reader on reader.id=borrow_list.reader_id " +
             "INNER JOIN book on book.id=borrow_list.book_id " +
-            "WHERE DATEDIFF(due_date, NOW())<0 and return_date is NULL";
+            "WHERE DATEDIFF(due_date, NOW())=-1 and return_date is NULL";
     private static final String UPDATE_BORROW_RECORD_COMMENT="UPDATE `borrow_list` SET`comment`=? WHERE id=?";
 
     private SqlBorrowRecordDao(ConnectionPool connectionPool) {

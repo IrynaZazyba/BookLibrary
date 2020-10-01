@@ -3,8 +3,8 @@ package com.itechart.javalab.library.controller.command.ajax.impl;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
-import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
 import com.itechart.javalab.library.controller.util.json.JsonBuilder;
+import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.service.BorrowRecordService;
 import com.itechart.javalab.library.service.impl.DefaultBorrowRecordService;
@@ -37,7 +37,7 @@ public class UpdateStatusBorrowRecordCommand implements AjaxCommand {
         String editedRecords = request.getParameter(REQUEST_PARAMETER_UPDATED_STATUS);
         String responseBody;
         try {
-            BorrowRecordDto[] records = BorrowRecordDto.parseBorrowRecords(editedRecords);
+            BorrowRecordDto[] records = jsonBuilder.getObjectMapper().readValue(editedRecords, BorrowRecordDto[].class);
             boolean result = readerService.changeBorrowStatus(records);
             if (result) {
                 response.setStatus(HttpServletResponse.SC_OK);

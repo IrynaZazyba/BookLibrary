@@ -36,7 +36,7 @@ public class DelayRemainder extends Remainder implements Job {
             ST delayNotification = g.getInstanceOf(STRING_TEMPLATE_DELAY_NAME);
             fillNotification(delayNotification, libraryInfo, record);
             MailSender mailSender = MailSender.getInstance();
-           // mailSender.send("Delay notification", delayNotification.render(), record.getReader().getEmail());
+            mailSender.send("Delay notification", delayNotification.render(), record.getReader().getEmail());
         });
     }
 }
