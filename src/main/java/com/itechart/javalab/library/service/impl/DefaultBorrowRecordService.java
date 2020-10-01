@@ -51,7 +51,6 @@ public class DefaultBorrowRecordService implements BorrowRecordService {
         LocalDateTime current = LocalDateTime.now();
         borrowRecords.forEach(r -> {
             r.setReturnDate(current);
-            r.setComment(StringEscapeUtils.escapeHtml4(r.getComment()));
         });
         return borrowRecordDao.setBorrowRecordStatus(borrowRecords);
     }
@@ -66,7 +65,6 @@ public class DefaultBorrowRecordService implements BorrowRecordService {
         borrowRecords.forEach(r -> {
             r.setBorrowDate(current);
             r.setDueDate(current.plusMonths(r.getTimePeriod().getMonthPeriod()));
-            r.setComment(StringEscapeUtils.escapeHtml4(r.getComment()));
         });
         if (borrowRecords.size() != validRecord.size()) {
             return false;

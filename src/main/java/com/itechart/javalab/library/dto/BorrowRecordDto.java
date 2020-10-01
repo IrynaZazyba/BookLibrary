@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.text.StringEscapeUtils;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +24,7 @@ public class BorrowRecordDto {
     private TimePeriod timePeriod;
 
     public BorrowRecord toBookAddRecordModel() {
-        return BorrowRecord.builder().id(id).status(status).comment(comment)
+        return BorrowRecord.builder().id(id).status(status).comment(StringEscapeUtils.escapeHtml4(comment))
                 .timePeriod(timePeriod)
                 .reader(reader.toModel())
                 .book(Book.builder().id(bookId).build())
@@ -31,7 +32,7 @@ public class BorrowRecordDto {
     }
 
     public BorrowRecord toBookEditRecordModel() {
-        return BorrowRecord.builder().id(id).status(status).comment(comment)
+        return BorrowRecord.builder().id(id).status(status).comment(StringEscapeUtils.escapeHtml4(comment))
                 .timePeriod(timePeriod)
                 .book(Book.builder().id(bookId).build())
                 .build();
