@@ -14,7 +14,7 @@
 <div class="container">
 
     <jsp:include page="WEB-INF/jsp/parts/NavigationBar.jsp"/>
-    <h3>Internal server error</h3>
+    <h3>Something go wrong. Please, try later.</h3>
 </div>
 
 <jsp:include page="WEB-INF/jsp/parts/BootstrapScript.jsp"/>
