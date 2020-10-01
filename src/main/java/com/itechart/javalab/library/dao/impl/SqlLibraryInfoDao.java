@@ -17,7 +17,11 @@ public class SqlLibraryInfoDao implements LibraryInfoDao {
 
     private final ConnectionPool connectionPool;
     private static volatile LibraryInfoDao instance;
-    private static final String GET_LIBRARY_INFO = "SELECT `address`, `name`, `signature` FROM `email_template`";
+    private static final String GET_LIBRARY_INFO = "SELECT `id`,`address`, `name`, `signature` FROM `email_template`";
+    private static final String INSERT_LIBRARY_INFO = "INSERT INTO `email_template`(`address`, `name`, " +
+            "`signature`) VALUES (?,?,?)";
+    private static final String UPDATE_LIBRARY_INFO = "UPDATE `email_template` SET `address`=?,`name`=?, " +
+            "`signature`=? WHERE id=?";
 
     private SqlLibraryInfoDao(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
@@ -41,16 +45,41 @@ public class SqlLibraryInfoDao implements LibraryInfoDao {
              PreparedStatement ps = connection.prepareStatement(GET_LIBRARY_INFO)) {
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
-                String address = resultSet.getString("address");
-                String name = resultSet.getString("name");
-                String signature = resultSet.getString("signature");
-                info = LibraryEmailInfo.builder()
-                        .address(address).name(name).signature(signature).build();
+                info = LibraryEmailInfo.buildFrom(resultSet);
             }
         } catch (SQLException e) {
             log.error("SqlException in SqlLibraryInfoDao getLibraryInfo() method", e);
             throw new DaoRuntimeException("SqlException in SqlLibraryInfoDao getLibraryInfo() method", e);
         }
         return Optional.ofNullable(info);
+    }
+
+    @Override
+    public void addLibraryInfo(LibraryEmailInfo info) {
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(INSERT_LIBRARY_INFO)) {
+            ps.setString(1, info.getAddress());
+            ps.setString(2, info.getName());
+            ps.setString(3, info.getSignature());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            log.error("SqlException in SqlLibraryInfoDao addLibraryInfo() method", e);
+            throw new DaoRuntimeException("SqlException in SqlLibraryInfoDao addLibraryInfo() method", e);
+        }
+    }
+
+    @Override
+    public void updateLibraryInfo(LibraryEmailInfo info) {
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(UPDATE_LIBRARY_INFO)) {
+            ps.setString(1, info.getAddress());
+            ps.setString(2, info.getName());
+            ps.setString(3, info.getSignature());
+            ps.setInt(4, info.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            log.error("SqlException in SqlLibraryInfoDao updateLibraryInfo() method", e);
+            throw new DaoRuntimeException("SqlException in SqlLibraryInfoDao updateLibraryInfo() method", e);
+        }
     }
 }

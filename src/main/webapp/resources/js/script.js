@@ -1,5 +1,6 @@
 "use strict";
 
+const card = document.querySelector(".card");
 document.addEventListener("DOMContentLoaded", menuLinkHelper);
 
 function menuLinkHelper() {
@@ -14,6 +15,11 @@ function menuLinkHelper() {
 
     if (window.location.pathname === "/") {
         document.querySelector(".navbar li a").classList.add('active');
+    }
+
+    if (localStorage.getItem("libInfoMessage")) {
+        card.insertAdjacentHTML('beforebegin', addSuccessNotification(localStorage.getItem("libInfoMessage")));
+        localStorage.removeItem("libInfoMessage");
     }
 }
 
@@ -169,10 +175,80 @@ function activateRemoveButton(event) {
         });
 
         if (isAllUnchecked) {
-            button.setAttribute("disabled","disabled");
+            button.setAttribute("disabled", "disabled");
         }
     }
 }
+
+async function addLibraryInfo() {
+
+    let bookInfoForm = document.getElementById("libInfo");
+    bookInfoForm.querySelectorAll("input.form-control").forEach(elem => {
+        if (elem.classList.contains('is-invalid')) {
+            elem.classList.remove('is-invalid');
+        }
+    });
+
+    let validationResult = true;
+    bookInfoForm.querySelectorAll("input.form-control[required]").forEach(elem => {
+        if (elem.value == "") {
+            validationResult = false;
+            elem.classList.add('is-invalid');
+        }
+    });
+
+    if (validationResult) {
+        let info = {
+            id: bookInfoForm.infoId.value,
+            name: bookInfoForm.name.value,
+            address: bookInfoForm.address.value,
+            signature: bookInfoForm.signature.value,
+        };
+        let requestBody = new FormData();
+        requestBody.append("info", JSON.stringify(info));
+        if (info.id) {
+            updateLibraryInfo(requestBody);
+        } else {
+            createLibraryInfo(requestBody);
+        }
+    }
+}
+
+async function createLibraryInfo(body) {
+
+    let response = await fetch("/ajax/library", {
+        method: 'POST',
+        body: body,
+    });
+
+    if (response.ok) {
+        localStorage.setItem('libInfoMessage', "Data was saved successfully.");
+        location.reload();
+    } else {
+        card.insertAdjacentHTML('beforebegin', addDangerNotification("Invalid data, please, check provided " +
+            "info and try again."))
+    }
+}
+
+async function updateLibraryInfo(body) {
+
+    let response = await fetch("/ajax/library", {
+        method: 'PUT',
+        body: body,
+    });
+
+    if (response.ok) {
+        localStorage.setItem('libInfoMessage', "Data was changed successfully.");
+        location.reload();
+    } else {
+        card.insertAdjacentHTML('beforebegin', addDangerNotification("Invalid data, please, check provided " +
+            "info and try again."))
+    }
+}
+
+
+
+
 
 
 

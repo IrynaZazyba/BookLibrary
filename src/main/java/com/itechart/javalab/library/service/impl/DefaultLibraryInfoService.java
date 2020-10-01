@@ -2,6 +2,7 @@ package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.dao.LibraryInfoDao;
 import com.itechart.javalab.library.dao.impl.SqlLibraryInfoDao;
+import com.itechart.javalab.library.dto.LibraryInfoDto;
 import com.itechart.javalab.library.model.LibraryEmailInfo;
 import com.itechart.javalab.library.service.LibraryInfoService;
 
@@ -27,9 +28,18 @@ public class DefaultLibraryInfoService implements LibraryInfoService {
         return instance;
     }
 
-
     @Override
     public Optional<LibraryEmailInfo> getLibraryInfo() {
         return libraryInfoDao.getLibraryInfo();
+    }
+
+    @Override
+    public void addLibraryInfo(LibraryInfoDto info) {
+        libraryInfoDao.addLibraryInfo(info.toModel());
+    }
+
+    @Override
+    public void updateLibraryInfo(LibraryInfoDto info) {
+        libraryInfoDao.updateLibraryInfo(info.toModel());
     }
 }

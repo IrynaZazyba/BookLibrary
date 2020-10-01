@@ -19,16 +19,17 @@
             readers from the library.</h5></div>
         <div class="shadow-sm card-body">
             <p class="card-text">
-            <form id="libInfo" class="form-horizontal" role="form" method="GET">
+            <form id="libInfo" class="form-horizontal" role="form">
+            <input type="hidden" name="infoId" value="${requestScope.emailInfo.id}">
                 <div class="form-row">
                     <div class="col-4">
                         <label for="address" class="col-sm-5 col-form-label">Address</label>
-                        <input type="text" name="address" id="address" class="form-control" placeholder="address"
+                        <input type="text" required name="address" id="address" class="form-control" placeholder="address"
                                value="${requestScope.emailInfo.address}"/>
                     </div>
                     <div class="col-4">
                         <label for="name" class="col-sm-5 col-form-label">Name</label>
-                        <input type="text" name="name" class="form-control" id="name" placeholder="name"
+                        <input type="text" required name="name" class="form-control" id="name" placeholder="name"
                                value="${requestScope.emailInfo.name}"/>
                     </div>
                     <div class="col-4">
@@ -38,7 +39,7 @@
                     </div>
                 </div>
                 <div class="form-row mt-3">
-                    <button type="submit" class="btn d-block mx-auto btn-info">Save</button>
+                    <button type="button" onclick="addLibraryInfo()" class="btn d-block mx-auto btn-info">Save</button>
                 </div>
             </form>
             </p>

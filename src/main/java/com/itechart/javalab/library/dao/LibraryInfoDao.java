@@ -8,4 +8,7 @@ public interface LibraryInfoDao {
 
     public Optional<LibraryEmailInfo> getLibraryInfo();
 
+    void addLibraryInfo(LibraryEmailInfo info);
+
+    void updateLibraryInfo(LibraryEmailInfo info);
 }

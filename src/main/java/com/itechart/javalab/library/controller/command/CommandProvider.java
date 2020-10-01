@@ -38,6 +38,8 @@ public class CommandProvider {
         ajaxCommandRepository.put(new CommandKey("POST", "/ajax/books"), new AddBookCommand());
         ajaxCommandRepository.put(new CommandKey("POST", "/ajax/readers"), new AddReaderCommand());
         ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/readers"), new EditReaderCommand());
+        ajaxCommandRepository.put(new CommandKey("POST", "/ajax/library"), new AddLibraryInfoCommand());
+        ajaxCommandRepository.put(new CommandKey("PUT", "/ajax/library"), new UpdateLibraryInfoCommand());
     }
 
     public static CommandProvider getInstance() {
