@@ -1,10 +1,13 @@
 package com.itechart.javalab.library.service;
 
 import com.itechart.javalab.library.dao.BorrowRecordDao;
+import com.itechart.javalab.library.dao.ReaderDao;
 import com.itechart.javalab.library.dao.impl.SqlBorrowRecordDao;
+import com.itechart.javalab.library.dao.impl.SqlReaderDao;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
 import com.itechart.javalab.library.dto.ReaderDto;
 import com.itechart.javalab.library.model.BorrowRecord;
+import com.itechart.javalab.library.model.Reader;
 import com.itechart.javalab.library.model.TimePeriod;
 import com.itechart.javalab.library.service.impl.DefaultBorrowRecordService;
 import org.junit.Assert;
@@ -13,12 +16,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.mock;
 
 public class DefaultBorrowRecordServiceTest {
 
     @Mock
     private BorrowRecordDao mockBorrowRecordDao = mock(SqlBorrowRecordDao.class);
+    @Mock
+    private ReaderDao mockReaderDao = mock(SqlReaderDao.class);
     private final BorrowRecordService borrowRecordService = DefaultBorrowRecordService.getInstance();
 
 
@@ -60,7 +67,10 @@ public class DefaultBorrowRecordServiceTest {
                 .build();
         borrowRecords[0] = borrowRecordDto;
         Whitebox.setInternalState(borrowRecordService, "borrowRecordDao", mockBorrowRecordDao);
+        Whitebox.setInternalState(borrowRecordService, "readerDao", mockReaderDao);
         Mockito.when(mockBorrowRecordDao.createBorrowRecord(Mockito.anyListOf(BorrowRecord.class))).thenReturn(true);
+        Mockito.when(mockReaderDao.getReadersByEmail("zazybo1.17@gmail.com"))
+                .thenReturn(Optional.ofNullable(Mockito.anySetOf(Reader.class)));
         Assert.assertTrue(borrowRecordService.addBorrowRecords(borrowRecords));
     }
 
@@ -73,8 +83,11 @@ public class DefaultBorrowRecordServiceTest {
                 .timePeriod(TimePeriod.TWO)
                 .build();
         borrowRecords[0] = borrowRecordDto;
+        Whitebox.setInternalState(borrowRecordService, "readerDao", mockReaderDao);
         Whitebox.setInternalState(borrowRecordService, "borrowRecordDao", mockBorrowRecordDao);
         Mockito.when(mockBorrowRecordDao.createBorrowRecord(Mockito.anyListOf(BorrowRecord.class))).thenReturn(false);
+        Mockito.when(mockReaderDao.getReadersByEmail("zazybo1.17@gmail.com"))
+                .thenReturn(Optional.ofNullable(null));
         Assert.assertFalse(borrowRecordService.addBorrowRecords(borrowRecords));
     }
 

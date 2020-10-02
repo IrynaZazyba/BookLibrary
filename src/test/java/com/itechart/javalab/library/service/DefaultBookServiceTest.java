@@ -2,6 +2,7 @@ package com.itechart.javalab.library.service;
 
 import com.itechart.javalab.library.dao.AlterBookDao;
 import com.itechart.javalab.library.dao.ReceiveBookDao;
+import com.itechart.javalab.library.dao.impl.SqlAlterBookDao;
 import com.itechart.javalab.library.dto.BookDto;
 import com.itechart.javalab.library.model.Author;
 import com.itechart.javalab.library.model.Book;
@@ -28,13 +29,14 @@ public class DefaultBookServiceTest {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Mock
-    private AlterBookDao alterBookDao = mock(AlterBookDao.class);
+    private AlterBookDao alterBookDao = mock(SqlAlterBookDao.class);
     @Mock
     private ReceiveBookDao receiveBookDao = mock(ReceiveBookDao.class);
     private final BookService bookService = DefaultBookService.getInstance();
     @Mock
     private final UploadFileService uploadFileService = mock(DefaultUploadFileService.class);
-
+    @Mock
+    private Part part = mock(Part.class);
 
     @Test
     public void testGetAllBooksNegative() {
@@ -163,14 +165,11 @@ public class DefaultBookServiceTest {
                 .bookDescription("")
                 .bookAuthor("")
                 .build();
-
         Paginator paginator = new Paginator("2", "2");
-
         Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
         Mockito.when(receiveBookDao.
                 findBooksByParameters(paginator, bookFilter))
                 .thenReturn(Optional.empty());
-
         Assert.assertEquals(bookService.findBooksByParameters(paginator, bookFilter), Optional.empty());
     }
 
@@ -202,6 +201,7 @@ public class DefaultBookServiceTest {
         Assert.assertEquals(bookService.getBookById(bookId), Optional.ofNullable(book));
     }
 
+
     @Test
     public void updateBookInfoPositive() {
         BookDto bookDto = BookDto.builder()
@@ -218,11 +218,13 @@ public class DefaultBookServiceTest {
                 .build();
         String anyPath = "/book";
         String fileName = "5.png";
+        Mockito.when(part.getSize()).thenReturn(1L);
+        Optional<Boolean> aBoolean = Optional.of(true);
         Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
-        Mockito.when(alterBookDao.updateBookInfo(Book.buildFrom(bookDto))).thenReturn(Optional.of(true));
+        Mockito.when(alterBookDao.updateBookInfo(Mockito.any(Book.class))).thenReturn(aBoolean);
         doNothing().when(uploadFileService)
-                .uploadFile(eq(anyPath), Mockito.any(Part.class), eq(fileName));
-        Assert.assertEquals(bookService.updateBookInfo(bookDto, Mockito.any(Part.class), fileName),
+                .uploadFile(eq(anyPath), eq(part), eq(fileName));
+        Assert.assertEquals(bookService.updateBookInfo(bookDto, part, fileName),
                 Optional.of(true));
     }
 
@@ -242,11 +244,15 @@ public class DefaultBookServiceTest {
                 .build();
         String anyPath = "/book";
         String fileName = "5.png";
+        Mockito.when(part.getSize()).thenReturn(0L);
+        Mockito.when(part.getSubmittedFileName()).thenReturn("5.png");
         Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
-        Mockito.when(alterBookDao.updateBookInfo(Book.buildFrom(bookDto))).thenReturn(Optional.empty());
+        Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
+        Mockito.when(alterBookDao.updateBookInfo(Mockito.any(Book.class))).thenReturn(Optional.empty());
+        Mockito.when(receiveBookDao.getBookCover(5)).thenReturn("5.png");
         doNothing().when(uploadFileService)
-                .uploadFile(eq(anyPath), Mockito.any(Part.class), eq(fileName));
-        Assert.assertEquals(Optional.empty(), bookService.updateBookInfo(bookDto, Mockito.any(Part.class), fileName));
+                .uploadFile(eq(anyPath), eq(part), eq(fileName));
+        Assert.assertEquals(Optional.empty(), bookService.updateBookInfo(bookDto, part, fileName));
     }
 
     @Test
@@ -280,11 +286,12 @@ public class DefaultBookServiceTest {
                 .build();
         String anyPath = "/book";
         String fileName = "5.png";
+        Mockito.when(part.getSize()).thenReturn(1L);
         Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
         Mockito.when(alterBookDao.createBook(Book.buildFrom(bookDto))).thenReturn(5);
-        doNothing().when(uploadFileService)
-                .uploadFile(eq(anyPath), Mockito.any(Part.class), eq(fileName));
-        Assert.assertEquals(bookService.createBook(bookDto, Mockito.any(Part.class), anyPath), 5);
+        doNothing().when(uploadFileService).uploadFile(eq(anyPath), eq(part), eq(fileName));
+        doNothing().when(alterBookDao)
+                .updateBookCover(Book.buildFrom(bookDto));
+        Assert.assertEquals(bookService.createBook(bookDto, part, anyPath), 5);
     }
-
 }
