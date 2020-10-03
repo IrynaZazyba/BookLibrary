@@ -28,7 +28,7 @@ public class AddBookCommand implements AjaxCommand {
 
     private final BookService bookService;
     private final JsonBuilder jsonBuilder;
-    private FileFormatValidator fileFormatValidator;
+    private final FileFormatValidator fileFormatValidator;
     private static final String BOOK_INFO = "bookDto";
     private static final String RESPONSE_MESSAGE_OK = "ok";
     private static final String UPLOAD_FILE = "image_uploads";

@@ -248,6 +248,7 @@
                     <div class="col-sm-10">
                         <input type="date" required name="publishDate" class="form-control"
                                value="${requestScope.bookPageDto.book.publishDate}"
+                               onkeydown="return false"
                                id="publishDate">
                         <div class="invalid-feedback">
                             Invalid date.

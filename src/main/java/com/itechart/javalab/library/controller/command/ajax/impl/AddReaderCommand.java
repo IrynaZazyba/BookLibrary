@@ -36,9 +36,9 @@ public class AddReaderCommand implements AjaxCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String readers = request.getParameter(READER_INFO);
-        ReaderDto readerDto = jsonBuilder.getObjectMapper().readValue(readers, ReaderDto.class);
         String responseBody;
         try {
+            ReaderDto readerDto = jsonBuilder.getObjectMapper().readValue(readers, ReaderDto.class);
             if (readerService.addReader(readerDto)) {
                 response.setStatus(HttpServletResponse.SC_OK);
                 responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_SUCCESS, RESPONSE_MESSAGE_OK);

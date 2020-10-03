@@ -1,12 +1,12 @@
 package com.itechart.javalab.library.dao.impl;
 
 import com.itechart.javalab.library.dao.AlterBookDao;
-import com.itechart.javalab.library.dao.conn.ConnectionPool;
+import com.itechart.javalab.library.dao.connection.ConnectionPool;
 import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
-import com.itechart.javalab.library.model.Author;
-import com.itechart.javalab.library.model.Book;
-import com.itechart.javalab.library.model.Genre;
-import com.itechart.javalab.library.model.Publisher;
+import com.itechart.javalab.library.domain.entity.Author;
+import com.itechart.javalab.library.domain.entity.Book;
+import com.itechart.javalab.library.domain.entity.Genre;
+import com.itechart.javalab.library.domain.entity.Publisher;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
@@ -64,7 +64,8 @@ public class SqlAlterBookDao implements AlterBookDao {
         try (Connection connection = connectionPool.getConnection()) {
             return executeUpdateByTransaction(connection, book);
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
+            log.error("SqlException in updateBookInfo() method. Check if connection exists or " +
+                    "exception thrown by rollback operation in method executeUpdateByTransaction()", e);
             throw new DaoRuntimeException("SqlException in SqlBookDao updateBookInfo() method", e);
         }
     }
@@ -89,8 +90,8 @@ public class SqlAlterBookDao implements AlterBookDao {
         } catch (SQLException e) {
             connection.rollback();
             connection.setAutoCommit(true);
-            log.error("SqlException in updateBookInfo() method", e);
-            throw new DaoRuntimeException("SqlException in SqlBookDao updateBookInfo() method", e);
+            log.error("SqlException in executeUpdateByTransaction() method", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao executeUpdateByTransaction() method", e);
         }
     }
 
@@ -99,7 +100,8 @@ public class SqlAlterBookDao implements AlterBookDao {
         try (Connection connection = connectionPool.getConnection()) {
             return executeDeleteByTransaction(connection, bookId);
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
+            log.error("SqlException in deleteBooks method. Check if connection exists or " +
+                    " exception thrown by rollback operation in method executeDeleteByTransaction()", e);
             throw new DaoRuntimeException("SqlException in SqlBookDao deleteBooks() method", e);
         }
     }
@@ -124,8 +126,8 @@ public class SqlAlterBookDao implements AlterBookDao {
         } catch (SQLException e) {
             connection.rollback();
             connection.setAutoCommit(true);
-            log.error("SqlException in deleteBooks() method", e);
-            throw new DaoRuntimeException("SqlException in SqlBookDao deleteBooks() method", e);
+            log.error("SqlException in executeDeleteByTransaction() method", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao executeDeleteByTransaction() method", e);
         }
         return result;
     }
@@ -138,8 +140,8 @@ public class SqlAlterBookDao implements AlterBookDao {
             ps.setInt(2, book.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
-            throw new DaoRuntimeException("SqlException in SqlBookDao createBook() method", e);
+            log.error("SqlException in updateBookCover() method", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao updateBookCover() method", e);
         }
     }
 
@@ -148,7 +150,8 @@ public class SqlAlterBookDao implements AlterBookDao {
         try (Connection connection = connectionPool.getConnection()) {
             return executeCreateByTransaction(connection, book);
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
+            log.error("SqlException in createBook() method. Check if connection exists or " +
+                    " exception thrown by rollback operation in method executeCreateByTransaction()", e);
             throw new DaoRuntimeException("SqlException in SqlBookDao createBook() method", e);
         }
     }
@@ -167,8 +170,8 @@ public class SqlAlterBookDao implements AlterBookDao {
         } catch (SQLException e) {
             connection.rollback();
             connection.setAutoCommit(true);
-            log.error("SqlException in createBook() method", e);
-            throw new DaoRuntimeException("SqlException in SqlBookDao createBook() method", e);
+            log.error("SqlException in executeCreateByTransaction() method", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao executeCreateByTransaction() method", e);
         }
         return id;
     }
@@ -338,8 +341,8 @@ public class SqlAlterBookDao implements AlterBookDao {
                 return Optional.of(resultSet.getInt("id"));
             }
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
-            throw new DaoRuntimeException("SqlException in SqlBookDao getEarliestDueDate() method", e);
+            log.error("SqlException in getAuthorByName() method", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao getAuthorByName() method", e);
         }
         return Optional.empty();
     }
@@ -353,7 +356,7 @@ public class SqlAlterBookDao implements AlterBookDao {
                 return Optional.of(resultSet.getInt("id"));
             }
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
+            log.error("SqlException in getGenreByName() method", e);
             throw new DaoRuntimeException("SqlException in SqlBookDao getGenreByName() method", e);
         }
         return Optional.empty();
@@ -368,7 +371,7 @@ public class SqlAlterBookDao implements AlterBookDao {
                 return Optional.of(resultSet.getInt("id"));
             }
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
+            log.error("SqlException in getPublisherByName() method", e);
             throw new DaoRuntimeException("SqlException in SqlBookDao getPublisherByName() method", e);
         }
         return Optional.empty();

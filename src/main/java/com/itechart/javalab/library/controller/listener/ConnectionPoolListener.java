@@ -1,6 +1,6 @@
 package com.itechart.javalab.library.controller.listener;
 
-import com.itechart.javalab.library.dao.conn.ConnectionPool;
+import com.itechart.javalab.library.dao.connection.ConnectionPool;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.ServletContextEvent;
@@ -10,6 +10,11 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * The class {@code ConnectionPoolListener} initializing the
+ * connection pool before starting the application and closing
+ * when application will stopped
+ */
 @Log4j2
 public class ConnectionPoolListener implements ServletContextListener {
 

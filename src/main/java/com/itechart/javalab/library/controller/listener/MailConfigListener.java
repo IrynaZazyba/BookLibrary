@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * The class {@code MailConfigListener} initializing mail config
+ */
 @Log4j2
 public class MailConfigListener implements ServletContextListener {
 
@@ -30,7 +33,7 @@ public class MailConfigListener implements ServletContextListener {
             }
         } catch (IOException e) {
             log.error("Exception in MailConfigListener in attempt to load properties", e);
-            throw new RuntimeException("MailConfigListener didn't initialize.",e);
+            throw new RuntimeException("MailConfigListener didn't initialize.", e);
         }
     }
 

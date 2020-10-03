@@ -189,7 +189,7 @@
     </div>
 </div>
 <jsp:include page="parts/BootstrapScript.jsp"/>
-<script src="resources/js/script.js"></script>
-<script src="resources/js/readerScript.js"></script>
+<script src="resources/js/script.js" charset="utf-8"></script>
+<script src="resources/js/readerScript.js" charset="utf-8"></script>
 </body>
 </html>

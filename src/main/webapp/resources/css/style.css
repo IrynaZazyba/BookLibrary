@@ -56,7 +56,7 @@
 
 
 .downloadImageLabel {
-    background-color: #A3A3CD;
+    background-color: #5fbdcc;
     padding: 5px 10px;
     border-radius: 5px;
     border: 1px ridge black;
@@ -66,7 +66,7 @@
 
 .downloadImageLabel:hover {
     color: white;
-    background-color: #666AAD;
+    background-color: #138496;
 }
 
 .container {
@@ -96,3 +96,4 @@
     border-color: #b62a45 !important;
     color: #b62a45 !important;
 }
+

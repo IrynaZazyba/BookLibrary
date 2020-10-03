@@ -35,6 +35,9 @@ function editBorrowStatus() {
         invalidStatusValue.style.display = "none";
     }
 
+    if (statusSelect.classList.contains('is-invalid')) {
+        statusSelect.classList.remove('is-invalid');
+    }
     let editBorrowForm = document.querySelector("div[id='editBorrowRecord'] form");
     let status = editBorrowForm.status.value;
     if (status === "") {
@@ -117,8 +120,10 @@ function showModalEditBorrow(obj) {
     $('#editBorrowRecord').modal('show');
     let statusSelect = document.querySelector("div[id='editBorrowRecord'] form select[name=status]");
 
-    if (statusSelect.classList.contains("is-invalid")) {
-        statusSelect.classList.remove("is-invalid");
+    let invalidStatusValue = document.querySelector(
+        "div[id='editBorrowRecord'] form select[name='status']  + div[class='invalid-feedback']");
+    if (invalidStatusValue.style.display === "block") {
+        invalidStatusValue.style.display = "none";
     }
 
     document.getElementById("editBorrowStatus").options[0].selected = true;
@@ -134,7 +139,7 @@ function showModalEditBorrow(obj) {
     let email = rowWithData.querySelector(".email").innerHTML;
     let borrowDate = rowWithData.querySelector(".borrowDate").innerHTML;
     let dueDate = rowWithData.querySelector(".dueDate").innerHTML;
-    let comment = rowWithData.querySelector(".comment").innerHTML;
+    let comment = rowWithData.querySelector(".comment").textContent;
     let status = rowWithData.getAttribute("data-status");
 
     //insert data from line to modal window
@@ -160,6 +165,11 @@ function showModalEditBorrow(obj) {
 
 function showModalAddBorrow(obj) {
     $('#addNewBorrowRecord').modal('show');
+    document.querySelectorAll('#addNewBorrowRecord form input').forEach(input=>{
+        if(input.classList.contains('is-invalid')){
+            input.classList.remove('is-invalid');
+        }
+    })
 }
 
 
@@ -197,7 +207,8 @@ function createNewBorrowRecord() {
     });
     let comment = modalAddNewBorrowRecord.querySelector("#addBorrowComment").value;
 
-    if (validateEmail(email) && validateName(name)) {
+    let isEmailExist = checkIfEmailExist(email);
+    if (isEmailExist && validateEmail(email) && validateName(name)) {
 
         let borrowDate = new Date();
         let dueDate = new Date();
@@ -219,13 +230,27 @@ function createNewBorrowRecord() {
         modalAddNewBorrowRecord.querySelector("#addBorrowTimePeriod").options[0].selected = true;
     } else {
 
-        if (!validateEmail(email)) {
+        if (!validateEmail(email) || !isEmailExist) {
             modalAddNewBorrowRecord.querySelector("#addBorrowEmail").classList.add("is-invalid");
         }
         if (!validateName(name)) {
             modalAddNewBorrowRecord.querySelector("#addBorrowName").classList.add("is-invalid");
         }
     }
+}
+
+function checkIfEmailExist(email) {
+    let isEmailExist = false;
+    if (!readersJson) {
+        isEmailExist = false;
+    } else {
+        readersJson.forEach(reader => {
+            if (reader.email == email) {
+                isEmailExist = true;
+            }
+        });
+    }
+    return isEmailExist;
 }
 
 let insertedBorrowRecordId = -1;
@@ -405,7 +430,6 @@ async function createBook() {
             "check info and try later."));
     }
 }
-
 
 const updateBookPageResult = document.querySelector("#resultNotification .modal-body");
 let bookUpdateResult = true;
@@ -650,7 +674,7 @@ function validateTotalAmount() {
 }
 
 function validateName(name) {
-    let pattern = /^([a-zA-Z- ]){2,25}$/;
+    let pattern = /^[a-zA-Z- ]{2,25}$/;
     return name.length !== 0 && pattern.test(name);
 }
 

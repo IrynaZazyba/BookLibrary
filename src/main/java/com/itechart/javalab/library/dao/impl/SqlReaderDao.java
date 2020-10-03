@@ -1,10 +1,10 @@
 package com.itechart.javalab.library.dao.impl;
 
 import com.itechart.javalab.library.dao.ReaderDao;
-import com.itechart.javalab.library.dao.conn.ConnectionPool;
+import com.itechart.javalab.library.dao.connection.ConnectionPool;
 import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
-import com.itechart.javalab.library.model.Paginator;
-import com.itechart.javalab.library.model.Reader;
+import com.itechart.javalab.library.domain.Paginator;
+import com.itechart.javalab.library.domain.entity.Reader;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;

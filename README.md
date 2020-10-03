@@ -73,3 +73,13 @@ Branch - add-reader-page
 - add dto objects
 - add GetReadersCommand
 - add DAO and Service methods
+
+##### Task#11 - Info page
+Branch - advanced-v2
+- delete opportunity add reader at BorrowRecordModal (TR Advanced Readers'page) 
+- add LibraryInfoPage.jsp
+- add bean
+- add EmailTemplateController
+- add dto object
+- add Command
+- add DAO and Service methods
