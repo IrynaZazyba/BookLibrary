@@ -3,7 +3,7 @@ package com.itechart.javalab.library.service;
 import com.itechart.javalab.library.dao.LibraryInfoDao;
 import com.itechart.javalab.library.dao.impl.SqlLibraryInfoDao;
 import com.itechart.javalab.library.dto.LibraryInfoDto;
-import com.itechart.javalab.library.model.LibraryEmailInfo;
+import com.itechart.javalab.library.domain.entity.LibraryEmailInfo;
 import com.itechart.javalab.library.service.impl.DefaultLibraryInfoService;
 import org.junit.Assert;
 import org.junit.Test;

@@ -165,6 +165,11 @@ function showModalEditBorrow(obj) {
 
 function showModalAddBorrow(obj) {
     $('#addNewBorrowRecord').modal('show');
+    document.querySelectorAll('#addNewBorrowRecord form input').forEach(input=>{
+        if(input.classList.contains('is-invalid')){
+            input.classList.remove('is-invalid');
+        }
+    })
 }
 
 

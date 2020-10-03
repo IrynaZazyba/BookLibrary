@@ -1,6 +1,6 @@
 package com.itechart.javalab.library.presentation;
 
-import com.itechart.javalab.library.model.Author;
+import com.itechart.javalab.library.domain.entity.Author;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 

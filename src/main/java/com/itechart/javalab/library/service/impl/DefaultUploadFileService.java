@@ -36,7 +36,7 @@ public class DefaultUploadFileService implements UploadFileService {
             }
             part.write(savePath + File.separator + fileName);
         } catch (IOException e) {
-            log.error("Error with write file to the directory", e);
+            log.error("Error with write file to the directory. Check savePath or permission to write.", e);
             throw new UploadFileRuntimeException("Impossible to write file");
         }
     }

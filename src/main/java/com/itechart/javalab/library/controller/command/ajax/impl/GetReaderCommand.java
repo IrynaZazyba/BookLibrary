@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
 import com.itechart.javalab.library.controller.util.json.JsonBuilder;
 import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
-import com.itechart.javalab.library.model.Reader;
+import com.itechart.javalab.library.domain.entity.Reader;
 import com.itechart.javalab.library.service.ReaderService;
 import com.itechart.javalab.library.service.impl.DefaultReaderService;
 import lombok.extern.log4j.Log4j2;

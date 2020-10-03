@@ -1,7 +1,7 @@
 package com.itechart.javalab.library.service.util.notification;
 
-import com.itechart.javalab.library.model.BorrowRecord;
-import com.itechart.javalab.library.model.LibraryEmailInfo;
+import com.itechart.javalab.library.domain.entity.BorrowRecord;
+import com.itechart.javalab.library.domain.entity.LibraryEmailInfo;
 import org.stringtemplate.v4.ST;
 
 import java.time.format.DateTimeFormatter;

@@ -5,10 +5,9 @@ import com.itechart.javalab.library.dao.ReaderDao;
 import com.itechart.javalab.library.dao.impl.SqlBorrowRecordDao;
 import com.itechart.javalab.library.dao.impl.SqlReaderDao;
 import com.itechart.javalab.library.dto.BorrowRecordDto;
-import com.itechart.javalab.library.model.BorrowRecord;
+import com.itechart.javalab.library.domain.entity.BorrowRecord;
 import com.itechart.javalab.library.service.BookService;
 import com.itechart.javalab.library.service.BorrowRecordService;
-import org.apache.commons.text.StringEscapeUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

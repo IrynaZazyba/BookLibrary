@@ -1,4 +1,4 @@
-package com.itechart.javalab.library.model;
+package com.itechart.javalab.library.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * The class {@code LibraryEmailInfo} contains info
+ * how to contact the library, used to build
+ * automatic emails from library
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

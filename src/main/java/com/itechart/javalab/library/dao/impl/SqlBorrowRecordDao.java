@@ -1,11 +1,11 @@
 package com.itechart.javalab.library.dao.impl;
 
 import com.itechart.javalab.library.dao.BorrowRecordDao;
-import com.itechart.javalab.library.dao.conn.ConnectionPool;
+import com.itechart.javalab.library.dao.connection.ConnectionPool;
 import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
-import com.itechart.javalab.library.model.BorrowRecord;
-import com.itechart.javalab.library.model.Reader;
-import com.itechart.javalab.library.model.Status;
+import com.itechart.javalab.library.domain.entity.BorrowRecord;
+import com.itechart.javalab.library.domain.entity.Reader;
+import com.itechart.javalab.library.domain.entity.Status;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
@@ -212,7 +212,8 @@ public class SqlBorrowRecordDao implements BorrowRecordDao {
                 throw new DaoRuntimeException("SqlException in SqlBookDao updateStatusBorrowRecords() method", e);
             }
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
+            log.error("SqlException in updateStatusBorrowRecords() method. Check if connection exists or" +
+                    " exception thrown by rollback operation", e);
             throw new DaoRuntimeException("SqlException in SqlReaderDao updateStatusBorrowRecords() method", e);
         }
         return result;

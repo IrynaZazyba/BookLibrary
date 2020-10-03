@@ -3,8 +3,8 @@ package com.itechart.javalab.library.controller.command.front.impl;
 import com.itechart.javalab.library.controller.command.front.Command;
 import com.itechart.javalab.library.controller.util.JspPageName;
 import com.itechart.javalab.library.dto.MainPageDto;
-import com.itechart.javalab.library.model.Book;
-import com.itechart.javalab.library.model.Paginator;
+import com.itechart.javalab.library.domain.entity.Book;
+import com.itechart.javalab.library.domain.Paginator;
 import com.itechart.javalab.library.service.BookService;
 import com.itechart.javalab.library.service.impl.DefaultBookService;
 

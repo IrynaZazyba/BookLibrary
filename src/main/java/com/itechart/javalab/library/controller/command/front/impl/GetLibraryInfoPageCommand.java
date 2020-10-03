@@ -2,7 +2,7 @@ package com.itechart.javalab.library.controller.command.front.impl;
 
 import com.itechart.javalab.library.controller.command.front.Command;
 import com.itechart.javalab.library.controller.util.JspPageName;
-import com.itechart.javalab.library.model.LibraryEmailInfo;
+import com.itechart.javalab.library.domain.entity.LibraryEmailInfo;
 import com.itechart.javalab.library.service.LibraryInfoService;
 import com.itechart.javalab.library.service.impl.DefaultLibraryInfoService;
 

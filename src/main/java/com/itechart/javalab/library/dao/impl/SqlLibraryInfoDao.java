@@ -1,10 +1,11 @@
 package com.itechart.javalab.library.dao.impl;
 
 import com.itechart.javalab.library.dao.LibraryInfoDao;
-import com.itechart.javalab.library.dao.conn.ConnectionPool;
+import com.itechart.javalab.library.dao.connection.ConnectionPool;
 import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
-import com.itechart.javalab.library.model.LibraryEmailInfo;
+import com.itechart.javalab.library.domain.entity.LibraryEmailInfo;
 import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.util.Strings;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -74,7 +75,7 @@ public class SqlLibraryInfoDao implements LibraryInfoDao {
              PreparedStatement ps = connection.prepareStatement(UPDATE_LIBRARY_INFO)) {
             ps.setString(1, info.getAddress());
             ps.setString(2, info.getName());
-            ps.setString(3, info.getSignature());
+            ps.setString(3, Strings.isEmpty(info.getSignature())?null:info.getSignature());
             ps.setInt(4, info.getId());
             ps.executeUpdate();
         } catch (SQLException e) {

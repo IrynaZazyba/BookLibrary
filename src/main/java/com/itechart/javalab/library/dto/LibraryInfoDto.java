@@ -1,6 +1,6 @@
 package com.itechart.javalab.library.dto;
 
-import com.itechart.javalab.library.model.LibraryEmailInfo;
+import com.itechart.javalab.library.domain.entity.LibraryEmailInfo;
 import lombok.*;
 import org.apache.commons.text.StringEscapeUtils;
 
