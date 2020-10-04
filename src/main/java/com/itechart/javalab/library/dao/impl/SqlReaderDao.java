@@ -23,6 +23,7 @@ public class SqlReaderDao implements ReaderDao {
     private static final String GET_READERS_BY_EMAIL = "SELECT id, email, name FROM `reader` WHERE email LIKE ?";
     private static final String UPDATE_READER = "UPDATE `reader` SET `name`=?,`lastName`=?,`email`=?,`phone`=?," +
             "`gender_id`=(SELECT id FROM gender WHERE gender=?) WHERE id=?";
+    private static final String GET_READER_BY_EMAIL_EXCEPT_ID = "SELECT id FROM `reader` WHERE email=? and id<>?";
     private static final String CREATE_READER = "INSERT INTO `reader`(`name`, `lastName`, `email`, `phone`, " +
             "`registrationDate`, `gender_id`) VALUES (?,?,?,?,?,(SELECT id FROM gender WHERE gender=?))";
 
@@ -75,7 +76,7 @@ public class SqlReaderDao implements ReaderDao {
 
     @Override
     public Optional<Set<Reader>> getReadersByEmail(String email) {
-        Set<Reader> readers=null;
+        Set<Reader> readers = null;
         try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_READERS_BY_EMAIL)) {
             preparedStatement.setString(1, "%" + email + "%");
@@ -126,6 +127,23 @@ public class SqlReaderDao implements ReaderDao {
             log.error("SqlException in createReader() method", e);
             throw new DaoRuntimeException("SqlException in SqlReaderDao createReader() method", e);
         }
+    }
+
+    @Override
+    public Optional<Integer> checkExistsEmail(String email, int readerId) {
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_READER_BY_EMAIL_EXCEPT_ID)) {
+            preparedStatement.setString(1, email);
+            preparedStatement.setInt(2, readerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(resultSet.getInt(1));
+            }
+        } catch (SQLException e) {
+            log.error("SqlException in checkExistsEmail() method", e);
+            throw new DaoRuntimeException("SqlException in SqlReceiveReaderDao checkExistsEmail() method", e);
+        }
+        return Optional.empty();
     }
 
 }

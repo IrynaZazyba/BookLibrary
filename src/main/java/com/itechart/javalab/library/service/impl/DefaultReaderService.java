@@ -2,9 +2,9 @@ package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.dao.ReaderDao;
 import com.itechart.javalab.library.dao.impl.SqlReaderDao;
-import com.itechart.javalab.library.dto.ReaderDto;
 import com.itechart.javalab.library.domain.Paginator;
 import com.itechart.javalab.library.domain.entity.Reader;
+import com.itechart.javalab.library.dto.ReaderDto;
 import com.itechart.javalab.library.service.BookService;
 import com.itechart.javalab.library.service.ReaderService;
 
@@ -59,8 +59,12 @@ public class DefaultReaderService implements ReaderService {
     }
 
     @Override
-    public void editReader(ReaderDto readerDto) {
+    public boolean editReader(ReaderDto readerDto) {
         Reader reader = readerDto.toExtendedModel();
+        if (readerDao.checkExistsEmail(reader.getEmail(), reader.getId()).isPresent()) {
+            return false;
+        }
         readerDao.updateReader(reader);
+        return true;
     }
 }

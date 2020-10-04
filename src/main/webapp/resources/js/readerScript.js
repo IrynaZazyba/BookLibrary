@@ -95,7 +95,12 @@ async function editReader() {
         $('#addRecord').modal('hide');
         location.reload();
     } else {
-        modalForm.insertAdjacentHTML('beforebegin', addDangerNotification("Reader wasn't update. Please, try later."));
+        if (response.status === 400) {
+            modalForm.insertAdjacentHTML('beforebegin', addDangerNotification("Please, check reader information."));
+        }
+        if (response.status === 409) {
+            modalForm.insertAdjacentHTML('beforebegin', addDangerNotification("Reader with such email already exists."));
+        }
     }
 }
 
