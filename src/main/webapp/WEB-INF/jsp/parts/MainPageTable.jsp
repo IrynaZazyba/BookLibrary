@@ -2,7 +2,7 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<table class="table table-bordered mainPageTable">
+<table id="searchResult" class="table table-bordered mainPageTable">
     <thead>
     <tr>
         <th></th>

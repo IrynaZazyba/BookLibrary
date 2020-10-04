@@ -1,15 +1,14 @@
 package com.itechart.javalab.library.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itechart.javalab.library.model.Book;
-import com.itechart.javalab.library.model.BorrowRecord;
-import com.itechart.javalab.library.model.Status;
-import com.itechart.javalab.library.model.TimePeriod;
+import com.itechart.javalab.library.domain.entity.Book;
+import com.itechart.javalab.library.domain.entity.BorrowRecord;
+import com.itechart.javalab.library.domain.entity.Status;
+import com.itechart.javalab.library.domain.entity.TimePeriod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.text.StringEscapeUtils;
 
 @Data
 @AllArgsConstructor
@@ -25,7 +24,7 @@ public class BorrowRecordDto {
     private TimePeriod timePeriod;
 
     public BorrowRecord toBookAddRecordModel() {
-        return BorrowRecord.builder().id(id).status(status).comment(comment)
+        return BorrowRecord.builder().id(id).status(status).comment(StringEscapeUtils.escapeHtml4(comment))
                 .timePeriod(timePeriod)
                 .reader(reader.toModel())
                 .book(Book.builder().id(bookId).build())
@@ -33,14 +32,9 @@ public class BorrowRecordDto {
     }
 
     public BorrowRecord toBookEditRecordModel() {
-        return BorrowRecord.builder().id(id).status(status).comment(comment)
+        return BorrowRecord.builder().id(id).status(status).comment(StringEscapeUtils.escapeHtml4(comment))
                 .timePeriod(timePeriod)
                 .book(Book.builder().id(bookId).build())
                 .build();
-    }
-
-    public static BorrowRecordDto[] parseBorrowRecords(String jsonRecords) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonRecords, BorrowRecordDto[].class);
     }
 }

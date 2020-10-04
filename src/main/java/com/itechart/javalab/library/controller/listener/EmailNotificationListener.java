@@ -13,6 +13,10 @@ import static org.quartz.JobBuilder.newJob;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+/**
+ * The class {@code EmailNotificationListener} class defines
+ * tasks to be executed on a schedule
+ */
 @Log4j2
 public class EmailNotificationListener implements ServletContextListener {
 
@@ -63,6 +67,5 @@ public class EmailNotificationListener implements ServletContextListener {
                 .usingJobData(jobDataMap)
                 .withIdentity(identity)
                 .build();
-
     }
 }

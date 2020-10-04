@@ -1,10 +1,14 @@
-package com.itechart.javalab.library.model;
+package com.itechart.javalab.library.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The class {@code BookFilter} allows
+ * realizing books filtration
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

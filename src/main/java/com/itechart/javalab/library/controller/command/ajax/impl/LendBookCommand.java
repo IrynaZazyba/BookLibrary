@@ -36,7 +36,8 @@ public class LendBookCommand implements AjaxCommand {
         String editedRecords = request.getParameter(REQUEST_PARAMETER_EDITED_RECORDS);
         String responseBody;
         try {
-            BorrowRecordDto[] borrowRecords = BorrowRecordDto.parseBorrowRecords(editedRecords);
+            BorrowRecordDto[] borrowRecords =jsonBuilder
+                    .getObjectMapper().readValue(editedRecords, BorrowRecordDto[].class);
             boolean result = readerService.addBorrowRecords(borrowRecords);
             if (result) {
                 response.setStatus(HttpServletResponse.SC_OK);

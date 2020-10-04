@@ -1,7 +1,7 @@
 package com.itechart.javalab.library.dto;
 
-import com.itechart.javalab.library.model.Gender;
-import com.itechart.javalab.library.model.Reader;
+import com.itechart.javalab.library.domain.entity.Gender;
+import com.itechart.javalab.library.domain.entity.Reader;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 

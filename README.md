@@ -1,5 +1,23 @@
 # BookLibrary
 
+### Description
+Client-server application.
+
+### Functionality
+- ability to add, remove, view and edit books stored in the library
+- track the status of book 
+- hold borrowing records
+- manage readers of the library
+- allows to searching for books with various criteria
+- send automatic emails with due date reminders to readers
+
+###Getting started
+1) Create db from book_library.sql script, define credentials in db.properties file
+2) Run the command from the project root  
+./mvnw org.codehaus.cargo:cargo-maven2-plugin:run (for the Unix system)   
+mvnw.cmd org.codehaus.cargo:cargo-maven2-plugin:run (for Windows)
+
+---
 ##### Task#1 - Proof of concept
 Branch - PoC  
 I offer project structure, which based on a layered architecture. Used the command pattern to process requests on 
@@ -72,4 +90,14 @@ Branch - add-reader-page
 - add ReaderController
 - add dto objects
 - add GetReadersCommand
+- add DAO and Service methods
+
+##### Task#11 - Info page
+Branch - advanced-v2
+- delete opportunity add reader at BorrowRecordModal (TR Advanced Readers'page) 
+- add LibraryInfoPage.jsp
+- add bean
+- add EmailTemplateController
+- add dto object
+- add Command
 - add DAO and Service methods

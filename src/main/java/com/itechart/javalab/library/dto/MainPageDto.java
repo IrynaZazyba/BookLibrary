@@ -1,6 +1,6 @@
 package com.itechart.javalab.library.dto;
 
-import com.itechart.javalab.library.model.Book;
+import com.itechart.javalab.library.domain.entity.Book;
 import lombok.*;
 
 import java.util.List;

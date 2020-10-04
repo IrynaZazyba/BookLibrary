@@ -1,10 +1,15 @@
-package com.itechart.javalab.library.model;
+package com.itechart.javalab.library.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * The class {@code Paginator} allows to realize pagination,
+ * introduce default values to currentPage and recordsPerPages
+ * parameters
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -1,11 +1,11 @@
 package com.itechart.javalab.library.dao.impl;
 
 import com.itechart.javalab.library.dao.BorrowRecordDao;
-import com.itechart.javalab.library.dao.conn.ConnectionPool;
+import com.itechart.javalab.library.dao.connection.ConnectionPool;
 import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
-import com.itechart.javalab.library.model.BorrowRecord;
-import com.itechart.javalab.library.model.Reader;
-import com.itechart.javalab.library.model.Status;
+import com.itechart.javalab.library.domain.entity.BorrowRecord;
+import com.itechart.javalab.library.domain.entity.Reader;
+import com.itechart.javalab.library.domain.entity.Status;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
@@ -51,7 +51,7 @@ public class SqlBorrowRecordDao implements BorrowRecordDao {
             "reader.email, reader.id, book.title,isbn, borrow_date FROM `borrow_list` " +
             "INNER JOIN reader on reader.id=borrow_list.reader_id " +
             "INNER JOIN book on book.id=borrow_list.book_id " +
-            "WHERE DATEDIFF(due_date, NOW())<0 and return_date is NULL";
+            "WHERE DATEDIFF(due_date, NOW())=-1 and return_date is NULL";
     private static final String UPDATE_BORROW_RECORD_COMMENT="UPDATE `borrow_list` SET`comment`=? WHERE id=?";
 
     private SqlBorrowRecordDao(ConnectionPool connectionPool) {
@@ -212,7 +212,8 @@ public class SqlBorrowRecordDao implements BorrowRecordDao {
                 throw new DaoRuntimeException("SqlException in SqlBookDao updateStatusBorrowRecords() method", e);
             }
         } catch (SQLException e) {
-            log.error("SqlException in attempt to get Connection", e);
+            log.error("SqlException in updateStatusBorrowRecords() method. Check if connection exists or" +
+                    " exception thrown by rollback operation", e);
             throw new DaoRuntimeException("SqlException in SqlReaderDao updateStatusBorrowRecords() method", e);
         }
         return result;

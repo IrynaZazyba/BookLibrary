@@ -1,9 +1,13 @@
 package com.itechart.javalab.library.dao.impl;
 
 import com.itechart.javalab.library.dao.ReceiveBookDao;
-import com.itechart.javalab.library.dao.conn.ConnectionPool;
+import com.itechart.javalab.library.dao.connection.ConnectionPool;
 import com.itechart.javalab.library.dao.exception.DaoRuntimeException;
-import com.itechart.javalab.library.model.*;
+import com.itechart.javalab.library.domain.BookFilter;
+import com.itechart.javalab.library.domain.Paginator;
+import com.itechart.javalab.library.domain.entity.Author;
+import com.itechart.javalab.library.domain.entity.Book;
+import com.itechart.javalab.library.domain.entity.Genre;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
@@ -197,8 +201,8 @@ public class SqlReceiveBookDao implements ReceiveBookDao {
                 bookCover = resultSet.getString("cover");
             }
         } catch (SQLException e) {
-            log.error("SqlException in getEarliestDueDate() method", e);
-            throw new DaoRuntimeException("SqlException in SqlBookDao getEarliestDueDate() method", e);
+            log.error("SqlException in getBookCover() method", e);
+            throw new DaoRuntimeException("SqlException in SqlBookDao getBookCover() method", e);
         }
         return bookCover;
     }

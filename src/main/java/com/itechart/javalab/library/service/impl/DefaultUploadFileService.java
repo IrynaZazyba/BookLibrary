@@ -2,7 +2,6 @@ package com.itechart.javalab.library.service.impl;
 
 import com.itechart.javalab.library.service.UploadFileService;
 import com.itechart.javalab.library.service.exception.UploadFileRuntimeException;
-import com.itechart.javalab.library.service.util.FileFormatValidator;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.http.Part;
@@ -37,7 +36,7 @@ public class DefaultUploadFileService implements UploadFileService {
             }
             part.write(savePath + File.separator + fileName);
         } catch (IOException e) {
-            log.error("Error with write file to the directory", e);
+            log.error("Error with write file to the directory. Check savePath or permission to write.", e);
             throw new UploadFileRuntimeException("Impossible to write file");
         }
     }

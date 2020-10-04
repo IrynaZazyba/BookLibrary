@@ -1,8 +1,8 @@
 package com.itechart.javalab.library.controller.command.ajax.impl;
 
 import com.itechart.javalab.library.controller.command.ajax.AjaxCommand;
-import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
 import com.itechart.javalab.library.controller.util.json.JsonBuilder;
+import com.itechart.javalab.library.controller.util.json.impl.JacksonJsonBuilder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

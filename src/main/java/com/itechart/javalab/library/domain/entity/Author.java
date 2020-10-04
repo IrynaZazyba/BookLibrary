@@ -1,4 +1,4 @@
-package com.itechart.javalab.library.model;
+package com.itechart.javalab.library.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

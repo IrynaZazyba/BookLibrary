@@ -1,4 +1,4 @@
-package com.itechart.javalab.library.model;
+package com.itechart.javalab.library.domain.entity;
 
 import com.itechart.javalab.library.dto.BookDto;
 import lombok.AllArgsConstructor;

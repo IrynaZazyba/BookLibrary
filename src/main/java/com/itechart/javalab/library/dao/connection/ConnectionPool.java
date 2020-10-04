@@ -1,4 +1,4 @@
-package com.itechart.javalab.library.dao.conn;
+package com.itechart.javalab.library.dao.connection;
 
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 

@@ -1,7 +1,7 @@
 "use strict";
 
 const emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const namePattern = /^([a-zA-Z- ]){2,15}$/;
+const namePattern = /^[a-zA-Z- ]{2,25}$/;
 const phonePattern = /^[8][0-9]{10}$|^[+][3][7][5][0-9]{9}$/;
 
 function showModalAddRecord(obj) {
@@ -32,16 +32,16 @@ function showModalEditRecord(obj) {
     modalForm.querySelector("#lastName").value = lastName;
     modalForm.querySelector("#email").value = email;
     modalForm.querySelector("#phoneNumber").value = phone;
+    modalForm.querySelector("input[name='readerId']").value = readerId;
 
     modalForm.querySelectorAll("input.form-check-input").forEach(e => {
         if (e.checked) {
             e.checked = false;
         }
     });
-
-    modalForm.querySelector("#" + gender).setAttribute("checked", "checked");
-    modalForm.querySelector("input[name='readerId']").value = readerId;
+    modalForm.querySelector(".form-check-input[value='" + gender + "']").checked = true;
     $('#addRecord').modal('show');
+
 }
 
 async function getCountReaderRecords(obj) {
@@ -162,8 +162,6 @@ function validateReader() {
         phone.classList.add("is-invalid");
         result = false;
     }
-
-
     return result;
 }
 
