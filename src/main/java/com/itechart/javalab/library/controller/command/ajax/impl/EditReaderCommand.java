@@ -25,6 +25,7 @@ public class EditReaderCommand implements AjaxCommand {
     private final JsonBuilder jsonBuilder;
     private static final String READER_INFO = "dto";
     private static final String RESPONSE_MESSAGE_OK = "ok";
+    private static final String RESPONSE_MESSAGE_CONFLICT = "Reader with such email already exist";
 
     public EditReaderCommand() {
         this.readerService = DefaultReaderService.getInstance();
@@ -37,9 +38,13 @@ public class EditReaderCommand implements AjaxCommand {
         String responseBody;
         try {
             ReaderDto readerDto = jsonBuilder.getObjectMapper().readValue(readers, ReaderDto.class);
-            readerService.editReader(readerDto);
-            response.setStatus(HttpServletResponse.SC_OK);
-            responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_SUCCESS, RESPONSE_MESSAGE_OK);
+            if (readerService.editReader(readerDto)) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_SUCCESS, RESPONSE_MESSAGE_OK);
+            } else {
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
+                responseBody = jsonBuilder.getJsonFromKeyValue(RESPONSE_PARAMETER_ERROR, RESPONSE_MESSAGE_CONFLICT);
+            }
         } catch (JsonParseException | JsonMappingException | IllegalArgumentException e) {
             log.error("Json transformation exception", e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

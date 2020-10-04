@@ -1,8 +1,8 @@
 package com.itechart.javalab.library.service;
 
-import com.itechart.javalab.library.dto.ReaderDto;
 import com.itechart.javalab.library.domain.Paginator;
 import com.itechart.javalab.library.domain.entity.Reader;
+import com.itechart.javalab.library.dto.ReaderDto;
 
 import java.util.Optional;
 import java.util.Set;
@@ -32,6 +32,7 @@ public interface ReaderService {
     /**
      * Adding readers to the system, transform dto object to
      * entity and setting registration date like current Date,
+     * check if provided email exists,
      * calls a method from dao
      *
      * @param readerDto {@link ReaderDto}
@@ -40,9 +41,10 @@ public interface ReaderService {
 
     /**
      * Adding readers to the system, transform dto object to
-     * entity, calls a method from dao
+     * entity, check if provided email exists,
+     * calls a method from dao
      *
      * @param readerDto {@link ReaderDto}
      */
-    void editReader(ReaderDto readerDto);
+    boolean editReader(ReaderDto readerDto);
 }

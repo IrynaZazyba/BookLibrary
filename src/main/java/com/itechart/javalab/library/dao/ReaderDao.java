@@ -41,4 +41,12 @@ public interface ReaderDao {
      * @param reader see{@link Reader}
      */
     void createReader(Reader reader);
+
+    /**
+     * Retrieves reader id where such email exists by other reader id
+     *
+     * @param email    reader email
+     * @param readerId reader id
+     */
+    Optional<Integer> checkExistsEmail(String email, int readerId);
 }
