@@ -221,6 +221,7 @@ public class DefaultBookServiceTest {
         Mockito.when(part.getSize()).thenReturn(1L);
         Optional<Boolean> aBoolean = Optional.of(true);
         Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
+        Whitebox.setInternalState(bookService, "uploadFileService", uploadFileService);
         Mockito.when(alterBookDao.updateBookInfo(Mockito.any(Book.class))).thenReturn(aBoolean);
         doNothing().when(uploadFileService)
                 .uploadFile(eq(anyPath), eq(part), eq(fileName));
@@ -248,6 +249,7 @@ public class DefaultBookServiceTest {
         Mockito.when(part.getSubmittedFileName()).thenReturn("5.png");
         Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
         Whitebox.setInternalState(bookService, "receiveBookDao", receiveBookDao);
+        Whitebox.setInternalState(bookService, "uploadFileService", uploadFileService);
         Mockito.when(alterBookDao.updateBookInfo(Mockito.any(Book.class))).thenReturn(Optional.empty());
         Mockito.when(receiveBookDao.getBookCover(5)).thenReturn("5.png");
         doNothing().when(uploadFileService)
@@ -288,6 +290,7 @@ public class DefaultBookServiceTest {
         String fileName = "5.png";
         Mockito.when(part.getSize()).thenReturn(1L);
         Whitebox.setInternalState(bookService, "alterBookDao", alterBookDao);
+        Whitebox.setInternalState(bookService, "uploadFileService", uploadFileService);
         Mockito.when(alterBookDao.createBook(Book.buildFrom(bookDto))).thenReturn(5);
         doNothing().when(uploadFileService).uploadFile(eq(anyPath), eq(part), eq(fileName));
         doNothing().when(alterBookDao)
