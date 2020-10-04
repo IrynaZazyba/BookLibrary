@@ -11,7 +11,7 @@ Client-server application.
 - allows to searching for books with various criteria
 - send automatic emails with due date reminders to readers
 
-###Getting started
+### Getting started
 1) Create db from book_library.sql script, define credentials in db.properties file
 2) Run the command from the project root  
 ./mvnw org.codehaus.cargo:cargo-maven2-plugin:run (for the Unix system)   
