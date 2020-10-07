@@ -67,7 +67,7 @@ public class DefaultReaderServiceTest {
         Mockito.when(readerDto.toExtendedModel()).thenReturn(reader);
         Set<Reader> readers = new HashSet<>();
         readers.add(Reader.builder().id(5).build());
-        Mockito.when(mockReaderDao.getReadersByEmail(reader.getEmail())).thenReturn(Optional.of(readers));
+        Mockito.when(mockReaderDao.checkExistsEmail(reader.getEmail(),reader.getId())).thenReturn(Optional.ofNullable(0));
         doNothing().when(mockReaderDao).createReader(reader);
         Assert.assertFalse(readerService.addReader(readerDto));
     }
@@ -78,8 +78,7 @@ public class DefaultReaderServiceTest {
         ReaderDto readerDto = Mockito.mock(ReaderDto.class);
         Reader reader = Mockito.mock(Reader.class);
         Mockito.when(readerDto.toExtendedModel()).thenReturn(reader);
-        Set<Reader> readers = null;
-        Mockito.when(mockReaderDao.getReadersByEmail(reader.getEmail())).thenReturn(Optional.ofNullable(readers));
+        Mockito.when(mockReaderDao.checkExistsEmail(reader.getEmail(),reader.getId())).thenReturn(Optional.empty());
         doNothing().when(mockReaderDao).createReader(reader);
         Assert.assertTrue(readerService.addReader(readerDto));
     }
@@ -90,8 +89,9 @@ public class DefaultReaderServiceTest {
         ReaderDto readerDto = Mockito.mock(ReaderDto.class);
         Reader reader = Mockito.mock(Reader.class);
         Mockito.when(readerDto.toExtendedModel()).thenReturn(reader);
+        Mockito.when(mockReaderDao.checkExistsEmail(reader.getEmail(),reader.getId())).thenReturn(Optional.ofNullable(0));
         doNothing().when(mockReaderDao).updateReader(reader);
         readerService.editReader(readerDto);
-        Mockito.verify(mockReaderDao, Mockito.times(1)).updateReader(reader);
+        Assert.assertFalse(readerService.editReader(readerDto));
     }
 }
