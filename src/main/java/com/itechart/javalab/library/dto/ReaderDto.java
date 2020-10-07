@@ -19,6 +19,7 @@ public class ReaderDto {
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
                     "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String PHONE_PATTERN = "(^[+][3][7][5][0-9]{9}$)|(^[8][0-9]{10}$)";
+
     private int id;
     private String name;
     private String lastName;
@@ -34,8 +35,14 @@ public class ReaderDto {
 
     public Reader toExtendedModel() {
         validateExtendedModel();
-        return Reader.builder().id(id).name(name.trim()).lastName(lastName.trim()).email(email.trim())
-                .phone(phone).gender(gender).build();
+        return Reader.builder()
+                .id(id)
+                .name(name.trim())
+                .lastName(lastName.trim())
+                .email(email.trim())
+                .phone(phone)
+                .gender(gender)
+                .build();
     }
 
     private void validate() throws IllegalArgumentException {
